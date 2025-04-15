@@ -67,4 +67,34 @@ body {
   #particleDisplay {
     left: calc(50% + 50px);
   }
+
+  .toggle-button {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    font-size: 16px;
+    font-weight: bold;
+    color: #000;
+    /*color: #cd7f32; /* metallic bronze */
+    font-family: 'Arial Black', sans-serif;
+    text-shadow: 1px 1px 2px #000;
+    border: none;
+    cursor: pointer;
+    background-color: transparent;
+    background-image: url('./Assets/button.png');
+    background-size: cover;
+    background-position: center;
+    box-shadow: 0 0 12px red;
+    transition: box-shadow 0.3s ease;
+    z-index: 1000;
+  }
+  
+  .toggle-button.active {
+    box-shadow: 0 0 12px limegreen;
+  }
+  
   
