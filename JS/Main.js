@@ -26,8 +26,6 @@ function gameLoop(timestamp) {
   const ctx = getCanvasContext();
   ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
-  console.log(SandComponents.x.length); // should be 500
-
   //Render sand particles
   drawSandParticles(ctx); // draws particles on top
 
