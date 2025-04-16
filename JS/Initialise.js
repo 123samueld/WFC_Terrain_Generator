@@ -28,11 +28,11 @@ export function initSandParticles(canvasWidth, canvasHeight) {
   const n = 500;
 
   for (let i = 0; i < n; i++) {
+    SandComponents.id.push(i);
     SandComponents.x.push(Math.floor(Math.random() * canvasWidth));
     SandComponents.y.push(Math.floor(Math.random() * canvasHeight));
-    SandComponents.vx.push(0);
-    SandComponents.vy.push(0);
     SandComponents.mass.push(1);
+    SandComponents.isMoving.push(true);
   }
   console.log('Initialising particles');
 

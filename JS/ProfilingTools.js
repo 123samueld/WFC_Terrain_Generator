@@ -1,5 +1,7 @@
 // ProfilingTools.js
 import { getChunks } from './SpatialAccelerator.js';
+import { SandComponents } from './GameStateManager.js';
+
 
 let showChunkGrid = false;
 
@@ -24,4 +26,23 @@ export function drawChunkGrid(ctx) {
   }
 
   ctx.setLineDash([]); // Reset
+}
+
+export function drawChunkHighlightForParticle(ctx) {
+  if (!showChunkGrid) return; // Toggle with the chunk grid
+
+  const chunks = getChunks();
+  const x = SandComponents.x[0];
+  const y = SandComponents.y[0];
+
+  for (const chunk of chunks) {
+    if (
+      x >= chunk.x && x < chunk.x + chunk.width &&
+      y >= chunk.y && y < chunk.y + chunk.height
+    ) {
+      ctx.fillStyle = 'rgba(255, 0, 0, 0.2)'; // Light red overlay
+      ctx.fillRect(chunk.x, chunk.y, chunk.width, chunk.height);
+      break; // Only highlight one chunk
+    }
+  }
 }

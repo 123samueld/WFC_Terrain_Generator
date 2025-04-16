@@ -1,8 +1,8 @@
 import FPSCounter from './FPSCounter.js';
 import { initCanvas, getCanvasContext } from './Initialise.js';
-import { initProfilingTools, drawChunkGrid } from './ProfilingTools.js';
+import { initProfilingTools, drawChunkGrid, drawChunkHighlightForParticle } from './ProfilingTools.js';
 import { drawSandParticles } from './Renderer.js';
-import { SandComponents } from './GameStateManager.js';
+import { updateGameStateSimulation } from './GameStateManager.js';
 
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -23,15 +23,21 @@ function gameLoop(timestamp) {
   fpsCounter.updateFrame(timestamp);
 
 
-  const ctx = getCanvasContext();
-  ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+
+  //Core game simulation loop call
+  updateGameStateSimulation();
+
 
   //Render sand particles
-  drawSandParticles(ctx); // draws particles on top
+  const ctx = getCanvasContext();
+  ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+  drawSandParticles(ctx);
 
 
   // Debugging functions
   drawChunkGrid(ctx);
+  drawChunkHighlightForParticle(ctx);
+
 
   // Request next frame
   requestAnimationFrame(gameLoop);
