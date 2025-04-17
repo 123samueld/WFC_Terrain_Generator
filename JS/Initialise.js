@@ -1,9 +1,9 @@
 // Initialise.js
 import { initChunker } from './SpatialAccelerator.js';
-import { SandComponents } from './GameStateManager.js';
+import { ParticleComponents } from './GameStateManager.js';
 
 let canvasRef, ctxRef;
-let hasInitialisedSand = false;
+let hasInitialisedParticles = false;
 
 
 export function initCanvas() {
@@ -14,7 +14,7 @@ export function initCanvas() {
   canvasRef.height = 800;
 
   initChunker(canvasRef.width, canvasRef.height);
-  initSandParticles(canvasRef.width, canvasRef.height);
+  initParticles(canvasRef.width, canvasRef.height);
 
 }
 
@@ -22,17 +22,18 @@ export function getCanvasContext() {
   return ctxRef;
 }
 
-export function initSandParticles(canvasWidth, canvasHeight) {
-  if (hasInitialisedSand) return; // Prevent double-init
-  hasInitialisedSand = true;
+export function initParticles(canvasWidth, canvasHeight) {
+  if (hasInitialisedParticles) return; // Prevent double-init
+  hasInitialisedParticles = true;
   const n = 500;
 
   for (let i = 0; i < n; i++) {
-    SandComponents.id.push(i);
-    SandComponents.x.push(Math.floor(Math.random() * canvasWidth));
-    SandComponents.y.push(Math.floor(Math.random() * canvasHeight));
-    SandComponents.mass.push(1);
-    SandComponents.isMoving.push(true);
+    ParticleComponents.id.push(i);
+    ParticleComponents.type.push("sand");
+    ParticleComponents.x.push(Math.floor(Math.random() * canvasWidth));
+    ParticleComponents.y.push(Math.floor(Math.random() * canvasHeight));
+    ParticleComponents.mass.push(1);
+    ParticleComponents.isMoving.push(true);
   }
   console.log('Initialising particles');
 

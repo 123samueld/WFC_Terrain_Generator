@@ -1,6 +1,6 @@
 // SpatialAccelerator.js
 
-import { SandComponents } from './GameStateManager.js';
+import { ParticleComponents } from './GameStateManager.js';
 
 let chunks = [];
 let chunkWidth, chunkHeight, cols, rows;
@@ -60,8 +60,8 @@ export function assignParticlesToChunks(particleX, particleY) {
 }
 
 export function getCurrentChunk(particleId) {
-  const x = SandComponents.x[particleId];
-  const y = SandComponents.y[particleId];
+  const x = ParticleComponents.x[particleId];
+  const y = ParticleComponents.y[particleId];
 
   const col = Math.floor(x / chunkWidth);
   const row = Math.floor(y / chunkHeight);
@@ -75,26 +75,30 @@ export function getCurrentChunk(particleId) {
 }
 
 export function getNeighbourChunks(chunkId) {
-  const nearByChunks = [];
+  const nearbyChunks = [];
 
-  const col = chunkId % cols;
   const row = Math.floor(chunkId / cols);
+  const col = chunkId % cols;
 
-  for (let dRow = -1; dRow <= 1; dRow++) {
-    for (let dCol = -1; dCol <= 1; dCol++) {
-      const neighbourRow = row + dRow;
-      const neighbourCol = col + dCol;
+  // Directional offsets: current, left, right, below-left, below, below-right
+  const offsets = [
+    [0, 0],   // current
+    [0, -1],  // left
+    [0, 1],   // right
+    [1, -1],  // below-left
+    [1, 0],   // below
+    [1, 1],   // below-right
+  ];
 
-      // Check bounds
-      if (
-        neighbourCol >= 0 && neighbourCol < cols &&
-        neighbourRow >= 0 && neighbourRow < rows
-      ) {
-        const neighbourId = neighbourRow * cols + neighbourCol;
-        nearByChunks.push(neighbourId);
-      }
+  for (const [dRow, dCol] of offsets) {
+    const newRow = row + dRow;
+    const newCol = col + dCol;
+
+    if (newRow >= 0 && newRow < rows && newCol >= 0 && newCol < cols) {
+      const neighborId = newRow * cols + newCol;
+      nearbyChunks.push(neighborId);
     }
   }
 
-  return nearByChunks;
+  return nearbyChunks;
 }

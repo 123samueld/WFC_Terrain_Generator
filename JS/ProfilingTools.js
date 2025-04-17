@@ -1,6 +1,6 @@
 // ProfilingTools.js
 import { getChunks } from './SpatialAccelerator.js';
-import { SandComponents } from './GameStateManager.js';
+import { ParticleComponents } from './GameStateManager.js';
 
 
 let showChunkGrid = false;
@@ -32,8 +32,8 @@ export function drawChunkHighlightForParticle(ctx) {
   if (!showChunkGrid) return; // Toggle with the chunk grid
 
   const chunks = getChunks();
-  const x = SandComponents.x[0];
-  const y = SandComponents.y[0];
+  const x = ParticleComponents.x[0];
+  const y = ParticleComponents.y[0];
 
   for (const chunk of chunks) {
     if (
