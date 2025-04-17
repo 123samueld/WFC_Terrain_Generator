@@ -8,7 +8,8 @@ export const ParticleComponents = {
   x: [],
   y: [],
   mass: [],
-  isMoving: []
+  isMoving: [],
+  colour: []
 };
 
 export const ParticleTypeFrictionCoefficient = {

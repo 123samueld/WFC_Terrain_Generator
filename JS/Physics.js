@@ -15,29 +15,38 @@ import {
 } from './SpatialAccelerator.js';
 
 export function updatePhysics() {
+  updateMovingParticles();
   updateParticleCoordinates();
   processNeighbourLookups();
 }
 
+// Keep MovingParticles array up to date each frame
+export function updateMovingParticles() {
+    MovingParticles.length = 0; // Clear list each frame
+  
+    for (let i = 0; i < ParticleComponents.isMoving.length; i++) {
+      if (ParticleComponents.isMoving[i]) {
+        MovingParticles.push(i);
+      }
+    }
+  }
+  
+
 // Function to update all particle coordinates based on type and behavior
 function updateParticleCoordinates() {
-    MovingParticles.length = 0; // Clear previous frame's moving particles
-  
-    for (let i = 0; i < ParticleComponents.x.length; i++) {
-      // Check the type of particle and call the corresponding movement behavior
-      const particleType = ParticleComponents.type[i];
+    for (let i = 0; i < MovingParticles.length; i++) {
+      const id = MovingParticles[i];
+      const particleType = ParticleComponents.type[id];
       const movementBehavior = ParticleTypeMovementBehavior[particleType];
   
       if (movementBehavior) {
-        movementBehavior(i); // Call the appropriate movement behavior
+        movementBehavior(id);
       }
-  
-      ParticleComponents.isMoving[i] = true;
-      MovingParticles.push(i);
     }
   
     assignParticlesToChunks(ParticleComponents.x, ParticleComponents.y);
   }
+  
 
 function processNeighbourLookups() {
   for (let i = 0; i < MovingParticles.length; i++) {
@@ -76,7 +85,7 @@ function getNeighbourParticles(particleId) {
 
 // Rock behavior (does nothing, obstructs movement)
 export function simulateRock(particleId) {
-    // No movement logic for rocks, they stay stationary
+    // No movement logic for rocks, they are stationary
     ParticleComponents.isMoving[particleId] = false;
 }
 
