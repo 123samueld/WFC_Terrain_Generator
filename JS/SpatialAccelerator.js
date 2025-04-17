@@ -1,8 +1,12 @@
 // SpatialAccelerator.js
 
+import { SandComponents } from './GameStateManager.js';
+
 let chunks = [];
 let chunkWidth, chunkHeight, cols, rows;
 
+// The "Chunker" is a way to partition the canvas into smaller chunks. This allows a rough pass neighbour check making a detailed pass
+// neighbour check less expensive in CPU resources.
 export function initChunker(canvasWidth, canvasHeight) {
   cols = 24;
   rows = 16;
@@ -39,12 +43,12 @@ export function clearChunkAssignments() {
   }
 }
 
-export function assignParticlesToChunks(particleXs, particleYs) {
+export function assignParticlesToChunks(particleX, particleY) {
   clearChunkAssignments();
 
-  for (let i = 0; i < particleXs.length; i++) {
-    const x = particleXs[i];
-    const y = particleYs[i];
+  for (let i = 0; i < particleX.length; i++) {
+    const x = particleX[i];
+    const y = particleY[i];
     const col = Math.floor(x / chunkWidth);
     const row = Math.floor(y / chunkHeight);
     const chunkId = row * cols + col;
@@ -55,12 +59,42 @@ export function assignParticlesToChunks(particleXs, particleYs) {
   }
 }
 
-export function getCurrentChunk(x, y) {
-  // Given an x and y position, calculate and return the chunk ID the particle is currently in.
-  // Return -1 if the coordinates fall outside valid chunk space.
+export function getCurrentChunk(particleId) {
+  const x = SandComponents.x[particleId];
+  const y = SandComponents.y[particleId];
+
+  const col = Math.floor(x / chunkWidth);
+  const row = Math.floor(y / chunkHeight);
+
+  if (col >= 0 && col < cols && row >= 0 && row < rows) {
+    const chunkId = row * cols + col;
+    return chunkId;
+  } else {
+    return -1; // Invalid position (outside canvas)
+  }
 }
 
 export function getNeighbourChunks(chunkId) {
-  // Given a chunk ID, calculate and return an array of the 8 neighboring chunk IDs.
-  // Ignore chunks that would fall outside the grid.
+  const nearByChunks = [];
+
+  const col = chunkId % cols;
+  const row = Math.floor(chunkId / cols);
+
+  for (let dRow = -1; dRow <= 1; dRow++) {
+    for (let dCol = -1; dCol <= 1; dCol++) {
+      const neighbourRow = row + dRow;
+      const neighbourCol = col + dCol;
+
+      // Check bounds
+      if (
+        neighbourCol >= 0 && neighbourCol < cols &&
+        neighbourRow >= 0 && neighbourRow < rows
+      ) {
+        const neighbourId = neighbourRow * cols + neighbourCol;
+        nearByChunks.push(neighbourId);
+      }
+    }
+  }
+
+  return nearByChunks;
 }

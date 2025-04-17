@@ -1,6 +1,7 @@
 // GameStateManager.js
 
-import { assignParticlesToChunks } from './SpatialAccelerator.js';
+import { assignParticlesToChunks, getCurrentChunk, getNeighbourChunks, getChunks } from './SpatialAccelerator.js';
+
 
 export const SandComponents = {
   id: [],
@@ -10,30 +11,54 @@ export const SandComponents = {
   isMoving: []
 };
 
-export const MovingSandParticleIDs = []; // New array to store IDs of moving particles
+export const MovingSandParticles = []; // Tracks IDs of moving particles
 
 export function updateGameStateSimulation() {
   updateSandParticleCoordinate();
+  processNeighbourLookups(); // Start the neighbour chain
 }
 
 function updateSandParticleCoordinate() {
-  MovingSandParticleIDs.length = 0; // Clear previous frame
+  MovingSandParticles.length = 0;
 
   for (let i = 0; i < SandComponents.x.length; i++) {
     SandComponents.y[i] += 4;
 
     if (SandComponents.isMoving[i]) {
-      MovingSandParticleIDs.push(SandComponents.id[i]);
+      MovingSandParticles.push(i);
     }
   }
 
   assignParticlesToChunks(SandComponents.x, SandComponents.y);
 }
 
+function processNeighbourLookups() {
+  for (let i = 0; i < MovingSandParticles.length; i++) {
+    const particleId = MovingSandParticles[i];
+    getNeighbourParticles(particleId);
+  }
+}
+
 export function getNeighbourParticles(particleId) {
-  // Given a sand particle ID:
-  // 1. Use its coordinates to find its current chunk.
-  // 2. Get the 8 neighboring chunk IDs.
-  // 3. Collect and return all sand particle IDs in those 8 chunks.
-  // This will be used for localized interaction checks.
+  const x = SandComponents.x[particleId];
+  const y = SandComponents.y[particleId];
+
+  const currentChunkId = getCurrentChunk(x, y);
+  if (currentChunkId === -1) return []; // Invalid position
+
+  const nearbyChunkIds = getNeighbourChunks(currentChunkId);
+  const allChunks = getChunks();
+
+  const neighbours = [];
+
+  for (const chunkId of nearbyChunkIds) {
+    const particlesInChunk = allChunks[chunkId].particles;
+    for (const otherId of particlesInChunk) {
+      if (otherId !== particleId) {
+        neighbours.push(otherId);
+      }
+    }
+  }
+  
+  return neighbours;
 }
