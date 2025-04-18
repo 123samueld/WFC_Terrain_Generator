@@ -1,6 +1,6 @@
 import FPSCounter from './FPSCounter.js';
 import { initCanvas, getCanvasContext } from './Initialise.js';
-import { initProfilingTools, drawChunkGrid, drawChunkHighlightForParticle } from './ProfilingTools.js';
+import { initProfilingTools, drawChunkGrid, drawChunkHighlightForParticle, updateParticleCountDisplay } from './ProfilingTools.js';
 import { drawDynamicParticles, drawStaticParticles } from './Renderer.js';
 import { updateGameStateSimulation } from './GameStateManager.js';
 
@@ -35,6 +35,8 @@ function gameLoop(timestamp) {
   // Debug overlays
   drawChunkGrid(ctx);
   drawChunkHighlightForParticle(ctx);
+  updateParticleCountDisplay();
+
 
   // Request next frame
   requestAnimationFrame(gameLoop);

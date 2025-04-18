@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Falling Sand Simulator</title>
   <link rel="stylesheet" href="index.css">
 </head>
@@ -12,18 +12,28 @@
 
   <!-- FPS display container -->
   <div id="fpsDisplay" class="fps-container">
-    <span>FPS: 0</span> <!-- Placeholder text for FPS -->
+    <span>FPS: 0</span>
   </div>
 
   <!-- Particle counter container -->
   <div id="particleDisplay" class="fps-container">
-    <span>Particles: 0</span> <!-- Placeholder text for particles -->
+    <span>Moving Particles: 0</span>
   </div>
 
-  <!-- Debuggin Grid Toggle -->
+  <!-- README link container -->
+<div id="readmeDisplay" class="fps-container">
+  <span>
+    <button id="readmeButton" onclick="window.open('https://github.com/yourusername/yourrepo#readme', '_blank')">
+      README
+    </button>
+  </span>
+</div>
+
+
+  <!-- Debugging Grid Toggle -->
   <button id="toggleGrid" class="toggle-button">Grid</button>
 
-  <!-- Import main JavaScript file, which will trigger everything -->
+  <!-- Import main JavaScript file -->
   <script type="module" src="JS/Main.js"></script>
 </body>
 </html>

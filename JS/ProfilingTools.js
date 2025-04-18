@@ -1,6 +1,7 @@
 // ProfilingTools.js
 import { getChunks } from './SpatialAccelerator.js';
-import { ParticleComponents } from './GameStateManager.js';
+import { ParticleComponents, MovingParticles } from './GameStateManager.js';
+
 
 
 let showChunkGrid = false;
@@ -45,4 +46,12 @@ export function drawChunkHighlightForParticle(ctx) {
       break; // Only highlight one chunk
     }
   }
+}
+
+export function updateParticleCountDisplay() {
+  const display = document.getElementById('particleDisplay');
+  if (!display) return;
+
+  const count = MovingParticles.length;
+  display.querySelector('span').innerHTML = `Moving Particles: <br>${count}`;
 }
