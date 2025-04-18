@@ -11,7 +11,11 @@ import {
   assignParticlesToChunks,
   getCurrentChunk,
   getNeighbourChunks,
-  getChunks
+  getChunks,
+  cols, 
+  rows,
+  chunkHeight,
+  chunkWidth
 } from './SpatialAccelerator.js';
 
 export function updatePhysics() {
@@ -60,7 +64,7 @@ function getNeighbourParticles(particleId) {
   const y = ParticleComponents.y[particleId];
 
   const currentChunkId = getCurrentChunk(particleId);
-  if (currentChunkId === -1) return;
+  if (currentChunkId === -1) return [];
 
   const nearbyChunkIds = getNeighbourChunks(currentChunkId);
   const allChunks = getChunks();
@@ -76,9 +80,9 @@ function getNeighbourParticles(particleId) {
     }
   }
 
-  // Future: apply collision or neighbor interactions
-  // e.g. checkCollisions(particleId, neighbours);
+  return neighbours;
 }
+
 
 // Particle Type Movement Behavior functions
 
@@ -95,6 +99,78 @@ export function simulateWater(particleId) {
 }
   
 // Sand movement behavior (e.g., move downward with some friction)
-export  function simulateSand(particleId) {
-    ParticleComponents.y[particleId] += 4;
+export function simulateSand(particleId) {
+  const x = ParticleComponents.x[particleId];
+  const y = ParticleComponents.y[particleId];
+
+  // Get current chunk info
+  const currentChunkId = getCurrentChunk(particleId);
+  if (currentChunkId === -1) {
+    ParticleComponents.isMoving[particleId] = false;
+    return;
+  }
+
+  const currentChunk = getChunks()[currentChunkId];
+
+  // === 1. Check current chunk for a particle directly below ===
+  for (const id of currentChunk.particles) {
+    if (id === particleId) continue;
+
+    const nx = ParticleComponents.x[id];
+    const ny = ParticleComponents.y[id];
+
+    if (nx === x && ny === y + 1) {
+      // Found blocking particle directly below in same chunk
+      // Check bottom-left or bottom-right randomly
+      const directions = Math.random() < 0.5 ? [-1, 1] : [1, -1];
+
+      for (const dx of directions) {
+        const tx = x + dx;
+        const ty = y + 1;
+
+        let blocked = false;
+        for (const otherId of currentChunk.particles) {
+          if (ParticleComponents.x[otherId] === tx && ParticleComponents.y[otherId] === ty) {
+            blocked = true;
+            break;
+          }
+        }
+
+        if (!blocked) {
+          // Move diagonally
+          ParticleComponents.x[particleId] = tx;
+          ParticleComponents.y[particleId] = ty;
+          return;
+        }
+      }
+
+      // Couldn’t move diagonally either
+      ParticleComponents.isMoving[particleId] = false;
+      return;
+    }
+  }
+
+  // === 2. Check the chunk below for a particle directly below ===
+  const currentRow = Math.floor(y / chunkHeight);
+  const currentCol = Math.floor(x / chunkWidth);
+  const belowRow = currentRow + 1;
+
+  if (belowRow < rows) {
+    const belowChunkId = belowRow * cols + currentCol;
+    const belowChunk = getChunks()[belowChunkId];
+
+    for (const id of belowChunk.particles) {
+      const nx = ParticleComponents.x[id];
+      const ny = ParticleComponents.y[id];
+
+      if (nx === x && ny === y + 1) {
+        // Found blocking particle directly below in chunk below
+        ParticleComponents.isMoving[particleId] = false;
+        return;
+      }
+    }
+  }
+
+  // === No particle below, move down ===
+  ParticleComponents.y[particleId] += 1;
 }

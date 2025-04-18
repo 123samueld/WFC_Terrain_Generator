@@ -31,7 +31,7 @@ export function initParticles(canvasWidth, canvasHeight) {
   if (hasInitialisedParticles) return;
   hasInitialisedParticles = true;
 
-  const n = 1000;
+  const n = 5000;
 
   for (let i = 0; i < n; i++) {
     ParticleComponents.id.push(i);

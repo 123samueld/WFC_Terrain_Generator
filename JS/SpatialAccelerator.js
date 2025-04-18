@@ -3,7 +3,7 @@
 import { ParticleComponents } from './GameStateManager.js';
 
 let chunks = [];
-let chunkWidth, chunkHeight, cols, rows;
+export let chunkWidth, chunkHeight, cols, rows;
 
 // The "Chunker" is a way to partition the canvas into smaller chunks. This allows a rough pass neighbour check making a detailed pass
 // neighbour check less expensive in CPU resources.

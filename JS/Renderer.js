@@ -2,7 +2,7 @@
 
 import { ParticleComponents, MovingParticles } from './GameStateManager.js';
 
-const size = 2;
+const size = 6;
 
 export function drawStaticParticles(ctx) {
   for (let i = 0; i < ParticleComponents.x.length; i++) {
