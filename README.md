@@ -1,14 +1,14 @@
 # Sand Sim 3000
 
-Building a decent RTS game engine has become a bit of an obsession. One of the most challenging aspects of an RTS engine, in my opinion, is handling a very large number of dynamic objects in real time. A sand simulator, although far simpler than a full RTS engine, is a good playground to practise building an engine capable of efficiently handling many dynamic objects in real time. This is my third attempt at a sand simulator, and this one got much closer to success than previous attempts.
+Building a decent RTS game engine has become a bit of an obsession. One of the most challenging aspects of an RTS engine, in my opinion, is handling a very large number of dynamic objects in real time. A sand simulator, although far more simple than a full RTS engine, is a good playground to practise building an engine capable of efficiently handling many dynamic objects in real time. This is my third attempt at a sand simulator, and this one got much closer to success than previous attempts byt still fell short due to 2 critical mistakes.
 
 ## 💡 Goals
 
 - Architecture should follow Data-Oriented Design (DOD) principles.
-- Explore Entity Component System (ECS) design patterns in a particle-based simulation.
+- Explore Entity Component System (ECS) `structs of arrays` design patterns in a particle-based simulation.
 - Use partitioning (chunks) for neighbour queries as a basic spatial accelerator.
-- Maintain performance with thousands of entities via `structs of arrays` layout.
 - Simulate thousands of particle physics interactions in real time without dropping the frame rate too badly (~30fps).
+- Create some profiling tools to accuratley visualise features.
 
 ## ⚙️ Key Features Implemented
 
@@ -20,7 +20,7 @@ Building a decent RTS game engine has become a bit of an obsession. One of the m
 
 ## 🧪 Optimisations Attempted
 
-- **Component-based architecture** for cache-friendly iteration over particle state.
+- **Component-based architecture** for cache-friendly iteration over Particle Entities.
 - **Chunk grid division** to reduce the number of neighbour checks.
 - **Moving Particles Array** to reduce the number of particles iterated over each frame.
 
@@ -28,18 +28,17 @@ Building a decent RTS game engine has become a bit of an obsession. One of the m
 
 Despite working features, the simulation fails under realistic conditions due to some critical architectural mistakes:
 
-1. **Temporal misalignment (ECS iteration vs spatial order):**
+1. **Temporal misalignment:**
    - ECS processes particles in ID or insertion order.
    - For falling sand, particles must be processed *bottom-up* to simulate realistic stacking.
    - This leads to higher particles "falling through" lower ones because they are updated after the particle above them.
+   - Entities misaligned with the order of the simulation grid breaks the ability to process particles in the required order: bottom-up.
 
 2. **Lack of a unified grid authority:**
    - Sand simulations are strictly cellular automata — the simulation domain *is* the grid.
-   - Treating particles as floating entities without exclusive spatial ownership results in overlaps, misstacking, and non-deterministic behaviour.
+   - Treating particles as floating Entities without exclusive, descreet spatial ownership results in overlaps and misstacking.
+   - A grid type structure must be maintained to create emergent behavior among the particles.
 
-3. **No atomic movement:**
-   - Without a grid to lock movement, multiple particles may move into the same location.
-   - This breaks the rules of classic sand behaviour (one particle per cell).
 
 ## 📉 Result
 
@@ -51,14 +50,15 @@ The project is being wrapped up as a failed-but-educational prototype.
 
 - A cellular automaton simulation (like a sand sim) must operate on a grid-based system.
 - ECS is a potential solution but must **adhere to spatial grid coordinates**.
-- Chunks are a basic but helpful spatial accelerator and greatly increased performance.
+- Chunks are a basic but good spatial accelerator and greatly increased performance.
 
 ## 🔮 Future Directions
 
 Should this be revisited:
-- Use a strict bottom-up, left-right update pass to enforce natural physics.
-- Consider ECS as a way of handling a 2D grid with DOD-friendly principles.
+- Use a strict bottom-up update pass to enforce natural physics.
+- Consider ECS as a way of handling a 2D (flattened to 1D) grid with DOD-friendly principles.
 - Use spatial acceleration again — this feature worked well.
+- For C++ version, use a bit map to chart cells that need updated and push them to their own array each simulation loop cycle. This should help with efficient grid traversal and DOD-friendly cache locality
 
 ---
 
