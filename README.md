@@ -1,7 +1,6 @@
 # Sand Sim 3000
 
-Building a decent RTS game engine has become a bit of an obsession. One of the most challenging aspects of an RTS engine, in my opinion, is handling a very large number of dynamic objects in real time. A sand simulator, although far more simple than a full RTS engine, is a good playground to practise building an engine capable of efficiently handling many dynamic objects in real time. This is my third attempt at a sand simulator, and this one got much closer to success than previous attempts byt still fell short due to 2 critical mistakes.
-
+Building a decent RTS game engine has become a bit of an obsession. One of the most challenging aspects of an RTS engine, in my opinion, is handling a very large number of dynamic objects in real time. A sand simulator, although far more simple than a full RTS, is a good playground to practice building an engine capable of efficiently handling masses dynamic objects in real time. This is my third attempt at building a falling sand simulator. This attempt got much closer to success than previous attempt, although it still fell short due to 2 critical mistakes it's my current best attempt at managing large masses of dynamic objects.
 ## 💡 Goals
 
 - Architecture should follow Data-Oriented Design (DOD) principles.
@@ -31,7 +30,7 @@ Despite working features, the simulation fails under realistic conditions due to
 1. **Temporal misalignment:**
    - ECS processes particles in ID or insertion order.
    - For falling sand, particles must be processed *bottom-up* to simulate realistic stacking.
-   - This leads to higher particles "falling through" lower ones because they are updated after the particle above them.
+   - Particles were not iterated through in *bottom-up* order but in the array insertion order. The result was some higher particles "fall through" lower ones because they are updated after the particle below them, as well as some other undesirable interactions.
    - Entities misaligned with the order of the simulation grid breaks the ability to process particles in the required order: bottom-up.
 
 2. **Lack of a unified grid authority:**
