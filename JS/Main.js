@@ -1,8 +1,7 @@
-import FPSCounter from './FPSCounter.js';
-import { initCanvas, getCanvasContext } from './Initialise.js';
-import { initProfilingTools, drawChunkGrid, drawChunkHighlightForParticle, updateParticleCountDisplay } from './ProfilingTools.js';
-import { drawDynamicParticles, drawStaticParticles } from './Renderer.js';
-import { updateGameStateSimulation } from './GameStateManager.js';
+import { initCanvas } from './Initialise.js';
+import { initProfilingTools } from './ProfilingTools.js';
+import { renderingLoop } from './Rendering.js';
+import { simulationLoop } from './Simulation.js';
 
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -11,32 +10,15 @@ document.addEventListener('DOMContentLoaded', () => {
   initProfilingTools();
 });
 
-const fpsDisplayElement = document.getElementById('fpsDisplay');
-const fpsCounter = new FPSCounter(fpsDisplayElement);
-
 let lastTimestamp = 0;
 
 function gameLoop(timestamp) {
-  const deltaTime = (timestamp - lastTimestamp) / 1000; 
 
-  // Update FPS counter
-  fpsCounter.updateFrame(timestamp);
+  //Iterate Simulation Loop
+  simulationLoop();
 
-  // Core game simulation loop call
-  updateGameStateSimulation();
-
-  // Render particles
-  const ctx = getCanvasContext();
-  ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-
-  drawStaticParticles(ctx); 
-  drawDynamicParticles(ctx);
-
-  // Debug overlays
-  drawChunkGrid(ctx);
-  drawChunkHighlightForParticle(ctx);
-  updateParticleCountDisplay();
-
+  //Iterate Rendering Loop
+  renderingLoop();
 
   // Request next frame
   requestAnimationFrame(gameLoop);
