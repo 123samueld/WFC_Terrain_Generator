@@ -4,7 +4,7 @@ import { } from './Simulation.js';
 let canvasRef, ctxRef;
 
 export function initCanvas() {
-  canvasRef = document.getElementById('sandCanvas');
+  canvasRef = document.getElementById('gameCanvas');
   ctxRef = canvasRef.getContext('2d');
 
   canvasRef.width = 1200;

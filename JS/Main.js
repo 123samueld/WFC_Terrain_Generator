@@ -31,4 +31,3 @@ function gameLoop() {
   // 4. Continue looping immediately
   gameLoop();
 }
-// Test from Cursor
