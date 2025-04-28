@@ -64,8 +64,73 @@ export function initInput() {
 
 export function initGameState() {
     const grid = initGrid();
-    gameStateBufferA = { ...grid };
-    gameStateBufferB = { ...grid };
+    gameStateBufferA = { 
+        ...grid,
+        character: {
+            x: canvasRef.width / 2,
+            y: canvasRef.height / 2,
+            width: 40,
+            height: 80,
+            color: '#0000FF'
+        },
+        camera: {
+            x: 0
+        },
+        platforms: [
+            // Visible platforms
+            {
+                x: 0,
+                y: canvasRef.height - 100,
+                width: canvasRef.width,
+                height: 20,
+                color: '#00FF00'
+            },
+            {
+                x: 200,
+                y: canvasRef.height - 300,
+                width: 400,
+                height: 20,
+                color: '#00FF00'
+            },
+            {
+                x: 600,
+                y: canvasRef.height - 500,
+                width: 400,
+                height: 20,
+                color: '#00FF00'
+            },
+            // Off-screen platforms
+            {
+                x: canvasRef.width + 200,
+                y: canvasRef.height - 200,
+                width: 400,
+                height: 20,
+                color: '#00FF00'
+            },
+            {
+                x: canvasRef.width + 800,
+                y: canvasRef.height - 400,
+                width: 400,
+                height: 20,
+                color: '#00FF00'
+            },
+            {
+                x: -400,
+                y: canvasRef.height - 200,
+                width: 400,
+                height: 20,
+                color: '#00FF00'
+            },
+            {
+                x: -800,
+                y: canvasRef.height - 400,
+                width: 400,
+                height: 20,
+                color: '#00FF00'
+            }
+        ]
+    };
+    gameStateBufferB = { ...gameStateBufferA };
     gameStateBufferRead = gameStateBufferA;
     gameStateBufferWrite = gameStateBufferB;
 }

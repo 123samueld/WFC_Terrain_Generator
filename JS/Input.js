@@ -17,7 +17,6 @@ export function handleKeyDown(e) {
     const key = e.key.toLowerCase();
     if (key in inputState.keys) {
         inputState.keys[key] = true;
-        console.log(inputState.keys);
     }
 }
 
