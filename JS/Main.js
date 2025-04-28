@@ -1,33 +1,41 @@
-import { initCanvas, initGrid } from './Initialise.js';
+import { initCanvas, initGrid, initInput, initGameState, getGameStateBuffers } from './Initialise.js';
 import { initProfilingTools } from './ProfilingTools.js';
 import { renderingLoop } from './Rendering.js';
 import { simulationLoop } from './Simulation.js';
+import { getInput } from './Input.js';
+
+let nextFrame = false; // Rendering sets this true when ready for a new frame
 
 document.addEventListener('DOMContentLoaded', () => {
   initCanvas();
   initProfilingTools();
   initGrid();
-  gameLoop();
-  // Initialize two game state buffers: gameStateBufferA and gameStateBufferB
-  // Set gameStateBufferRead = A (initially for rendering)
-  // Set gameStateBufferWrite = B (initially for simulation updates)});
+  initInput();
+  initGameState();
+  requestAnimationFrame(gameLoop);
 });
 
-let nextFrame = false; // Rendering sets this true when ready for a new frame
+function swapGameStateBuffers() {
+  [gameStateBufferRead, gameStateBufferWrite] = [gameStateBufferWrite, gameStateBufferRead];
+}
 
 function gameLoop() {
+  // Test input
+  const input = getInput();
+
   // 1. Run Simulation loop (simulate as fast as possible)
-  simulationLoop(gameStateBufferRead, gameStateBufferWrite);
+  const buffers = getGameStateBuffers();
+  simulationLoop(buffers.read, buffers.write);
 
   // 2. Swap buffers only when Rendering signals it's safe
   if (nextFrame) {
-    // Swap gameStateBufferRead and gameStateBufferWrite
-    // Reset nextFrame = false
+    swapGameStateBuffers();
+    nextFrame = false;
   }
 
   // 3. Run Rendering loop (~60fps / ~16.667ms)
-  renderingLoop(gameStateBufferRead);
+  renderingLoop(buffers.read);
 
-  // 4. Continue looping immediately
-  gameLoop();
+  // 4. Schedule next frame
+  requestAnimationFrame(gameLoop);
 }
