@@ -52,3 +52,10 @@ MIT License - Feel free to use this template for your own projects!
 
 ---
 
+## 📚 Additional Resources
+
+This engine is part of a game engine talk. Additional resources related to this repository include:
+
+- 🎥 [Watch the talk on YouTube](https://www.youtube.com/@armoriumimperatoris) *(link will be updated once available)*
+- 📄 [View the PDF of the talk](https://github.com/123samueld/STE_MkI/blob/main/GameEngineTalk.pdf)
+- 🧠 [Explore the Data-Oriented Design (DOD) example from slide 6](https://github.com/123samueld/STE_MkI/blob/main/DOD_example.md)
