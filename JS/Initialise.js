@@ -1,12 +1,15 @@
 // Initialise.js
 import { } from './Simulation.js';
 import { inputState, handleKeyDown, handleKeyUp, handleMouseMove } from './Input.js';
+import { createTerrainTile, TileType } from './TerrainTile.js';
+import { GameState } from './GameState.js';
 
 let canvasRef, ctxRef;
 let gameStateBufferA;
 let gameStateBufferB;
 let gameStateBufferRead;
 let gameStateBufferWrite;
+let terrainTiles = {};
 
 export function getGameStateBuffers() {
     return {
@@ -15,35 +18,37 @@ export function getGameStateBuffers() {
     };
 }
 
+export function getTerrainTiles() {
+    return terrainTiles;
+}
+
+export function getSprites() {
+    return sprites;
+}
+
 export function initCanvas() {
-  canvasRef = document.getElementById('gameCanvas');
-  ctxRef = canvasRef.getContext('2d');
+    canvasRef = document.getElementById('gameCanvas');
+    ctxRef = canvasRef.getContext('2d');
 
-  canvasRef.width = 1200;
-  canvasRef.height = 800;
-
+    canvasRef.width = 1200;
+    canvasRef.height = 800;
 }
 
 export function getCanvasContext() {
-  return ctxRef;
+    return ctxRef;
 }
 
 export function initGrid() {
-  const cellSize = 4;
+    const GRID_SIZE = 36; // 36x36 grid
+    const totalCells = GRID_SIZE * GRID_SIZE;
 
-  if (!canvasRef) {
-    throw new Error('Canvas not initialized. Call initCanvas() first.');
-  }
+    // Create a flat array initialized to null (no tile assigned)
+    const grid = new Array(totalCells).fill(null);
 
-  // Calculate number of columns and rows
-  const cols = Math.floor(canvasRef.width / cellSize);
-  const rows = Math.floor(canvasRef.height / cellSize);
-  const totalCells = cols * rows;
-
-  // Create a flat boolean array initialized to false
-  const grid = new Array(totalCells).fill(false);
-
-  return { cols, rows, cellSize, grid };
+    return { 
+        gridSize: GRID_SIZE,
+        grid: grid
+    };
 }
 
 // Set up keyboard event listeners
@@ -63,74 +68,55 @@ export function initInput() {
 }
 
 export function initGameState() {
-    const grid = initGrid();
-    gameStateBufferA = { 
-        ...grid,
-        character: {
-            x: canvasRef.width / 2,
-            y: canvasRef.height / 2,
-            width: 40,
-            height: 80,
-            color: '#0000FF'
-        },
-        camera: {
-            x: 0
-        },
-        platforms: [
-            // Visible platforms
-            {
-                x: 0,
-                y: canvasRef.height - 100,
-                width: canvasRef.width,
-                height: 20,
-                color: '#00FF00'
-            },
-            {
-                x: 200,
-                y: canvasRef.height - 300,
-                width: 400,
-                height: 20,
-                color: '#00FF00'
-            },
-            {
-                x: 600,
-                y: canvasRef.height - 500,
-                width: 400,
-                height: 20,
-                color: '#00FF00'
-            },
-            // Off-screen platforms
-            {
-                x: canvasRef.width + 200,
-                y: canvasRef.height - 200,
-                width: 400,
-                height: 20,
-                color: '#00FF00'
-            },
-            {
-                x: canvasRef.width + 800,
-                y: canvasRef.height - 400,
-                width: 400,
-                height: 20,
-                color: '#00FF00'
-            },
-            {
-                x: -400,
-                y: canvasRef.height - 200,
-                width: 400,
-                height: 20,
-                color: '#00FF00'
-            },
-            {
-                x: -800,
-                y: canvasRef.height - 400,
-                width: 400,
-                height: 20,
-                color: '#00FF00'
-            }
-        ]
-    };
-    gameStateBufferB = { ...gameStateBufferA };
+    // Create game state buffers
+    gameStateBufferA = new GameState();
+    gameStateBufferB = new GameState();
+    
+    // Initialize test pattern in buffer A
+    gameStateBufferA.initializeTestPattern();
+    
+    // Set up buffer references
     gameStateBufferRead = gameStateBufferA;
     gameStateBufferWrite = gameStateBufferB;
+}
+
+// Load a single sprite
+function loadSprite(path) {
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.onerror = reject;
+        img.src = path;
+    });
+}
+
+// Load all terrain tiles
+export async function loadTerrainTiles() {
+    try {
+        console.log('Loading terrain tiles...');
+        
+        // Load Cross tile
+        const crossIsometric = await loadSprite('Assets/Terrain_Tile_Sprites/Isometric/Cross.png');
+        const crossCartesian = await loadSprite('Assets/Terrain_Tile_Sprites/Cartesian/Cross.png');
+        console.log('Cross tile loaded:', crossIsometric, crossCartesian);
+        
+        terrainTiles[TileType.CROSS] = createTerrainTile(TileType.CROSS, crossIsometric, crossCartesian);
+        console.log('Terrain tiles after loading:', terrainTiles);
+
+        // Load Straight Latitude tile
+        const straightLatIsometric = await loadSprite('Assets/Terrain_Tile_Sprites/Isometric/Straight_Latitude.png');
+        const straightLatCartesian = await loadSprite('Assets/Terrain_Tile_Sprites/Cartesian/Straight_Latitude.png');
+        terrainTiles[TileType.STRAIGHT_LATITUDE] = createTerrainTile(TileType.STRAIGHT_LATITUDE, straightLatIsometric, straightLatCartesian);
+
+        // Load Straight Longitude tile
+        const straightLongIsometric = await loadSprite('Assets/Terrain_Tile_Sprites/Isometric/Straight_Longitude.png');
+        const straightLongCartesian = await loadSprite('Assets/Terrain_Tile_Sprites/Cartesian/Straight_Longitude.png');
+        terrainTiles[TileType.STRAIGHT_LONGITUDE] = createTerrainTile(TileType.STRAIGHT_LONGITUDE, straightLongIsometric, straightLongCartesian);
+
+        // TODO: Load L-curves and T-junctions
+        // We'll need to load these from their respective subdirectories
+
+    } catch (error) {
+        console.error('Error loading terrain tiles:', error);
+    }
 }

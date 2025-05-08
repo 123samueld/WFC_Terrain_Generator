@@ -1,4 +1,4 @@
-import { initCanvas, initGrid, initInput, initGameState, getGameStateBuffers } from './Initialise.js';
+import { initCanvas, initGrid, initInput, initGameState, getGameStateBuffers, loadTerrainTiles } from './Initialise.js';
 import {  } from './ProfilingTools.js';
 import { renderingLoop } from './Rendering.js';
 import { simulationLoop } from './Simulation.js';
@@ -6,11 +6,12 @@ import { getInput } from './Input.js';
 
 let nextFrame = false; // Rendering sets this true when ready for a new frame
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   initCanvas();
   initGrid();
   initInput();
   initGameState();
+  await loadTerrainTiles(); // Load terrain tiles before starting the game loop
   requestAnimationFrame(gameLoop);
 });
 
