@@ -11,11 +11,4 @@ export function simulationLoop(gameStateBufferRead, gameStateBufferWrite) {
     // Get input state
     const input = getInput();
 
-    // Update camera position based on edge scrolling
-    if (input.scroll.x !== 0) {
-        gameStateBufferWrite.camera.x += input.scroll.x;
-    }
-    if (input.scroll.y !== 0) {
-        gameStateBufferWrite.camera.y += input.scroll.y;
-    }
 }

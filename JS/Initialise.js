@@ -93,16 +93,13 @@ function loadSprite(path) {
 // Load all terrain tiles
 export async function loadTerrainTiles() {
     try {
-        console.log('Loading terrain tiles...');
         
         // Load Cross tile
         const crossIsometric = await loadSprite('Assets/Terrain_Tile_Sprites/Isometric/Cross.png');
         const crossCartesian = await loadSprite('Assets/Terrain_Tile_Sprites/Cartesian/Cross.png');
-        console.log('Cross tile loaded:', crossIsometric, crossCartesian);
-        
+       
         terrainTiles[TileType.CROSS] = createTerrainTile(TileType.CROSS, crossIsometric, crossCartesian);
-        console.log('Terrain tiles after loading:', terrainTiles);
-
+ 
         // Load Straight Latitude tile
         const straightLatIsometric = await loadSprite('Assets/Terrain_Tile_Sprites/Isometric/Straight_Latitude.png');
         const straightLatCartesian = await loadSprite('Assets/Terrain_Tile_Sprites/Cartesian/Straight_Latitude.png');

@@ -16,3 +16,10 @@ export function cartesianToIsometric(x, y) {
         y: (x + y) * (ISOMETRIC_TILE_HEIGHT / 2)
     };
 } 
+
+export function isometricToCartesian(x, y) {
+    return {
+        x: (x - y) * (tileWidth / 2),
+        y: (x + y) * (tileHeight / 2)
+    };
+}

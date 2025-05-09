@@ -21,8 +21,6 @@ body {
   }
   
   canvas {
-    width: 1055px;
-    height: 800px;
     border: 8px solid;
     border-image: linear-gradient(
       135deg,
@@ -38,10 +36,24 @@ body {
       inset 0 -1px 2px rgba(0, 0, 0, 0.2);
     border-radius: 8px;
     background-color: rgb(6, 20, 20);
-    margin-bottom: 120px;
+  }
+  #gameCanvas {
+    width: 1200px;
+    height: 800px;
+    position: relative;
+    z-index: 1;
+  }
+  
+  #miniMapCanvas {
+    width: 300px;
+    height: 150px;
+    position: absolute;
+    z-index: 2;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
   }
 
-/* Bottom-right README container */
 #readmeDisplay {
   right: 10px;
   bottom: 0px;

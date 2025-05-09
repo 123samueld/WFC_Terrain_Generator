@@ -2,7 +2,7 @@ import { initCanvas, initGrid, initInput, initGameState, getGameStateBuffers, lo
 import {  } from './ProfilingTools.js';
 import { renderingLoop } from './Rendering.js';
 import { simulationLoop } from './Simulation.js';
-import { getInput } from './Input.js';
+import { getInput, updateCameraPosition } from './Input.js';
 
 let nextFrame = false; // Rendering sets this true when ready for a new frame
 
@@ -36,6 +36,9 @@ function gameLoop() {
   // 3. Run Rendering loop (~60fps / ~16.667ms)
   renderingLoop(buffers.read);
 
-  // 4. Schedule next frame
+  // 4. Update camera position based on input
+  updateCameraPosition(buffers.write);
+
+  // 5. Schedule next frame
   requestAnimationFrame(gameLoop);
 }

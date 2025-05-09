@@ -31,4 +31,5 @@ export function renderingLoop(gameStateBufferRead) {
 
     // Draw grid overlay
     drawGridOverlay(gameStateBufferRead);
+
 }

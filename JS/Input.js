@@ -1,3 +1,7 @@
+// Input.js
+import { isometricToCartesian } from './Math.js';
+
+
 // Input state object to store current input values
 export const inputState = {
     keys: {
@@ -11,10 +15,7 @@ export const inputState = {
         y: 0,
         isOverCanvas: false
     },
-    scroll: {
-        x: 0,
-        y: 0
-    }
+    offset: { x: 0, y: 0 } // Single offset for both scroll and grid
 };
 
 // Constants for edge scrolling
@@ -58,22 +59,12 @@ export function handleMouseMove(e) {
         
         inputState.mouse.x = (e.clientX - rect.left) * scaleX;
         inputState.mouse.y = (e.clientY - rect.top) * scaleY;
-        
-        // Debug logging for mouse position calculation
-        console.log('Mouse Position Calculation:', {
-            clientX: e.clientX,
-            rectLeft: rect.left,
-            scaleX: scaleX,
-            calculatedX: inputState.mouse.x,
-            canvasWidth: canvas.width,
-            rectWidth: rect.width
-        });
-        
+                
         updateEdgeScrolling(inputState.mouse.x, inputState.mouse.y);
     } else {
         // Reset scroll values when mouse leaves canvas
-        inputState.scroll.x = 0;
-        inputState.scroll.y = 0;
+        inputState.offset.x = 0;
+        inputState.offset.y = 0;
     }
 }
 
@@ -82,8 +73,8 @@ function updateEdgeScrolling(mouseX, mouseY) {
     const canvas = document.getElementById('gameCanvas');
     
     // Reset scroll values
-    inputState.scroll.x = 0;
-    inputState.scroll.y = 0;
+    inputState.offset.x = 0;
+    inputState.offset.y = 0;
 
     // Only calculate scroll if mouse is over canvas
     if (!inputState.mouse.isOverCanvas) return;
@@ -97,61 +88,33 @@ function updateEdgeScrolling(mouseX, mouseY) {
     const distFromTop = Math.max(0, mouseY - EDGE_OFFSET);
     const distFromBottom = Math.max(0, canvas.height - mouseY - EDGE_OFFSET);
 
-    // Debug logging
-    console.log('Mouse Position:', { x: mouseX, y: mouseY });
-    console.log('Canvas Dimensions:', { width: canvas.width, height: canvas.height });
-    console.log('Distances:', {
-        left: distFromLeft,
-        right: distFromRight,
-        top: distFromTop,
-        bottom: distFromBottom
-    });
-
     // Handle horizontal scrolling with adjusted zones
     if (distFromLeft < EDGE_ZONE_2) {
-        // First zone (0-75px)
         if (distFromLeft < EDGE_ZONE_1) {
-            inputState.scroll.x = -SCROLL_SPEED_FAST;
-            console.log('Fast scroll left');
+            inputState.offset.x = -SCROLL_SPEED_FAST;
+        } else {
+            inputState.offset.x = -SCROLL_SPEED_SLOW;
         }
-        // Second zone (75-150px)
-        else {
-            inputState.scroll.x = -SCROLL_SPEED_SLOW;
-            console.log('Slow scroll left');
-        }
-    }
-    else if (distFromRight < EDGE_ZONE_2) {
-        // First zone (0-75px)
+    } else if (distFromRight < EDGE_ZONE_2) {
         if (distFromRight < EDGE_ZONE_1) {
-            inputState.scroll.x = SCROLL_SPEED_FAST;
-            console.log('Fast scroll right');
-        }
-        // Second zone (75-150px)
-        else {
-            inputState.scroll.x = SCROLL_SPEED_SLOW;
-            console.log('Slow scroll right');
+            inputState.offset.x = SCROLL_SPEED_FAST;
+        } else {
+            inputState.offset.x = SCROLL_SPEED_SLOW;
         }
     }
 
     // Handle vertical scrolling with adjusted zones
     if (distFromTop < EDGE_ZONE_2) {
-        // First zone (0-75px)
         if (distFromTop < EDGE_ZONE_1) {
-            inputState.scroll.y = -SCROLL_SPEED_FAST;
+            inputState.offset.y = -SCROLL_SPEED_FAST;
+        } else {
+            inputState.offset.y = -SCROLL_SPEED_SLOW;
         }
-        // Second zone (75-150px)
-        else {
-            inputState.scroll.y = -SCROLL_SPEED_SLOW;
-        }
-    }
-    else if (distFromBottom < EDGE_ZONE_2) {
-        // First zone (0-75px)
+    } else if (distFromBottom < EDGE_ZONE_2) {
         if (distFromBottom < EDGE_ZONE_1) {
-            inputState.scroll.y = SCROLL_SPEED_FAST;
-        }
-        // Second zone (75-150px)
-        else {
-            inputState.scroll.y = SCROLL_SPEED_SLOW;
+            inputState.offset.y = SCROLL_SPEED_FAST;
+        } else {
+            inputState.offset.y = SCROLL_SPEED_SLOW;
         }
     }
 }
@@ -168,7 +131,7 @@ function getMouseInput() {
 
 // Get current scroll values
 function getScrollInput() {
-    return inputState.scroll;
+    return inputState.offset;
 }
 
 // Main function to get all input states
@@ -178,4 +141,14 @@ export function getInput() {
         mouse: getMouseInput(),
         scroll: getScrollInput()
     };
-} 
+}
+
+export function updateCameraPosition(gameStateBufferWrite) {
+    const newY = gameStateBufferWrite.camera.y + inputState.offset.y;
+    const newX = gameStateBufferWrite.camera.x + inputState.offset.x;
+
+    gameStateBufferWrite.camera.y = Math.max(400, Math.min(3200, newY));
+    gameStateBufferWrite.camera.x = Math.max(-2900, Math.min(3100, newX));
+}
+
+
