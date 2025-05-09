@@ -1,15 +1,17 @@
 //Rendering.js
-import { getCanvasContext, getTerrainTiles } from './Initialise.js';
+import { getCanvasContext, getTerrainTiles, initGameCanvas, initMiniMapCanvas, miniMapCanvasRef } from './Initialise.js';
 import { TileType } from './TerrainTile.js';
 import { cartesianToIsometric, ISOMETRIC_TILE_WIDTH, ISOMETRIC_TILE_HEIGHT } from './Math.js';
 import { drawGridOverlay } from './ProfilingTools.js';
 
 export function renderingLoop(gameStateBufferRead) {
     const ctx = getCanvasContext();
+    const miniMapCtx = miniMapCanvasRef.getContext('2d');
     const terrainTiles = getTerrainTiles();
     
     // Clear canvas
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    miniMapCtx.clearRect(0, 0, miniMapCanvasRef.width, miniMapCanvasRef.height);
     
     // Draw all tiles in the grid
     for (let y = 0; y < gameStateBufferRead.gridSize; y++) {
@@ -25,11 +27,27 @@ export function renderingLoop(gameStateBufferRead) {
                 
                 // Draw the tile
                 terrainTiles[tileType].draw(ctx, screenX, screenY, 'isometric');
-            }
+              }
         }
     }
+    // Draw camera viewport rectangle on minimap
+    const scaleX = miniMapCanvasRef.width / 7200;
+    const scaleY = miniMapCanvasRef.height / 3600;
+
+    const viewportWidth = 1200 * scaleX;
+    const viewportHeight = 800 * scaleY;
+
+    // Center offset for isometric map in minimap
+    const xOffset = (7200 / 2) * scaleX;
+
+    const camMiniX = (gameStateBufferRead.camera.x + 7200 / 2 - 1200 / 2) * scaleX - 3;
+    const camMiniY = (gameStateBufferRead.camera.y - 800 / 2) * scaleY;
+
+
+    miniMapCtx.strokeStyle = 'white';
+    miniMapCtx.lineWidth = 1;
+    miniMapCtx.strokeRect(camMiniX, camMiniY, viewportWidth, viewportHeight);
 
     // Draw grid overlay
     drawGridOverlay(gameStateBufferRead);
-
 }

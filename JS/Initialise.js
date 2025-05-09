@@ -10,6 +10,7 @@ let gameStateBufferB;
 let gameStateBufferRead;
 let gameStateBufferWrite;
 let terrainTiles = {};
+export let miniMapCanvasRef, miniMapCtxRef;
 
 export function getGameStateBuffers() {
     return {
@@ -26,12 +27,25 @@ export function getSprites() {
     return sprites;
 }
 
-export function initCanvas() {
+export function initGameCanvas() {
     canvasRef = document.getElementById('gameCanvas');
     ctxRef = canvasRef.getContext('2d');
 
     canvasRef.width = 1200;
     canvasRef.height = 800;
+}
+
+export function initMiniMapCanvas() {
+    miniMapCanvasRef = document.getElementById('miniMapCanvas');
+    miniMapCtxRef = miniMapCanvasRef.getContext('2d');
+
+    miniMapCanvasRef.width = 300;
+    miniMapCanvasRef.height = 150;
+}
+
+export function initCanvas() {
+    initGameCanvas();
+    initMiniMapCanvas();
 }
 
 export function getCanvasContext() {
