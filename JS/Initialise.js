@@ -12,6 +12,11 @@ let gameStateBufferWrite;
 let terrainTiles = {};
 export let miniMapCanvasRef, miniMapCtxRef;
 
+export const mapOrigin = {
+    x: 100,   // Adjust based on your desired anchor
+    y: -350
+  };
+
 export function getGameStateBuffers() {
     return {
         read: gameStateBufferRead,
@@ -39,6 +44,11 @@ export function initGameCanvas() {
     window.addEventListener('keyup', handleKeyUp);
     canvasRef.addEventListener('mousemove', handleMouseMove);
     canvasRef.addEventListener('click', handleMouseClick);
+    
+    // Prevent context menu on right-click
+    canvasRef.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+    });
 }
 
 export function initMiniMapCanvas() {

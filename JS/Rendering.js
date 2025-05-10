@@ -1,30 +1,93 @@
 //Rendering.js
-import { getCanvasContext, getTerrainTiles, miniMapCanvasRef } from './Initialise.js';
+import { getCanvasContext, getTerrainTiles, miniMapCanvasRef, mapOrigin } from './Initialise.js';
 import { cartesianToIsometric } from './Math.js';
 import { drawGridOverlay } from './ProfilingTools.js';
 import { inputState } from './Input.js';
 
-// Draw highlight for selected tile
-function drawSelectedTileHighlight(ctx, gameStateBufferRead) {
+// Draw highlight for a tile
+function drawTileHighlight(ctx, x, y, color, lineWidth = 3) {
+    ctx.strokeStyle = color;
+    ctx.lineWidth = lineWidth;
+    ctx.beginPath();
+    ctx.moveTo(x, y - 50);        // Top
+    ctx.lineTo(x + 100, y);       // Right
+    ctx.lineTo(x, y + 50);        // Bottom
+    ctx.lineTo(x - 100, y);       // Left
+    ctx.closePath();
+    ctx.stroke();
+}
+
+// Get highlight color based on tile type
+function getHighlightColor(tileType) {
+    switch(tileType) {
+        case 'cross':
+            return 'rgba(255, 255, 0, 0.8)'; // Yellow
+        case 'straight_latitude':
+            return 'rgba(0, 255, 255, 0.8)'; // Cyan
+        case 'straight_longitude':
+            return 'rgba(255, 0, 255, 0.8)'; // Magenta
+        default:
+            return 'rgba(255, 255, 255, 0.8)'; // White
+    }
+}
+
+// Draw selected and hovered tile highlights
+function drawTileHighlights(ctx, gameStateBufferRead) {
+    // Draw hovered tile highlight
+    if (inputState.mouse.hoveredTile) {
+        const { x, y } = inputState.mouse.hoveredTile;
+        const isoCoords = cartesianToIsometric(x, y);
+        const screenX = ctx.canvas.width / 2 + isoCoords.x - gameStateBufferRead.camera.x;
+        const screenY = ctx.canvas.height / 2 + isoCoords.y - gameStateBufferRead.camera.y;
+        
+        // Draw hover effect with thinner line
+        drawTileHighlight(ctx, screenX, screenY, 'rgba(255, 255, 255, 0.4)', 2);
+    }
+}
+
+// Draw tile information
+function drawTileInfo(ctx, gameStateBufferRead) {
     if (!inputState.selectedTile) return;
 
     const { x, y } = inputState.selectedTile;
-    const isoCoords = cartesianToIsometric(x, y);
+    const tileType = gameStateBufferRead.getTile(x, y);
     
-    // Center the highlight on the screen and apply camera offset
+    if (!tileType) return;
+
+    // Position the info box in the top-right corner
+    const padding = 10;
+    const lineHeight = 20;
+    const boxWidth = 200;
+    const boxHeight = 80;
+    const boxX = ctx.canvas.width - boxWidth - padding;
+    const boxY = padding;
+
+    // Draw semi-transparent background
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+    ctx.fillRect(boxX, boxY, boxWidth, boxHeight);
+
+    // Draw border
+    ctx.strokeStyle = getHighlightColor(tileType);
+    ctx.lineWidth = 2;
+    ctx.strokeRect(boxX, boxY, boxWidth, boxHeight);
+
+    // Draw text
+    ctx.fillStyle = 'white';
+    ctx.font = '16px UnrealT';
+    ctx.textBaseline = 'top';
+    
+    // Draw tile type
+    ctx.fillText(`Tile Type: ${tileType}`, boxX + padding, boxY + padding);
+    
+    // Draw coordinates
+    ctx.fillText(`Grid Position: (${x}, ${y})`, boxX + padding, boxY + padding + lineHeight);
+    
+    // Draw camera-relative position
+    const isoCoords = cartesianToIsometric(x, y);
     const screenX = ctx.canvas.width / 2 + isoCoords.x - gameStateBufferRead.camera.x;
     const screenY = ctx.canvas.height / 2 + isoCoords.y - gameStateBufferRead.camera.y;
-
-    // Draw highlight
-    ctx.strokeStyle = 'rgba(255, 255, 0, 0.8)';
-    ctx.lineWidth = 3;
-    ctx.beginPath();
-    ctx.moveTo(screenX, screenY - 50);        // Top
-    ctx.lineTo(screenX + 100, screenY);       // Right
-    ctx.lineTo(screenX, screenY + 50);        // Bottom
-    ctx.lineTo(screenX - 100, screenY);       // Left
-    ctx.closePath();
-    ctx.stroke();
+    ctx.fillText(`Screen Position: (${Math.round(screenX)}, ${Math.round(screenY)})`, 
+                 boxX + padding, boxY + padding + lineHeight * 2);
 }
 
 export function renderingLoop(gameStateBufferRead) {
@@ -49,8 +112,11 @@ export function renderingLoop(gameStateBufferRead) {
         }
     }
 
-    // Draw selected tile highlight
-    drawSelectedTileHighlight(ctx, gameStateBufferRead);
+    // Draw tile highlights
+    drawTileHighlights(ctx, gameStateBufferRead);
+
+    // Draw tile information
+    drawTileInfo(ctx, gameStateBufferRead);
 
     // --- MINIMAP GRID + FILLED DIAMONDS ---
     const gridSize = gameStateBufferRead.gridSize;

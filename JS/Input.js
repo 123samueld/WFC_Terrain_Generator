@@ -1,5 +1,7 @@
 // Input.js
 import { isometricToCartesian } from './Math.js';
+import { mapOrigin } from './Initialise.js';
+import { getGameStateBuffers } from './Initialise.js';
 
 
 // Input state object to store current input values
@@ -13,7 +15,8 @@ export const inputState = {
     mouse: {
         x: 0,
         y: 0,
-        isOverCanvas: false
+        isOverCanvas: false,
+        hoveredTile: null // Store the currently hovered tile coordinates
     },
     offset: { x: 0, y: 0 }, // Single offset for both scroll and grid
     selectedTile: null // Store the currently selected tile coordinates
@@ -60,12 +63,16 @@ export function handleMouseMove(e) {
         
         inputState.mouse.x = (e.clientX - rect.left) * scaleX;
         inputState.mouse.y = (e.clientY - rect.top) * scaleY;
+        
+        // Update hovered tile
+        updateHoveredTile(inputState.mouse.x, inputState.mouse.y);
                 
         updateEdgeScrolling(inputState.mouse.x, inputState.mouse.y);
     } else {
-        // Reset scroll values when mouse leaves canvas
+        // Reset scroll values and hovered tile when mouse leaves canvas
         inputState.offset.x = 0;
         inputState.offset.y = 0;
+        inputState.mouse.hoveredTile = null;
     }
 }
 
@@ -120,33 +127,45 @@ function updateEdgeScrolling(mouseX, mouseY) {
     }
 }
 
+function updateHoveredTile(mouseX, mouseY) {
+    const canvas = document.getElementById('gameCanvas');
+    const { read: gameStateBufferRead } = getGameStateBuffers();
+
+    // --- 1. Center mouse coords relative to canvas center ---
+    const centeredX = mouseX - canvas.width / 2;
+    const centeredY = mouseY - canvas.height / 2;
+
+    // --- 2. Offset by mapOrigin and camera ---
+    const worldX = centeredX + gameStateBufferRead.camera.x;
+    const worldY = centeredY + gameStateBufferRead.camera.y;
+
+    // --- 3. Convert to cartesian grid ---
+    const cartCoords = isometricToCartesian(worldX, worldY);
+
+    // --- 4. Round to nearest tile ---
+    const gridX = Math.round(cartCoords.x);
+    const gridY = Math.round(cartCoords.y);
+
+    // --- 5. Save to state ---
+    inputState.mouse.hoveredTile = { x: gridX, y: gridY };
+}
+
+
+
 // Event handler for mouse click
 export function handleMouseClick(e) {
     if (!inputState.mouse.isOverCanvas) return;
 
-    const canvas = document.getElementById('gameCanvas');
-    const rect = canvas.getBoundingClientRect();
-    
-    // Get mouse position relative to canvas, accounting for canvas scaling
-    const scaleX = canvas.width / rect.width;
-    const scaleY = canvas.height / rect.height;
-    
-    const mouseX = (e.clientX - rect.left) * scaleX;
-    const mouseY = (e.clientY - rect.top) * scaleY;
+    // Right click to deselect
+    if (e.button === 2) {
+        inputState.selectedTile = null;
+        return;
+    }
 
-    // Convert screen coordinates to isometric coordinates
-    const screenToIsoX = mouseX - canvas.width / 2;
-    const screenToIsoY = mouseY - canvas.height / 2;
-
-    // Convert isometric coordinates to cartesian grid coordinates
-    const cartCoords = isometricToCartesian(screenToIsoX, screenToIsoY);
-
-    // Round to nearest grid cell
-    const gridX = Math.round(cartCoords.x);
-    const gridY = Math.round(cartCoords.y);
-
-    // Update selected tile
-    inputState.selectedTile = { x: gridX, y: gridY };
+    // Left click to select
+    if (e.button === 0 && inputState.mouse.hoveredTile) {
+        inputState.selectedTile = { ...inputState.mouse.hoveredTile };
+    }
 }
 
 // Get current keyboard state
