@@ -15,11 +15,17 @@ export function cartesianToIsometric(x, y) {
         x: (x - y) * (ISOMETRIC_TILE_WIDTH / 2),
         y: (x + y) * (ISOMETRIC_TILE_HEIGHT / 2)
     };
-} 
+}
 
-export function isometricToCartesian(x, y) {
+/**
+ * Transforms Isometric coordinates to Cartesian coordinates
+ * @param {number} isoX - Isometric x coordinate
+ * @param {number} isoY - Isometric y coordinate
+ * @returns {Object} Object containing cartesian x and y coordinates
+ */
+export function isometricToCartesian(isoX, isoY) {
     return {
-        x: (x - y) * (tileWidth / 2),
-        y: (x + y) * (tileHeight / 2)
+        x: (isoX / (ISOMETRIC_TILE_WIDTH / 2) + isoY / (ISOMETRIC_TILE_HEIGHT / 2)) / 2,
+        y: (isoY / (ISOMETRIC_TILE_HEIGHT / 2) - isoX / (ISOMETRIC_TILE_WIDTH / 2)) / 2
     };
 }

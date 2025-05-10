@@ -1,6 +1,6 @@
 // Initialise.js
 import { } from './Simulation.js';
-import { inputState, handleKeyDown, handleKeyUp, handleMouseMove } from './Input.js';
+import { inputState, handleKeyDown, handleKeyUp, handleMouseMove, handleMouseClick } from './Input.js';
 import { createTerrainTile, TileType } from './TerrainTile.js';
 import { GameState } from './GameState.js';
 
@@ -33,6 +33,12 @@ export function initGameCanvas() {
 
     canvasRef.width = 1200;
     canvasRef.height = 800;
+
+    // Add event listeners
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keyup', handleKeyUp);
+    canvasRef.addEventListener('mousemove', handleMouseMove);
+    canvasRef.addEventListener('click', handleMouseClick);
 }
 
 export function initMiniMapCanvas() {

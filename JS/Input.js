@@ -15,7 +15,8 @@ export const inputState = {
         y: 0,
         isOverCanvas: false
     },
-    offset: { x: 0, y: 0 } // Single offset for both scroll and grid
+    offset: { x: 0, y: 0 }, // Single offset for both scroll and grid
+    selectedTile: null // Store the currently selected tile coordinates
 };
 
 // Constants for edge scrolling
@@ -117,6 +118,35 @@ function updateEdgeScrolling(mouseX, mouseY) {
             inputState.offset.y = SCROLL_SPEED_SLOW;
         }
     }
+}
+
+// Event handler for mouse click
+export function handleMouseClick(e) {
+    if (!inputState.mouse.isOverCanvas) return;
+
+    const canvas = document.getElementById('gameCanvas');
+    const rect = canvas.getBoundingClientRect();
+    
+    // Get mouse position relative to canvas, accounting for canvas scaling
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    
+    const mouseX = (e.clientX - rect.left) * scaleX;
+    const mouseY = (e.clientY - rect.top) * scaleY;
+
+    // Convert screen coordinates to isometric coordinates
+    const screenToIsoX = mouseX - canvas.width / 2;
+    const screenToIsoY = mouseY - canvas.height / 2;
+
+    // Convert isometric coordinates to cartesian grid coordinates
+    const cartCoords = isometricToCartesian(screenToIsoX, screenToIsoY);
+
+    // Round to nearest grid cell
+    const gridX = Math.round(cartCoords.x);
+    const gridY = Math.round(cartCoords.y);
+
+    // Update selected tile
+    inputState.selectedTile = { x: gridX, y: gridY };
 }
 
 // Get current keyboard state

@@ -2,6 +2,30 @@
 import { getCanvasContext, getTerrainTiles, miniMapCanvasRef } from './Initialise.js';
 import { cartesianToIsometric } from './Math.js';
 import { drawGridOverlay } from './ProfilingTools.js';
+import { inputState } from './Input.js';
+
+// Draw highlight for selected tile
+function drawSelectedTileHighlight(ctx, gameStateBufferRead) {
+    if (!inputState.selectedTile) return;
+
+    const { x, y } = inputState.selectedTile;
+    const isoCoords = cartesianToIsometric(x, y);
+    
+    // Center the highlight on the screen and apply camera offset
+    const screenX = ctx.canvas.width / 2 + isoCoords.x - gameStateBufferRead.camera.x;
+    const screenY = ctx.canvas.height / 2 + isoCoords.y - gameStateBufferRead.camera.y;
+
+    // Draw highlight
+    ctx.strokeStyle = 'rgba(255, 255, 0, 0.8)';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(screenX, screenY - 50);        // Top
+    ctx.lineTo(screenX + 100, screenY);       // Right
+    ctx.lineTo(screenX, screenY + 50);        // Bottom
+    ctx.lineTo(screenX - 100, screenY);       // Left
+    ctx.closePath();
+    ctx.stroke();
+}
 
 export function renderingLoop(gameStateBufferRead) {
     const ctx = getCanvasContext();
@@ -25,39 +49,59 @@ export function renderingLoop(gameStateBufferRead) {
         }
     }
 
-    // --- MINIMAP ISOMETRIC GRID DRAWING ---
-const gridSize = gameStateBufferRead.gridSize;
-const miniMapWidth = miniMapCanvasRef.width;
-const miniMapHeight = miniMapCanvasRef.height;
+    // Draw selected tile highlight
+    drawSelectedTileHighlight(ctx, gameStateBufferRead);
 
-// Enforce 2:1 isometric tile ratio
-const isoTileWidth = miniMapWidth / gridSize;
-const isoTileHeight = isoTileWidth / 2;
+    // --- MINIMAP GRID + FILLED DIAMONDS ---
+    const gridSize = gameStateBufferRead.gridSize;
+    const miniMapWidth = miniMapCanvasRef.width;
+    const miniMapHeight = miniMapCanvasRef.height;
 
-const centerX = miniMapWidth / 2;
-const centerY = 5;
+    // Enforce 2:1 isometric tile ratio
+    const isoTileWidth = miniMapWidth / gridSize;
+    const isoTileHeight = isoTileWidth / 2;
 
-miniMapCtx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
-miniMapCtx.lineWidth = 1;
+    const centerX = miniMapWidth / 2;
+    const centerY = 5;
 
-for (let y = 0; y < gridSize; y++) {
-    for (let x = 0; x < gridSize; x++) {
-        const isoX = (x - y) * (isoTileWidth / 2) + centerX;
-        const isoY = (x + y) * (isoTileHeight / 2) + centerY;
+    miniMapCtx.lineWidth = 1;
 
-        const halfW = isoTileWidth / 2;
-        const halfH = isoTileHeight / 2;
+    for (let y = 0; y < gridSize; y++) {
+        for (let x = 0; x < gridSize; x++) {
+            const tileType = gameStateBufferRead.getTile(x, y);
 
-        miniMapCtx.beginPath();
-        miniMapCtx.moveTo(isoX, isoY - halfH);        // Top
-        miniMapCtx.lineTo(isoX + halfW, isoY);         // Right
-        miniMapCtx.lineTo(isoX, isoY + halfH);         // Bottom
-        miniMapCtx.lineTo(isoX - halfW, isoY);         // Left
-        miniMapCtx.closePath();
-        miniMapCtx.stroke();
+            const isoX = (x - y) * (isoTileWidth / 2) + centerX;
+            const isoY = (x + y) * (isoTileHeight / 2) + centerY;
+
+            const halfW = isoTileWidth / 2;
+            const halfH = isoTileHeight / 2;
+
+            // Draw tile outline
+            miniMapCtx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+            miniMapCtx.beginPath();
+            miniMapCtx.moveTo(isoX, isoY - halfH);        // Top
+            miniMapCtx.lineTo(isoX + halfW, isoY);         // Right
+            miniMapCtx.lineTo(isoX, isoY + halfH);         // Bottom
+            miniMapCtx.lineTo(isoX - halfW, isoY);         // Left
+            miniMapCtx.closePath();
+            miniMapCtx.stroke();
+
+            // Optionally draw diamond if the tile is filled
+            if (tileType) {
+                const miniHalfW = isoTileWidth * 0.25;
+                const miniHalfH = isoTileHeight * 0.25;
+
+                miniMapCtx.fillStyle = 'rgba(0, 255, 0, 0.8)';
+                miniMapCtx.beginPath();
+                miniMapCtx.moveTo(isoX, isoY - miniHalfH);
+                miniMapCtx.lineTo(isoX + miniHalfW, isoY);
+                miniMapCtx.lineTo(isoX, isoY + miniHalfH);
+                miniMapCtx.lineTo(isoX - miniHalfW, isoY);
+                miniMapCtx.closePath();
+                miniMapCtx.fill();
+            }
+        }
     }
-}
-
 
     // --- MINIMAP CAMERA RECTANGLE ---
     const scaleX = miniMapWidth / 7200;
