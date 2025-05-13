@@ -2,7 +2,7 @@ import { initCanvas, initGrid, initInput, initGameState, getGameStateBuffers, lo
 import {  } from './ProfilingTools.js';
 import { renderingLoop } from './Rendering.js';
 import { simulationLoop } from './Simulation.js';
-import { getInput, updateCameraPosition } from './Input.js';
+import { getInput, updateCameraPosition, initEventListeners } from './Input.js';
 
 let nextFrame = false; // Rendering sets this true when ready for a new frame
 
@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   initInput();
   initGameState();
   await loadTerrainTiles(); // Load terrain tiles before starting the game loop
+  initEventListeners();
   requestAnimationFrame(gameLoop);
 });
 

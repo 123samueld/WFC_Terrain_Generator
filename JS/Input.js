@@ -2,6 +2,8 @@
 import { isometricToCartesian } from './Math.js';
 import { mapOrigin } from './Initialise.js';
 import { getGameStateBuffers } from './Initialise.js';
+import { hotkeyManager } from './HotkeyManager.js';
+import { buildMenu } from './BuildMenu.js';
 
 
 // Input state object to store current input values
@@ -34,6 +36,7 @@ export function handleKeyDown(e) {
     if (key in inputState.keys) {
         inputState.keys[key] = true;
     }
+    hotkeyManager.handleKeyDown(key);
 }
 
 export function handleKeyUp(e) {
@@ -41,6 +44,7 @@ export function handleKeyUp(e) {
     if (key in inputState.keys) {
         inputState.keys[key] = false;
     }
+    hotkeyManager.handleKeyUp(key);
 }
 
 // Event handler for mouse
@@ -198,6 +202,35 @@ export function updateCameraPosition(gameStateBufferWrite) {
 
     gameStateBufferWrite.camera.y = Math.max(400, Math.min(3200, newY));
     gameStateBufferWrite.camera.x = Math.max(-2900, Math.min(3100, newX));
+}
+
+// Function to initialize event listeners
+export function initEventListeners() {
+    const neonButton = document.getElementById('neonButton');
+    const menuContent = document.getElementById('menuContent');
+    const topLine = document.getElementById('topLine');
+
+    // Function to toggle menu
+    const toggleMenu = () => {
+        if (menuContent.style.opacity === '1') {
+            menuContent.style.opacity = '0'; // Hide the menu content
+            menuContent.style.height = '1px'; // Set height to minimal
+            topLine.style.transform = 'translateY(0)'; // Move top line back down
+        } else {
+            menuContent.style.opacity = '1'; // Show the menu content
+            menuContent.style.height = '500px'; // Set height to visible
+        }
+    };
+
+    // Add click event listener
+    neonButton.addEventListener('click', toggleMenu);
+
+    // Register 'b' key hotkey
+    hotkeyManager.register('b', toggleMenu, 'Toggle Build Menu');
+
+    // Register BuildMenu key bindings
+    buildMenu.registerBindings();
+    buildMenu.linkButtons(); // Link buttons to actions
 }
 
 

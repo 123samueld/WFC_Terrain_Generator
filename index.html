@@ -7,10 +7,76 @@
   <link rel="stylesheet" href="index.css">
 </head>
 <body>
+  <div id="title-wrapper">
+    <img id="title-bg" src="./Assets/title_plaque.png" alt="Title Plaque Background" />
+    <div id="title-glow"></div>
+    <h1 id="title">WFC Terrain Generator</h1>
+    <h1 id="title-outline">WFC Terrain Generator</h1>
+  </div>
+
   <!-- Canvas element where the game will be drawn -->
   <canvas id="gameCanvas"></canvas>
   <canvas id="miniMapCanvas"></canvas>
+
+  <div id="buildMenu">
+    <div class="metal-line" id="topLine"></div>
+    <div class="menu-content" id="menuContent">
+        <button id="btnQ" class="menu-button">
+            <img src="./Assets/Button_Icons/back.png" alt="Q Action" class="button-icon">
+            <span>Back</span>
+        </button>
+        <button id="btnW" class="menu-button">
+            <img src="./Assets/Button_Icons/back.png" alt="W Action" class="button-icon">
+            <span>Back</span>
+        </button>
+        <button id="btnE" class="menu-button">
+            <img src="./Assets/Button_Icons/back.png" alt="E Action" class="button-icon">
+            <span>Back</span>
+        </button>
+        <button id="btnR" class="menu-button">
+            <img src="./Assets/Button_Icons/back.png" alt="R Action" class="button-icon">
+            <span>Back</span>
+        </button>
+        <button id="btnA" class="menu-button">
+            <img src="./Assets/Button_Icons/back.png" alt="A Action" class="button-icon">
+            <span>Back</span>
+        </button>
+        <button id="btnS" class="menu-button">
+            <img src="./Assets/Button_Icons/back.png" alt="S Action" class="button-icon">
+            <span>Back</span>
+        </button>
+        <button id="btnD" class="menu-button">
+            <img src="./Assets/Button_Icons/back.png" alt="D Action" class="button-icon">
+            <span>Back</span>
+        </button>
+        <button id="btnF" class="menu-button">
+            <img src="./Assets/Button_Icons/back.png" alt="F Action" class="button-icon">
+            <span>Back</span>
+        </button>
+        <button id="btnZ" class="menu-button">
+            <img src="./Assets/Button_Icons/back.png" alt="Back" class="button-icon">
+            <span>Back</span>
+        </button>
+        <button id="btnX" class="menu-button">
+            <img src="./Assets/Button_Icons/back.png" alt="X Action" class="button-icon">
+            <span>Back</span>
+        </button>
+        <button id="btnC" class="menu-button">
+            <img src="./Assets/Button_Icons/back.png" alt="C Action" class="button-icon">
+            <span>Back</span>
+        </button>
+        <button id="btnV" class="menu-button">
+            <img src="./Assets/Button_Icons/back.png" alt="V Action" class="button-icon">
+            <span>Back</span>
+        </button>
+    </div>
+    <div class="metal-line" id="bottomLine"></div>
+  </div>
+
+  <button id="neonButton">Build Menu</button>
+  
   <!-- Import main JavaScript file -->
   <script type="module" src="JS/Main.js"></script>
+  <script type="module" src="JS/Input.js"></script>
 </body>
 </html>
