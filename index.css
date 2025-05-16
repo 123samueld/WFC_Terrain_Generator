@@ -239,31 +239,72 @@ canvas {
 .menu-content {
     display: grid; /* Use grid layout */
     grid-template-columns: repeat(4, 1fr); /* 4 equal columns */
-    grid-template-rows: repeat(3, 1fr); /* 3 rows with equal height */
+    grid-template-rows: auto repeat(3, 1fr); /* Auto height for header, then 3 equal rows for buttons */
     gap: 0; /* Remove space between buttons */
     justify-items: center; /* Center items in each grid cell */
     padding: 0; /* Remove padding around the grid */
     height: 100%; /* Ensure the menu content takes full height */
 }
 
-.menu-button {
+.button-container {
     width: 100%; /* Set width to 100% of the grid cell */
-    height: 100%; /* Set height to 100% of the grid cell */
-    display: flex;
+    display: flex; /* Use flexbox for layout */
     flex-direction: column; /* Stack image and text vertically */
     align-items: center; /* Center align items */
     background-color: transparent; /* Make background transparent */
     border: 2px solid rgba(255, 255, 255, 0.8); /* Add a border with a light color */
     border-radius: 5px; /* Optional: add rounded corners */
-    cursor: pointer; /* Change cursor to pointer */
+    cursor: default; /* Change cursor to default to indicate it's not clickable */
     padding: 0; /* Remove padding */
     margin: 0; /* Remove margin */
 }
 
+.menu-button {
+    width: 100%; /* Set width to 100% of the button container */
+    height: 0; /* Set height to 0 */
+    padding-bottom: 100%; /* This creates a square by using padding */
+    display: flex; /* Use flexbox for layout */
+    flex-direction: column; /* Stack image and text vertically */
+    align-items: center; /* Center align items */
+    justify-content: center; /* Center the content vertically */
+    background-color: transparent; /* Make background transparent */
+    border: none; /* Remove border from the button */
+    cursor: pointer; /* Change cursor to pointer for the button */
+    margin: 0; /* Remove margin */
+    background-size: cover; /* Ensure the background image covers the button */
+    background-position: center; /* Center the background image */
+    position: relative; /* Position relative to keep it in the flow */
+}
+
 .button-icon {
-    width: 50px; /* Set a fixed width for the icon */
-    height: 50px; /* Set a fixed height for the icon */
-    margin-bottom: 5px; /* Space between icon and text */
+    width: 100%; /* Set width to 100% of the button */
+    height: auto; /* Maintain aspect ratio */
+    margin: 0; /* Remove margin */
+    padding: 0; /* Remove padding */
+    display: block; /* Ensure it behaves like a block element */
+}
+
+.header-row {
+    grid-column: 1 / -1; /* Span all columns */
+    display: flex; /* Use flexbox for centering */
+    justify-content: center; /* Center the content horizontally */
+    margin-bottom: 10px; /* Space below the header */
+    font-size: 24px; /* Adjust font size as needed */
+    color: #000; /* Text color */
+    width: 100%; /* Full width of the grid */
+}
+
+.menu-button.placeholder {
+    visibility: hidden; /* Makes the button invisible but keeps its space */
+    /* Alternatively, you can use opacity: 0; and pointer-events: none; */
+}
+
+.button-container span {
+    margin-top: 5px; /* Add space between the button and the text */
+    color: #000; /* Set text color */
+    text-align: center; /* Center the text */
+    font-size: 16px; /* Adjust font size as needed */
+    width: 100%; /* Ensure the span takes the full width of the container */
 }
 
 

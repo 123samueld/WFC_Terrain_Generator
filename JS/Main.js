@@ -3,6 +3,7 @@ import {  } from './ProfilingTools.js';
 import { renderingLoop } from './Rendering.js';
 import { simulationLoop } from './Simulation.js';
 import { getInput, updateCameraPosition, initEventListeners } from './Input.js';
+import { buildMenu } from './BuildMenu.js';
 
 let nextFrame = false; // Rendering sets this true when ready for a new frame
 

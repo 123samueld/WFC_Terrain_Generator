@@ -18,65 +18,74 @@
   <canvas id="gameCanvas"></canvas>
   <canvas id="miniMapCanvas"></canvas>
 
-  <div id="buildMenu">
-    <div class="metal-line" id="topLine"></div>
-    <div class="menu-content" id="menuContent">
-        <button id="btnQ" class="menu-button">
-            <img src="./Assets/Button_Icons/back.png" alt="Q Action" class="button-icon">
-            <span>Back</span>
-        </button>
-        <button id="btnW" class="menu-button">
-            <img src="./Assets/Button_Icons/back.png" alt="W Action" class="button-icon">
-            <span>Back</span>
-        </button>
-        <button id="btnE" class="menu-button">
-            <img src="./Assets/Button_Icons/back.png" alt="E Action" class="button-icon">
-            <span>Back</span>
-        </button>
-        <button id="btnR" class="menu-button">
-            <img src="./Assets/Button_Icons/back.png" alt="R Action" class="button-icon">
-            <span>Back</span>
-        </button>
-        <button id="btnA" class="menu-button">
-            <img src="./Assets/Button_Icons/back.png" alt="A Action" class="button-icon">
-            <span>Back</span>
-        </button>
-        <button id="btnS" class="menu-button">
-            <img src="./Assets/Button_Icons/back.png" alt="S Action" class="button-icon">
-            <span>Back</span>
-        </button>
-        <button id="btnD" class="menu-button">
-            <img src="./Assets/Button_Icons/back.png" alt="D Action" class="button-icon">
-            <span>Back</span>
-        </button>
-        <button id="btnF" class="menu-button">
-            <img src="./Assets/Button_Icons/back.png" alt="F Action" class="button-icon">
-            <span>Back</span>
-        </button>
-        <button id="btnZ" class="menu-button">
-            <img src="./Assets/Button_Icons/back.png" alt="Back" class="button-icon">
-            <span>Back</span>
-        </button>
-        <button id="btnX" class="menu-button">
-            <img src="./Assets/Button_Icons/back.png" alt="X Action" class="button-icon">
-            <span>Back</span>
-        </button>
-        <button id="btnC" class="menu-button">
-            <img src="./Assets/Button_Icons/back.png" alt="C Action" class="button-icon">
-            <span>Back</span>
-        </button>
-        <button id="btnV" class="menu-button">
-            <img src="./Assets/Button_Icons/back.png" alt="V Action" class="button-icon">
-            <span>Back</span>
-        </button>
+  <div id="nestedMenuComponent">
+    <div id="buildMenu">
+      <div class="metal-line" id="topLine"></div>
+      <div class="menu-content" id="menuContent">
+        <div class="header-row">
+          <h2 id="menuHeader"></h2>
+        </div>
+        <div class="button-container QContainer" id="QButtonContainer">
+          <button id="btnQ" class="menu-button" style="background-image: url('./Assets/Nested_Menu_Icons/Main_Menu_Icons/Back.png');"></button>
+          <span id="QButtonText">Back</span>
+        </div>
+        <div class="button-container WContainer" id="WButtonContainer">
+          <button id="btnW" class="menu-button" style="background-image: url('./Assets/Nested_Menu_Icons/Main_Menu_Icons/Back.png');"></button>
+          <span id="WButtonText">Back</span>
+        </div>
+        <div class="button-container EContainer" id="EButtonContainer">
+          <button id="btnE" class="menu-button placeholder" style="background-image: url('./Assets/Nested_Menu_Icons/Main_Menu_Icons/Back.png');"></button>
+          <span id="EButtonText">Back</span>
+        </div>
+        <div class="button-container RContainer" id="RButtonContainer">
+          <button id="btnR" class="menu-button placeholder" style="background-image: url('./Assets/Nested_Menu_Icons/Main_Menu_Icons/Back.png');"></button>
+          <span id="RButtonText">Back</span>
+        </div>
+        <div class="button-container AContainer" id="AButtonContainer">
+          <button id="btnA" class="menu-button placeholder" style="background-image: url('./Assets/Nested_Menu_Icons/Main_Menu_Icons/Back.png');"></button>
+          <span id="AButtonText">Back</span>
+        </div>
+        <div class="button-container SContainer" id="SButtonContainer">
+          <button id="btnS" class="menu-button placeholder" style="background-image: url('./Assets/Nested_Menu_Icons/Main_Menu_Icons/Back.png');"></button>
+          <span id="SButtonText">Back</span>
+        </div>
+        <div class="button-container DContainer" id="DButtonContainer">
+          <button id="btnD" class="menu-button placeholder" style="background-image: url('./Assets/Nested_Menu_Icons/Main_Menu_Icons/Back.png');"></button>
+          <span id="DButtonText">Back</span>
+        </div>
+        <div class="button-container FContainer" id="FButtonContainer">
+          <button id="btnF" class="menu-button placeholder" style="background-image: url('./Assets/Nested_Menu_Icons/Main_Menu_Icons/Back.png');"></button>
+          <span id="FButtonText">Back</span>
+        </div>
+        <div class="button-container ZContainer" id="ZButtonContainer">
+          <button id="btnZ" class="menu-button" style="background-image: url('./Assets/Nested_Menu_Icons/Main_Menu_Icons/Back.png');"></button>
+          <span id="ZButtonText">Back</span>
+        </div>
+        <div class="button-container XContainer" id="XButtonContainer">
+          <button id="btnX" class="menu-button placeholder" style="background-image: url('./Assets/Nested_Menu_Icons/Main_Menu_Icons/Back.png');"></button>
+          <span id="XButtonText">Back</span>
+        </div>
+        <div class="button-container CContainer" id="CButtonContainer">
+          <button id="btnC" class="menu-button placeholder" style="background-image: url('./Assets/Nested_Menu_Icons/Main_Menu_Icons/Back.png');"></button>
+          <span id="CButtonText">Back</span>
+        </div>
+        <div class="button-container VContainer" id="VButtonContainer">
+          <button id="btnV" class="menu-button placeholder" style="background-image: url('./Assets/Nested_Menu_Icons/Main_Menu_Icons/Back.png');"></button>
+          <span id="VButtonText">Back</span>
+        </div>
+      </div>
+      <div class="metal-line" id="bottomLine"></div>
     </div>
-    <div class="metal-line" id="bottomLine"></div>
-  </div>
-
-  <button id="neonButton">Build Menu</button>
   
+    <button id="neonButton">Build Menu</button>
+  </div>
+  
+
+ 
   <!-- Import main JavaScript file -->
   <script type="module" src="JS/Main.js"></script>
   <script type="module" src="JS/Input.js"></script>
+  <script type="module" src="JS/BuildMenu.js"></script>
+  <script type="module" src="JS/Initialise.js"></script>
 </body>
 </html>

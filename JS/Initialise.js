@@ -62,6 +62,7 @@ export function initMiniMapCanvas() {
 export function initCanvas() {
     initGameCanvas();
     initMiniMapCanvas();
+
 }
 
 export function getCanvasContext() {
