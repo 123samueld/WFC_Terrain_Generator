@@ -1,7 +1,7 @@
 // ProfilingTools.js
 import { getCanvasContext } from './Initialise.js';
 import { cartesianToIsometric, ISOMETRIC_TILE_WIDTH, ISOMETRIC_TILE_HEIGHT } from './Math.js';
-
+import { options } from './Options.js';
 // Constants for edge scrolling (matching Input.js)
 const EDGE_ZONE_1 = 75;  // First buffer zone (0-75px)
 const EDGE_ZONE_2 = 150; // Second buffer zone (75-150px)
@@ -35,6 +35,7 @@ export function drawDebugOverlay() {
 }
 
 export function drawGridOverlay(gameStateBufferRead) {
+    if (!options.showGrid) return;
     const ctx = getCanvasContext();
     const gridSize = gameStateBufferRead.gridSize;
     

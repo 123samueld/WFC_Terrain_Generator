@@ -35,7 +35,8 @@ function getHighlightColor(tileType) {
 function drawTileHighlights(ctx, gameStateBufferRead) {
     // Draw hovered tile highlight
     if (inputState.mouse.hoveredTile) {
-        const { x, y } = inputState.mouse.hoveredTile;
+        const x = inputState.mouse.hoveredTile.x + 1;
+        const y = inputState.mouse.hoveredTile.y;
         const isoCoords = cartesianToIsometric(x, y);
         const screenX = ctx.canvas.width / 2 + isoCoords.x - gameStateBufferRead.camera.x;
         const screenY = ctx.canvas.height / 2 + isoCoords.y - gameStateBufferRead.camera.y;
@@ -90,15 +91,48 @@ function drawTileInfo(ctx, gameStateBufferRead) {
                  boxX + padding, boxY + padding + lineHeight * 2);
 }
 
+// Draw delete menu
+function drawDeleteMenu(ctx) {
+    if (!inputState.showDeleteMenu) return;
+
+    const { x, y } = inputState.deleteMenuPosition;
+    
+    // Draw menu background
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+    ctx.fillRect(x, y, 100, 60);
+    
+    // Draw border
+    ctx.strokeStyle = 'white';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(x, y, 100, 60);
+    
+    // Draw text
+    ctx.fillStyle = 'white';
+    ctx.font = '16px UnrealT';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    
+    // Draw options
+    ctx.fillText('Delete Tile?', x + 50, y + 15);
+    ctx.fillText('Yes', x + 25, y + 35);
+    ctx.fillText('No', x + 75, y + 35);
+    
+    // Draw separator line
+    ctx.beginPath();
+    ctx.moveTo(x, y + 30);
+    ctx.lineTo(x + 100, y + 30);
+    ctx.stroke();
+}
+
 export function renderingLoop(gameStateBufferRead) {
     const ctx = getCanvasContext();
     const miniMapCtx = miniMapCanvasRef.getContext('2d');
     const terrainTiles = getTerrainTiles();
-
+    
     // Clear both canvases
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
     miniMapCtx.clearRect(0, 0, miniMapCanvasRef.width, miniMapCanvasRef.height);
-
+    
     // --- GAME CANVAS TILE DRAWING ---
     for (let y = 0; y < gameStateBufferRead.gridSize; y++) {
         for (let x = 0; x < gameStateBufferRead.gridSize; x++) {
@@ -117,6 +151,9 @@ export function renderingLoop(gameStateBufferRead) {
 
     // Draw tile information
     drawTileInfo(ctx, gameStateBufferRead);
+
+    // Draw delete menu if active
+    drawDeleteMenu(ctx);
 
     // --- MINIMAP GRID + FILLED DIAMONDS ---
     const gridSize = gameStateBufferRead.gridSize;
@@ -157,7 +194,10 @@ export function renderingLoop(gameStateBufferRead) {
                 const miniHalfW = isoTileWidth * 0.25;
                 const miniHalfH = isoTileHeight * 0.25;
 
-                miniMapCtx.fillStyle = 'rgba(0, 255, 0, 0.8)';
+                // Get the TerrainTile object and use its miniMapTileColour directly
+                const terrainTile = terrainTiles[tileType];
+                miniMapCtx.fillStyle = terrainTile.miniMapTileColour;
+
                 miniMapCtx.beginPath();
                 miniMapCtx.moveTo(isoX, isoY - miniHalfH);
                 miniMapCtx.lineTo(isoX + miniHalfW, isoY);

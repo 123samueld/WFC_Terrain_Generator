@@ -25,7 +25,7 @@ export function cartesianToIsometric(x, y) {
  */
 export function isometricToCartesian(isoX, isoY) {
     return {
-        x: (isoX / (ISOMETRIC_TILE_WIDTH / 2) + isoY / (ISOMETRIC_TILE_HEIGHT / 2)) / 2,
+        x: ((isoX / (ISOMETRIC_TILE_WIDTH / 2) + isoY / (ISOMETRIC_TILE_HEIGHT / 2)) / 2) - 1,
         y: (isoY / (ISOMETRIC_TILE_HEIGHT / 2) - isoX / (ISOMETRIC_TILE_WIDTH / 2)) / 2
     };
 }

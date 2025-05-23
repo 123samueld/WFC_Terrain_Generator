@@ -1,10 +1,9 @@
 // Input.js
 import { isometricToCartesian } from './Math.js';
-import { mapOrigin } from './Initialise.js';
-import { getGameStateBuffers } from './Initialise.js';
+import { getGameStateBuffers, terrainTiles } from './Initialise.js';
 import { hotkeyManager } from './HotkeyManager.js';
 import { buildMenu } from './BuildMenu.js';
-
+import { options } from './Options.js';
 // Input state object to store current input values
 export const inputState = {
     keys: {
@@ -17,10 +16,12 @@ export const inputState = {
         x: 0,
         y: 0,
         isOverCanvas: false,
-        hoveredTile: null // Store the currently hovered tile coordinates
+        hoveredTile: null
     },
-    offset: { x: 0, y: 0 }, // Single offset for both scroll and grid
-    selectedTile: null // Store the currently selected tile coordinates
+    offset: { x: 0, y: 0 },
+    selectedTile: null,
+    showDeleteMenu: false,
+    deleteMenuPosition: { x: 0, y: 0 }
 };
 
 // Constants for edge scrolling
@@ -102,30 +103,30 @@ function updateEdgeScrolling(mouseX, mouseY) {
     // Handle horizontal scrolling with adjusted zones
     if (distFromLeft < EDGE_ZONE_2) {
         if (distFromLeft < EDGE_ZONE_1) {
-            inputState.offset.x = -SCROLL_SPEED_FAST;
+            inputState.offset.x = -SCROLL_SPEED_FAST * options.scrollSpeed;
         } else {
-            inputState.offset.x = -SCROLL_SPEED_SLOW;
+            inputState.offset.x = -SCROLL_SPEED_SLOW * options.scrollSpeed;
         }
     } else if (distFromRight < EDGE_ZONE_2) {
         if (distFromRight < EDGE_ZONE_1) {
-            inputState.offset.x = SCROLL_SPEED_FAST;
+            inputState.offset.x = SCROLL_SPEED_FAST * options.scrollSpeed;
         } else {
-            inputState.offset.x = SCROLL_SPEED_SLOW;
+            inputState.offset.x = SCROLL_SPEED_SLOW * options.scrollSpeed;
         }
     }
 
     // Handle vertical scrolling with adjusted zones
     if (distFromTop < EDGE_ZONE_2) {
         if (distFromTop < EDGE_ZONE_1) {
-            inputState.offset.y = -SCROLL_SPEED_FAST;
+            inputState.offset.y = -SCROLL_SPEED_FAST * options.scrollSpeed;
         } else {
-            inputState.offset.y = -SCROLL_SPEED_SLOW;
+            inputState.offset.y = -SCROLL_SPEED_SLOW * options.scrollSpeed;
         }
     } else if (distFromBottom < EDGE_ZONE_2) {
         if (distFromBottom < EDGE_ZONE_1) {
-            inputState.offset.y = SCROLL_SPEED_FAST;
+            inputState.offset.y = SCROLL_SPEED_FAST * options.scrollSpeed;
         } else {
-            inputState.offset.y = SCROLL_SPEED_SLOW;
+            inputState.offset.y = SCROLL_SPEED_SLOW * options.scrollSpeed;
         }
     }
 }
@@ -157,15 +158,60 @@ function updateHoveredTile(mouseX, mouseY) {
 export function handleMouseClick(e) {
     if (!inputState.mouse.isOverCanvas) return;
 
-    // Right click to deselect
+    // Right click to show delete menu
     if (e.button === 2) {
-        inputState.selectedTile = null;
+        const tileType = getGameStateBuffers().read.getTile(inputState.mouse.hoveredTile.x, inputState.mouse.hoveredTile.y);
+        if (tileType) {
+            inputState.showDeleteMenu = true;
+            inputState.deleteMenuPosition = { x: e.clientX, y: e.clientY };
+        }
         return;
     }
 
-    // Left click to select
-    if (e.button === 0 && inputState.mouse.hoveredTile) {
-        inputState.selectedTile = { ...inputState.mouse.hoveredTile };
+    // Left click to select or place
+    if (e.button === 0) {
+        // If delete menu is showing, handle its options
+        if (inputState.showDeleteMenu) {
+            const menuX = inputState.deleteMenuPosition.x;
+            const menuY = inputState.deleteMenuPosition.y;
+            
+            // Check if click is within delete menu bounds
+            if (e.clientX >= menuX && e.clientX <= menuX + 100 &&
+                e.clientY >= menuY && e.clientY <= menuY + 60) {
+                
+                // Check which option was clicked
+                if (e.clientY < menuY + 30) { // Yes option
+                    getGameStateBuffers().write.setTile(
+                        inputState.mouse.hoveredTile.x,
+                        inputState.mouse.hoveredTile.y,
+                        null
+                    );
+                }
+                // No option just closes the menu
+                inputState.showDeleteMenu = false;
+                return;
+            }
+            // Click outside menu just closes it
+            inputState.showDeleteMenu = false;
+        }
+
+        // Handle tile placement
+        if (inputState.mouse.hoveredTile && buildMenu.getSelectedMenuItem()) {
+            const tileType = buildMenu.getSelectedMenuItem().tileType;
+
+            
+            if (tileType && terrainTiles[tileType]) {
+                getGameStateBuffers().write.setTile(
+                    inputState.mouse.hoveredTile.x,
+                    inputState.mouse.hoveredTile.y,
+                    tileType
+                );
+                // Reset selected tile after placement
+                buildMenu.selectedMenuItem = null;
+            } else {
+                console.log("ERROR: Tile type not found in terrainTiles:", tileType);
+            }
+        }
     }
 }
 

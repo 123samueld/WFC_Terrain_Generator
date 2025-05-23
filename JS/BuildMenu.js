@@ -1,5 +1,8 @@
 // BuildMenu.js
 import { hotkeyManager } from './HotkeyManager.js';
+import { menuItems } from './MenuItems.js';
+import { inputState } from './Input.js';
+import { getGameStateBuffers } from './Initialise.js';
 
 class BuildMenu {
     constructor() {
@@ -7,138 +10,15 @@ class BuildMenu {
         this.menuChain = [];
         this.nestedMenus = [
             "Main", 
-            "Roads", 
             "Buildings", 
+            "Roads", 
             "Train_Tracks", 
             "Power_Lines", 
             "Pipes"
         ];
 
-        this.menuItems_Main = {
-            isLeafMenu: false,
-            items: [
-                {
-                    id: 0,
-                    image: './Assets/Nested_Menu_Icons/Main_Menu_Icons/Roads.png',
-                    text: 'Roads',
-                    menu: 'Main'
-                },
-                {
-                    id: 1,
-                    image: './Assets/Nested_Menu_Icons/Main_Menu_Icons/Buildings.png',
-                    text: 'Buildings',
-                    menu: 'Main'
-                },
-                {
-                    id: 2,
-                    placeholder: true
-                },
-                {
-                    id: 3,
-                    placeholder: true
-                },
-                {
-                    id: 4,
-                    placeholder: true
-                },
-                {
-                    id: 5,
-                    placeholder: true
-                },
-                {
-                    id: 9,
-                    placeholder: true
-                },
-                {
-                    id: 7,
-                    placeholder: true
-                },
-                {
-                    id: 8,
-                    image: './Assets/Nested_Menu_Icons/Main_Menu_Icons/Back.png',
-                    text: 'Back',
-                    menu: 'Main'
-                },
-                {
-                    id: 9,
-                    placeholder: true
-                },
-                {
-                    id: 10,
-                    placeholder: true
-                },
-                {
-                    id: 11,
-                    placeholder: true
-                }
-            ]
-        };
-        
-        this.menuItems_Roads = {
-            isLeafMenu: true,
-            items: [
-                {
-                    id: 0,
-                    image: './Assets/Nested_Menu_Icons/Road_Menu_Icons/L_Curves/01_ES.png',
-                    text: 'L_ES',
-                    menu: 'Roads'
-                },
-                {
-                    id: 1,
-                    image: './Assets/Nested_Menu_Icons/Road_Menu_Icons/L_Curves/02_SW.png',
-                    text: 'L_SW',
-                    menu: 'Roads'
-                },
-                {
-                    id: 2,
-                    image: './Assets/Nested_Menu_Icons/Road_Menu_Icons/L_Curves/03_WN.png',
-                    text: 'L_WN',
-                    menu: 'Roads'
-                },
-                {
-                    id: 3,
-                    image: './Assets/Nested_Menu_Icons/Road_Menu_Icons/L_Curves/04_NE.png',
-                    text: 'L_NE',
-                    menu: 'Roads'
-                },
-                {
-                    id: 4,
-                    placeholder: true
-                },
-                {
-                    id: 5,
-                    placeholder: true
-                },
-                {
-                    id: 6,
-                    placeholder: true
-                },
-                {
-                    id: 7,
-                    placeholder: true
-                },
-                {
-                    id: 8,
-                    image: './Assets/Nested_Menu_Icons/Road_Menu_Icons/Back.png',
-                    text: 'Back',
-                    menu: 'Roads'
-                },
-                {
-                    id: 9,
-                    placeholder: true
-                },
-                {
-                    id: 10,
-                    placeholder: true
-                },
-                {
-                    id: 11,
-                    placeholder: true
-                }
-            ]
-        };
-        
-        
+        // Store menu items
+        this.menuItems = menuItems;
 
         this.bindings = {
             q: this.actionQ,
@@ -155,6 +35,11 @@ class BuildMenu {
             v: this.actionV,
             b: this.actionB
         };
+        this.selectedMenuItem = null;
+    }
+
+    getSelectedMenuItem() {
+        return this.selectedMenuItem;
     }
 
     // Method to toggle the build menu
@@ -193,14 +78,10 @@ class BuildMenu {
     
 
     generateDynamicMenu(activeMenu) {
-        const menuPropertyName = `menuItems_${activeMenu}`;
-        const menuData = this[menuPropertyName];
+        const menuData = this.menuItems[activeMenu];
     
         if (!menuData || !Array.isArray(menuData.items)) {
-            console.warn(`Menu items for '${activeMenu}' not found.`);
             return;
-        } else {
-            console.log(`Generating menu: ${menuPropertyName}`);
         }
     
         // Update header
@@ -245,16 +126,10 @@ class BuildMenu {
             return;
         }
     
-        const menuData = this[`menuItems_${menuName}`];
+        const menuData = this.menuItems[menuName];
     
         if (!menuData || !Array.isArray(menuData.items)) {
             console.warn(`Menu '${menuName}' not found or malformed.`);
-            return;
-        }
-    
-        // Early out if current menu is a leaf
-        if (menuData.isLeafMenu) {
-            console.log(`'${menuName}' is a leaf menu. No further navigation.`);
             return;
         }
     
@@ -264,26 +139,26 @@ class BuildMenu {
             console.warn(`No menu item at index '${keyPressedID}' in menu '${menuName}'.`);
             return;
         }
+
+        // Handle leaf menu item (tile placement)
+        if (menuData.isLeafMenu) {
+            this.selectedMenuItem = selectedItem;
+            return;
+        }
     
         const nextMenuName = selectedItem.text;
     
-        const nextMenuData = this[`menuItems_${nextMenuName}`];
+        const nextMenuData = this.menuItems[nextMenuName];
         if (!nextMenuData || !Array.isArray(nextMenuData.items)) {
             console.warn(`Submenu '${nextMenuName}' not found or malformed.`);
             return;
         }
     
-        // Navigate to the selected menu (even if it's a leaf)
+        // Navigate to the selected menu
         this.menuChain.push(nextMenuName);
         this.activeMenu = nextMenuName;
         this.generateDynamicMenu(nextMenuName);
-    
-        if (nextMenuData.isLeafMenu) {
-            console.log(`'${nextMenuName}' is a leaf menu.`);
-            // Optional: handle leaf menu logic here
-        }
     }
-    
     
     
 
@@ -302,9 +177,7 @@ class BuildMenu {
     actionV() { this.handleMenuAction(this.activeMenu, 11); }
     actionB() { this.toggleMenu(); }
 
-    back() {
-        console.log("Back action triggered");
-    
+    back() {    
         // Remove the current (active) menu from the chain
         this.menuChain.pop();
     
@@ -348,4 +221,3 @@ export const buildMenu = new BuildMenu();
 window.addEventListener('DOMContentLoaded', () => {
     buildMenu.initializeMenu();
 });
-
