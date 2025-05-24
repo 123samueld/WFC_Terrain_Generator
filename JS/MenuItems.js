@@ -44,11 +44,15 @@ export const menuItems = {
             },
             {
                 id: 5,
-                placeholder: true
+                image: MENU_ICON_PATHS.MAIN + '06_Fauna.png',
+                text: 'Fauna',
+                menu: 'Main'
             },
             {
                 id: 6,
-                placeholder: true
+                image: MENU_ICON_PATHS.MAIN + '07_Flora.png',
+                text: 'Flora',
+                menu: 'Main'
             },
             {
                 id: 7,
@@ -179,7 +183,10 @@ export const menuItems = {
             },
             {
                 id: 5,
-                placeholder: true
+                image: MENU_ICON_PATHS.BUILDINGS + '06_Hab_Block.png',
+                text: 'Apartment\nBlock',
+                menu: 'Buildings',
+                tileType: 'Hab_Block'
             },
             {
                 id: 6,

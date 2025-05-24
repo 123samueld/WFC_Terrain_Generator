@@ -38,13 +38,9 @@ export const TileType = {
     FACTORUM: 'Factorum',
     CHEMICAL_PLANT: 'Chemical_Plant',
     TRAIN_STATION: 'Train_Station',
-    PROMETHIUM_REFINERY: 'Promethium_Refinery'
-        //Buildings
-    // Power Station - tileHeightOverSpill: 65px
-    // Steel Foundry - tileHeightOverSpill: 131px
-    //CHEMICAL_PLANT: 'Chemical_Plant' // tileHeightOverSpill: 30px
-    // Train Station - tileHeightOverSpill: 14px
-    // Oil Refinery - tileHeightOverSpill: 53px
+    PROMETHIUM_REFINERY: 'Promethium_Refinery',
+    HAB_BLOCK: 'Hab_Block'
+
 };
 
 // Factory function to create terrain tiles

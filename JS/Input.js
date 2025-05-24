@@ -19,9 +19,7 @@ export const inputState = {
         hoveredTile: null
     },
     offset: { x: 0, y: 0 },
-    selectedTile: null,
-    showDeleteMenu: false,
-    deleteMenuPosition: { x: 0, y: 0 }
+    selectedTile: null
 };
 
 // Constants for edge scrolling
@@ -154,51 +152,32 @@ function updateHoveredTile(mouseX, mouseY) {
     inputState.mouse.hoveredTile = { x: gridX, y: gridY };
 }
 
+// Event handler for mouse wheel
+export function handleMouseWheel(e) {
+    console.log('Mouse wheel event:', {
+        deltaY: e.deltaY,
+        deltaMode: e.deltaMode
+    });
+    // TODO: Implement zoom functionality
+}
+
 // Event handler for mouse click
 export function handleMouseClick(e) {
     if (!inputState.mouse.isOverCanvas) return;
 
-    // Right click to show delete menu
-    if (e.button === 2) {
-        const tileType = getGameStateBuffers().read.getTile(inputState.mouse.hoveredTile.x, inputState.mouse.hoveredTile.y);
-        if (tileType) {
-            inputState.showDeleteMenu = true;
-            inputState.deleteMenuPosition = { x: e.clientX, y: e.clientY };
+    // Right click to deselect menu item
+    if (e.button === 2 || e.which === 3) {
+        if (inputState.mouse.hoveredTile && buildMenu.selectedMenuItem) {
+            buildMenu.selectedMenuItem = null;
         }
         return;
     }
 
     // Left click to select or place
-    if (e.button === 0) {
-        // If delete menu is showing, handle its options
-        if (inputState.showDeleteMenu) {
-            const menuX = inputState.deleteMenuPosition.x;
-            const menuY = inputState.deleteMenuPosition.y;
-            
-            // Check if click is within delete menu bounds
-            if (e.clientX >= menuX && e.clientX <= menuX + 100 &&
-                e.clientY >= menuY && e.clientY <= menuY + 60) {
-                
-                // Check which option was clicked
-                if (e.clientY < menuY + 30) { // Yes option
-                    getGameStateBuffers().write.setTile(
-                        inputState.mouse.hoveredTile.x,
-                        inputState.mouse.hoveredTile.y,
-                        null
-                    );
-                }
-                // No option just closes the menu
-                inputState.showDeleteMenu = false;
-                return;
-            }
-            // Click outside menu just closes it
-            inputState.showDeleteMenu = false;
-        }
-
+    if (e.button === 0 || e.which === 1) {
         // Handle tile placement
-        if (inputState.mouse.hoveredTile && buildMenu.getSelectedMenuItem()) {
-            const tileType = buildMenu.getSelectedMenuItem().tileType;
-
+        if (inputState.mouse.hoveredTile && buildMenu.selectedMenuItem) {
+            const tileType = buildMenu.selectedMenuItem.tileType;
             
             if (tileType && terrainTiles[tileType]) {
                 getGameStateBuffers().write.setTile(
@@ -212,6 +191,11 @@ export function handleMouseClick(e) {
                 console.log("ERROR: Tile type not found in terrainTiles:", tileType);
             }
         }
+    }
+
+    // Middle click
+    if (e.button === 1 || e.which === 2) {
+        console.log('Middle click detected');
     }
 }
 

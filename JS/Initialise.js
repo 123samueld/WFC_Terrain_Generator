@@ -1,6 +1,11 @@
+/*
+ * TODO: Sprite Atlas Implementation
+ * - Create a sprite atlas to combine all tile sprites into a single texture
+ */
+
 // Initialise.js
 import { } from './Simulation.js';
-import { inputState, handleKeyDown, handleKeyUp, handleMouseMove, handleMouseClick } from './Input.js';
+import { inputState, handleKeyDown, handleKeyUp, handleMouseMove, handleMouseClick, handleMouseWheel } from './Input.js';
 import { createTerrainTile, TileType } from './TerrainTile.js';
 import { GameState } from './GameState.js';
 
@@ -43,11 +48,14 @@ export function initGameCanvas() {
     window.addEventListener('keydown', handleKeyDown);
     window.addEventListener('keyup', handleKeyUp);
     canvasRef.addEventListener('mousemove', handleMouseMove);
-    canvasRef.addEventListener('click', handleMouseClick);
+    canvasRef.addEventListener('mousedown', handleMouseClick);
+    canvasRef.addEventListener('wheel', handleMouseWheel);
     
     // Prevent context menu on right-click
     canvasRef.addEventListener('contextmenu', (e) => {
         e.preventDefault();
+        e.stopPropagation();
+        return false;
     });
 }
 
@@ -127,13 +135,6 @@ export async function loadTerrainTiles() {
         
         /* Buildings */
         
-            //Buildings
-    // Power Station - tileHeightOverSpill: 65px
-    // Steel Foundry - tileHeightOverSpill: 131px
-    //CHEMICAL_PLANT: 'Chemical_Plant' // tileHeightOverSpill: 30px
-    // Train Station - tileHeightOverSpill: 14px
-    // Oil Refinery - tileHeightOverSpill: 53px
-
         const isometricBuildingSpritesAddressPrefix = 'Assets/Terrain_Tile_Sprites/Isometric/01_Buildings/';
         const cartesianBuildingSpritesAddressPrefix = 'Assets/Terrain_Tile_Sprites/Cartesian/01_Buildings/';
         
@@ -174,6 +175,15 @@ export async function loadTerrainTiles() {
         terrainTiles[TileType.PROMETHIUM_REFINERY] = createTerrainTile(TileType.PROMETHIUM_REFINERY, promethiumRefineryIsometric, promethiumRefineryCartesian);
         terrainTiles[TileType.PROMETHIUM_REFINERY].tileHeightSpillOver = 53;
         terrainTiles[TileType.PROMETHIUM_REFINERY].miniMapTileColour =  'rgba(136, 152, 160, 0.8)';
+
+        // Hab Block
+        const habBlockIsometric = await loadSprite(isometricBuildingSpritesAddressPrefix + '06_Hab_Block.png');
+        const habBlockCartesian = await loadSprite(isometricBuildingSpritesAddressPrefix + '06_Hab_Block.png');
+        terrainTiles[TileType.HAB_BLOCK] = createTerrainTile(TileType.HAB_BLOCK, habBlockIsometric, habBlockCartesian);
+        terrainTiles[TileType.HAB_BLOCK].tileHeightSpillOver = 123;
+        terrainTiles[TileType.HAB_BLOCK].miniMapTileColour =  'rgba(136, 152, 160, 0.8)';
+
+        // Hab Block 123px height overspill
         
         
 

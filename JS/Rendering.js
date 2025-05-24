@@ -1,8 +1,16 @@
+/*
+ * TODO: Rendering Optimizations
+ * - Consider implementing a view frustum culling system to only render visible tiles
+ * - Batch similar tile types together to reduce draw calls
+ * - Implement a system to only draw new tiles.
+ */
+
 //Rendering.js
 import { getCanvasContext, getTerrainTiles, miniMapCanvasRef, mapOrigin } from './Initialise.js';
 import { cartesianToIsometric } from './Math.js';
 import { drawGridOverlay } from './ProfilingTools.js';
 import { inputState } from './Input.js';
+import { buildMenu } from './BuildMenu.js';
 
 // Draw highlight for a tile
 function drawTileHighlight(ctx, x, y, color, lineWidth = 3) {
@@ -35,14 +43,37 @@ function getHighlightColor(tileType) {
 function drawTileHighlights(ctx, gameStateBufferRead) {
     // Draw hovered tile highlight
     if (inputState.mouse.hoveredTile) {
-        const x = inputState.mouse.hoveredTile.x + 1;
+        // For highlight outline, we need the +1 offset
+        const highlightX = inputState.mouse.hoveredTile.x + 1;
         const y = inputState.mouse.hoveredTile.y;
-        const isoCoords = cartesianToIsometric(x, y);
+        
+        // For sprite preview, we use the actual grid position
+        const spriteX = inputState.mouse.hoveredTile.x;
+        
+        const isoCoords = cartesianToIsometric(highlightX, y);
         const screenX = ctx.canvas.width / 2 + isoCoords.x - gameStateBufferRead.camera.x;
         const screenY = ctx.canvas.height / 2 + isoCoords.y - gameStateBufferRead.camera.y;
         
-        // Draw hover effect with thinner line
-        drawTileHighlight(ctx, screenX, screenY, 'rgba(255, 255, 255, 0.4)', 2);
+        // If a menu item is selected, draw its sprite instead of the highlight
+        const selectedMenuItem = buildMenu.getSelectedMenuItem();
+        if (selectedMenuItem && selectedMenuItem.tileType) {
+            const terrainTiles = getTerrainTiles();
+            const terrainTile = terrainTiles[selectedMenuItem.tileType];
+            if (terrainTile) {
+                // Calculate sprite position using the actual grid position
+                const spriteIsoCoords = cartesianToIsometric(spriteX, y);
+                const spriteScreenX = ctx.canvas.width / 2 + spriteIsoCoords.x - gameStateBufferRead.camera.x;
+                const spriteScreenY = ctx.canvas.height / 2 + spriteIsoCoords.y - gameStateBufferRead.camera.y;
+                
+                // Draw the sprite with 50% opacity
+                ctx.globalAlpha = 0.5;
+                terrainTile.draw(ctx, spriteScreenX, spriteScreenY, 'isometric');
+                ctx.globalAlpha = 1.0;
+            }
+        } else {
+            // Draw hover effect with thinner line if no menu item is selected
+            drawTileHighlight(ctx, screenX, screenY, 'rgba(255, 255, 255, 0.4)', 2);
+        }
     }
 }
 
@@ -105,7 +136,7 @@ function drawDeleteMenu(ctx) {
     ctx.strokeStyle = 'white';
     ctx.lineWidth = 2;
     ctx.strokeRect(x, y, 100, 60);
-    
+
     // Draw text
     ctx.fillStyle = 'white';
     ctx.font = '16px UnrealT';
@@ -132,6 +163,9 @@ export function renderingLoop(gameStateBufferRead) {
     // Clear both canvases
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
     miniMapCtx.clearRect(0, 0, miniMapCanvasRef.width, miniMapCanvasRef.height);
+    
+    // Draw grid overlay first (if enabled)
+    drawGridOverlay(gameStateBufferRead);
     
     // --- GAME CANVAS TILE DRAWING ---
     for (let y = 0; y < gameStateBufferRead.gridSize; y++) {
@@ -220,8 +254,5 @@ export function renderingLoop(gameStateBufferRead) {
     miniMapCtx.strokeStyle = 'white';
     miniMapCtx.lineWidth = 1;
     miniMapCtx.strokeRect(camMiniX, camMiniY, viewportWidth, viewportHeight);
-
-    // --- Optional: debug grid overlay ---
-    drawGridOverlay(gameStateBufferRead);
 }
 
