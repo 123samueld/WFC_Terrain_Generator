@@ -2,7 +2,10 @@
 
 // Constants for isometric tile dimensions
 export const ISOMETRIC_TILE_WIDTH = 200;
+export const ISOMETRIC_TILE_WIDTH_HALF = 100;
 export const ISOMETRIC_TILE_HEIGHT = 100;
+export const CANVAS_HALF_WIDTH = 600;
+export const CANVAS_HALF_HEIGHT = 400;
 
 /**
  * Transforms Cartesian coordinates to Isometric coordinates

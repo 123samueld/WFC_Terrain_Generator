@@ -1,13 +1,12 @@
-/*
- * TODO: Rendering Optimizations
- * - Consider implementing a view frustum culling system to only render visible tiles
- * - Batch similar tile types together to reduce draw calls
- * - Implement a system to only draw new tiles.
- */
-
 //Rendering.js
 import { getCanvasContext, getTerrainTiles, miniMapCanvasRef, mapOrigin } from './Initialise.js';
-import { cartesianToIsometric } from './Math.js';
+import { cartesianToIsometric, 
+    isometricToCartesian, 
+    ISOMETRIC_TILE_WIDTH, 
+    ISOMETRIC_TILE_WIDTH_HALF, 
+    ISOMETRIC_TILE_HEIGHT, 
+    CANVAS_HALF_WIDTH, 
+    CANVAS_HALF_HEIGHT } from './Math.js';
 import { drawGridOverlay } from './ProfilingTools.js';
 import { inputState } from './Input.js';
 import { buildMenu } from './BuildMenu.js';
@@ -25,21 +24,7 @@ function drawTileHighlight(ctx, x, y, color, lineWidth = 3) {
     ctx.stroke();
 }
 
-// Get highlight color based on tile type
-function getHighlightColor(tileType) {
-    switch(tileType) {
-        case 'cross':
-            return 'rgba(255, 255, 0, 0.8)'; // Yellow
-        case 'straight_latitude':
-            return 'rgba(0, 255, 255, 0.8)'; // Cyan
-        case 'straight_longitude':
-            return 'rgba(255, 0, 255, 0.8)'; // Magenta
-        default:
-            return 'rgba(255, 255, 255, 0.8)'; // White
-    }
-}
-
-// Draw selected and hovered tile highlights
+// Draw selected and hovered tile highlights including if a menu item is selected
 function drawTileHighlights(ctx, gameStateBufferRead) {
     // Draw hovered tile highlight
     if (inputState.mouse.hoveredTile) {
@@ -77,119 +62,43 @@ function drawTileHighlights(ctx, gameStateBufferRead) {
     }
 }
 
-// Draw tile information
-function drawTileInfo(ctx, gameStateBufferRead) {
-    if (!inputState.selectedTile) return;
+// Occlusion culling based on 6 tiles in each direction from center
+function calculateVisibleTiles(gameStateBufferRead) {
+    const camera = gameStateBufferRead.camera;
 
-    const { x, y } = inputState.selectedTile;
-    const tileType = gameStateBufferRead.getTile(x, y);
-    
-    if (!tileType) return;
+    // Center of the screen is the camera position
+    const viewportCenterX = camera.x;
+    const viewportCenterY = camera.y;
 
-    // Position the info box in the top-right corner
-    const padding = 10;
-    const lineHeight = 20;
-    const boxWidth = 200;
-    const boxHeight = 80;
-    const boxX = ctx.canvas.width - boxWidth - padding;
-    const boxY = padding;
+    // Convert to cartesian grid coordinates
+    const centerTile = isometricToCartesian(viewportCenterX, viewportCenterY);
+    const centerGridX = Math.round(centerTile.x);
+    const centerGridY = Math.round(centerTile.y);
 
-    // Draw semi-transparent background
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
-    ctx.fillRect(boxX, boxY, boxWidth, boxHeight);
+    const visibleTiles = [];
 
-    // Draw border
-    ctx.strokeStyle = getHighlightColor(tileType);
-    ctx.lineWidth = 2;
-    ctx.strokeRect(boxX, boxY, boxWidth, boxHeight);
+    // 12 columns and rows = 6 tiles in each direction from center
+    const RANGE = 6;
 
-    // Draw text
-    ctx.fillStyle = 'white';
-    ctx.font = '16px UnrealT';
-    ctx.textBaseline = 'top';
-    
-    // Draw tile type
-    ctx.fillText(`Tile Type: ${tileType}`, boxX + padding, boxY + padding);
-    
-    // Draw coordinates
-    ctx.fillText(`Grid Position: (${x}, ${y})`, boxX + padding, boxY + padding + lineHeight);
-    
-    // Draw camera-relative position
-    const isoCoords = cartesianToIsometric(x, y);
-    const screenX = ctx.canvas.width / 2 + isoCoords.x - gameStateBufferRead.camera.x;
-    const screenY = ctx.canvas.height / 2 + isoCoords.y - gameStateBufferRead.camera.y;
-    ctx.fillText(`Screen Position: (${Math.round(screenX)}, ${Math.round(screenY)})`, 
-                 boxX + padding, boxY + padding + lineHeight * 2);
-}
-
-// Draw delete menu
-function drawDeleteMenu(ctx) {
-    if (!inputState.showDeleteMenu) return;
-
-    const { x, y } = inputState.deleteMenuPosition;
-    
-    // Draw menu background
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
-    ctx.fillRect(x, y, 100, 60);
-    
-    // Draw border
-    ctx.strokeStyle = 'white';
-    ctx.lineWidth = 2;
-    ctx.strokeRect(x, y, 100, 60);
-
-    // Draw text
-    ctx.fillStyle = 'white';
-    ctx.font = '16px UnrealT';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    
-    // Draw options
-    ctx.fillText('Delete Tile?', x + 50, y + 15);
-    ctx.fillText('Yes', x + 25, y + 35);
-    ctx.fillText('No', x + 75, y + 35);
-    
-    // Draw separator line
-    ctx.beginPath();
-    ctx.moveTo(x, y + 30);
-    ctx.lineTo(x + 100, y + 30);
-    ctx.stroke();
-}
-
-export function renderingLoop(gameStateBufferRead) {
-    const ctx = getCanvasContext();
-    const miniMapCtx = miniMapCanvasRef.getContext('2d');
-    const terrainTiles = getTerrainTiles();
-    
-    // Clear both canvases
-    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-    miniMapCtx.clearRect(0, 0, miniMapCanvasRef.width, miniMapCanvasRef.height);
-    
-    // Draw grid overlay first (if enabled)
-    drawGridOverlay(gameStateBufferRead);
-    
-    // --- GAME CANVAS TILE DRAWING ---
-    for (let y = 0; y < gameStateBufferRead.gridSize; y++) {
-        for (let x = 0; x < gameStateBufferRead.gridSize; x++) {
-            const tileType = gameStateBufferRead.getTile(x, y);
-            if (tileType && terrainTiles[tileType]) {
-                const isoCoords = cartesianToIsometric(x, y);
-                const screenX = ctx.canvas.width / 2 + isoCoords.x - gameStateBufferRead.camera.x;
-                const screenY = ctx.canvas.height / 2 + isoCoords.y - gameStateBufferRead.camera.y;
-                terrainTiles[tileType].draw(ctx, screenX, screenY, 'isometric');
-            }
+    for (let dy = -RANGE; dy <= RANGE; dy++) {
+        for (let dx = -RANGE; dx <= RANGE; dx++) {
+            const tileX = centerGridX + dx;
+            const tileY = centerGridY + dy;
+            visibleTiles.push({ x: tileX, y: tileY });
         }
     }
 
-    // Draw tile highlights
-    drawTileHighlights(ctx, gameStateBufferRead);
+    return visibleTiles;
+}
 
-    // Draw tile information
-    drawTileInfo(ctx, gameStateBufferRead);
+// Draw minimap
+function drawMiniMap(gameStateBufferRead) {
+    const miniMapCtx = miniMapCanvasRef.getContext('2d');
+    const terrainTiles = getTerrainTiles();
 
-    // Draw delete menu if active
-    drawDeleteMenu(ctx);
+    // Clear minimap canvas
+    miniMapCtx.clearRect(0, 0, miniMapCanvasRef.width, miniMapCanvasRef.height);
 
-    // --- MINIMAP GRID + FILLED DIAMONDS ---
     const gridSize = gameStateBufferRead.gridSize;
     const miniMapWidth = miniMapCanvasRef.width;
     const miniMapHeight = miniMapCanvasRef.height;
@@ -228,7 +137,6 @@ export function renderingLoop(gameStateBufferRead) {
                 const miniHalfW = isoTileWidth * 0.25;
                 const miniHalfH = isoTileHeight * 0.25;
 
-                // Get the TerrainTile object and use its miniMapTileColour directly
                 const terrainTile = terrainTiles[tileType];
                 miniMapCtx.fillStyle = terrainTile.miniMapTileColour;
 
@@ -255,4 +163,43 @@ export function renderingLoop(gameStateBufferRead) {
     miniMapCtx.lineWidth = 1;
     miniMapCtx.strokeRect(camMiniX, camMiniY, viewportWidth, viewportHeight);
 }
+
+
+function drawMainMap(gameStateBufferRead, visibleTiles) {
+    const ctx = getCanvasContext();
+    const terrainTiles = getTerrainTiles();
+
+    for (const { x, y } of visibleTiles) {
+        const tileType = gameStateBufferRead.getTile(x, y);
+        if (tileType && terrainTiles[tileType]) {
+            const isoCoords = cartesianToIsometric(x, y);
+            const screenX = ctx.canvas.width / 2 + isoCoords.x - gameStateBufferRead.camera.x;
+            const screenY = ctx.canvas.height / 2 + isoCoords.y - gameStateBufferRead.camera.y;
+            terrainTiles[tileType].draw(ctx, screenX, screenY, 'isometric');
+        }
+    }
+}
+
+export function renderingLoop(gameStateBufferRead) {
+    const ctx = getCanvasContext();
+
+    // Clear main canvas
+    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+
+    // Calculate visible tiles
+    const visibleTiles = calculateVisibleTiles(gameStateBufferRead);
+
+    // Draw grid overlay first (if enabled)
+    drawGridOverlay(gameStateBufferRead);
+
+    // Draw only visible tiles
+    drawMainMap(gameStateBufferRead, visibleTiles);
+
+    // Highlight selected or hovered tiles
+    drawTileHighlights(ctx, gameStateBufferRead);
+
+    // Draw the minimap
+    drawMiniMap(gameStateBufferRead);
+}
+
 

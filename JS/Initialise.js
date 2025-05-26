@@ -1,8 +1,3 @@
-/*
- * TODO: Sprite Atlas Implementation
- * - Create a sprite atlas to combine all tile sprites into a single texture
- */
-
 // Initialise.js
 import { } from './Simulation.js';
 import { inputState, handleKeyDown, handleKeyUp, handleMouseMove, handleMouseClick, handleMouseWheel } from './Input.js';
