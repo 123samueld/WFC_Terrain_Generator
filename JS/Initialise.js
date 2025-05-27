@@ -3,6 +3,7 @@ import { } from './Simulation.js';
 import { inputState, handleKeyDown, handleKeyUp, handleMouseMove, handleMouseClick, handleMouseWheel } from './Input.js';
 import { createTerrainTile, TileType } from './TerrainTile.js';
 import { GameState } from './GameState.js';
+import { PATHS } from './FilePathRouter.js';
 
 let canvasRef, ctxRef;
 let gameStateBufferA;
@@ -184,7 +185,7 @@ export async function loadTerrainTiles() {
 
         /* Roads */
         const isometricRoadSpritesAddressPrefix = 'Assets/Terrain_Tile_Sprites/Isometric/02_Roads/';
-        const cartesianRoadSpritesAddressPrefix = 'Assets/Nested_Menu_Icons/03_Road_Menu_Icons/';
+        const cartesianRoadSpritesAddressPrefix = PATHS.ASSETS.MENU_ICONS.ROADS;
         // Cross 
         const crossIsometric = await loadSprite(isometricRoadSpritesAddressPrefix + '01_Cross.png');
         const crossCartesian = await loadSprite(cartesianRoadSpritesAddressPrefix + '01_Cross.png');

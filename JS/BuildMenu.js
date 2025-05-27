@@ -4,16 +4,19 @@ import { menuItems } from './MenuItems.js';
 import { inputState } from './Input.js';
 import { getGameStateBuffers } from './Initialise.js';
 
+
+
 class BuildMenu {
     constructor() {
         this.activeMenu = "Main";
         this.menuChain = [];
         this.nestedMenus = [
-            "Main", 
+            "Main",
+            "Build Options",
             "Buildings", 
             "Roads", 
-            "Train_Tracks", 
-            "Power_Lines", 
+            "Train Tracks", 
+            "Power Lines", 
             "Pipes"
         ];
 
@@ -146,7 +149,11 @@ class BuildMenu {
             return;
         }
     
-        const nextMenuName = selectedItem.text;
+        const nextMenuName = selectedItem.nextMenu;
+        if (!nextMenuName) {
+            console.warn(`No next menu specified for item in menu '${menuName}'.`);
+            return;
+        }
     
         const nextMenuData = this.menuItems[nextMenuName];
         if (!nextMenuData || !Array.isArray(nextMenuData.items)) {

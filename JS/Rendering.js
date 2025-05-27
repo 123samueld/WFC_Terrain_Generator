@@ -11,6 +11,9 @@ import { drawGridOverlay } from './ProfilingTools.js';
 import { inputState } from './Input.js';
 import { buildMenu } from './BuildMenu.js';
 
+// Add toggle at the top level
+let drawGrid = true;
+
 // Draw highlight for a tile
 function drawTileHighlight(ctx, x, y, color, lineWidth = 3) {
     ctx.strokeStyle = color;
@@ -180,6 +183,8 @@ function drawMainMap(gameStateBufferRead, visibleTiles) {
     }
 }
 
+let toggleDraw = true;
+
 export function renderingLoop(gameStateBufferRead) {
     const ctx = getCanvasContext();
 
@@ -189,8 +194,9 @@ export function renderingLoop(gameStateBufferRead) {
     // Calculate visible tiles
     const visibleTiles = calculateVisibleTiles(gameStateBufferRead);
 
-    // Draw grid overlay first (if enabled)
-    drawGridOverlay(gameStateBufferRead);
+    // Draw grid overlay
+      drawGridOverlay(gameStateBufferRead);
+
 
     // Draw only visible tiles
     drawMainMap(gameStateBufferRead, visibleTiles);
@@ -198,8 +204,10 @@ export function renderingLoop(gameStateBufferRead) {
     // Highlight selected or hovered tiles
     drawTileHighlights(ctx, gameStateBufferRead);
 
-    // Draw the minimap
-    drawMiniMap(gameStateBufferRead);
+    if (toggleDraw) { drawMiniMap(gameStateBufferRead); } 
+
+    // Toggle for next frame
+    toggleDraw = !toggleDraw;
 }
 
 
