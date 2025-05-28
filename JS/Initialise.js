@@ -1,7 +1,7 @@
 // Initialise.js
 import { } from './Simulation.js';
 import { inputState, handleKeyDown, handleKeyUp, handleMouseMove, handleMouseClick, handleMouseWheel } from './Input.js';
-import { createTerrainTile, TileType } from './TerrainTile.js';
+import { createTerrainTile, TileType, UtilityType } from './TerrainTile.js';
 import { GameState } from './GameState.js';
 import { PATHS } from './FilePathRouter.js';
 
@@ -66,7 +66,6 @@ export function initMiniMapCanvas() {
 export function initCanvas() {
     initGameCanvas();
     initMiniMapCanvas();
-
 }
 
 export function getCanvasContext() {
@@ -140,6 +139,7 @@ export async function loadTerrainTiles() {
         terrainTiles[TileType.POWER_PLANT] = createTerrainTile(TileType.POWER_PLANT, powerPlantIsometric, powerPlantCartesian);
         terrainTiles[TileType.POWER_PLANT].tileHeightSpillOver = 65;
         terrainTiles[TileType.POWER_PLANT].miniMapTileColour =  'rgba(136, 152, 160, 0.8)';
+        terrainTiles[TileType.POWER_PLANT].setSupplyDemand(100, 0, 0, -10); // Produces power, requires people
         
         // Factorum
         const factorumIsometric = await loadSprite(isometricBuildingSpritesAddressPrefix + '02_Factorum.png');
@@ -147,8 +147,7 @@ export async function loadTerrainTiles() {
         terrainTiles[TileType.FACTORUM] = createTerrainTile(TileType.FACTORUM, factorumIsometric, factorumCartesian);
         terrainTiles[TileType.FACTORUM].tileHeightSpillOver = 131;
         terrainTiles[TileType.FACTORUM].miniMapTileColour =  'rgba(136, 152, 160, 0.8)';
-        
-  
+        terrainTiles[TileType.FACTORUM].setSupplyDemand(-20, 0, 50, -20); // Requires power and people, produces ore
 
         // Chem Plant
         const chemicalPlantIsometric = await loadSprite(isometricBuildingSpritesAddressPrefix + '03_Chem_Plant.png');
@@ -156,6 +155,7 @@ export async function loadTerrainTiles() {
         terrainTiles[TileType.CHEMICAL_PLANT] = createTerrainTile(TileType.CHEMICAL_PLANT, chemicalPlantIsometric, chemicalPlantCartesian);
         terrainTiles[TileType.CHEMICAL_PLANT].tileHeightSpillOver = 30;
         terrainTiles[TileType.CHEMICAL_PLANT].miniMapTileColour =  'rgba(136, 152, 160, 0.8)';
+        terrainTiles[TileType.CHEMICAL_PLANT].setSupplyDemand(-30, -20, 0, -15); // Requires power, oil, and people
 
         // Train Station
         const trainStationIsometric = await loadSprite(isometricBuildingSpritesAddressPrefix + '04_Train_Station.png');
@@ -163,7 +163,7 @@ export async function loadTerrainTiles() {
         terrainTiles[TileType.TRAIN_STATION] = createTerrainTile(TileType.TRAIN_STATION, trainStationIsometric, trainStationCartesian);
         terrainTiles[TileType.TRAIN_STATION].tileHeightSpillOver = 14;
         terrainTiles[TileType.TRAIN_STATION].miniMapTileColour =  'rgba(136, 152, 160, 0.8)';
-        
+        terrainTiles[TileType.TRAIN_STATION].setSupplyDemand(-10, 0, 0, -5); // Requires power and people
         
         // Promethium Refinery
         const promethiumRefineryIsometric = await loadSprite(isometricBuildingSpritesAddressPrefix + '05_Promethium_Refinery.png');
@@ -171,6 +171,7 @@ export async function loadTerrainTiles() {
         terrainTiles[TileType.PROMETHIUM_REFINERY] = createTerrainTile(TileType.PROMETHIUM_REFINERY, promethiumRefineryIsometric, promethiumRefineryCartesian);
         terrainTiles[TileType.PROMETHIUM_REFINERY].tileHeightSpillOver = 53;
         terrainTiles[TileType.PROMETHIUM_REFINERY].miniMapTileColour =  'rgba(136, 152, 160, 0.8)';
+        terrainTiles[TileType.PROMETHIUM_REFINERY].setSupplyDemand(-40, -30, 0, -25); // Requires power, oil, and people
 
         // Hab Block
         const habBlockIsometric = await loadSprite(isometricBuildingSpritesAddressPrefix + '06_Hab_Block.png');
@@ -178,34 +179,81 @@ export async function loadTerrainTiles() {
         terrainTiles[TileType.HAB_BLOCK] = createTerrainTile(TileType.HAB_BLOCK, habBlockIsometric, habBlockCartesian);
         terrainTiles[TileType.HAB_BLOCK].tileHeightSpillOver = 123;
         terrainTiles[TileType.HAB_BLOCK].miniMapTileColour =  'rgba(136, 152, 160, 0.8)';
-
-        // Hab Block 123px height overspill
-        
-        
+        terrainTiles[TileType.HAB_BLOCK].setSupplyDemand(-5, 0, 0, 50); // Requires power, produces people
 
         /* Roads */
         const isometricRoadSpritesAddressPrefix = 'Assets/Terrain_Tile_Sprites/Isometric/02_Roads/';
         const cartesianRoadSpritesAddressPrefix = PATHS.ASSETS.MENU_ICONS.ROADS;
+        
         // Cross 
         const crossIsometric = await loadSprite(isometricRoadSpritesAddressPrefix + '01_Cross.png');
         const crossCartesian = await loadSprite(cartesianRoadSpritesAddressPrefix + '01_Cross.png');
-       
         terrainTiles[TileType.CROSS] = createTerrainTile(TileType.CROSS, crossIsometric, crossCartesian);
+        terrainTiles[TileType.CROSS].setRoadSockets(true, true, true, true);
  
         // Straight Latitude 
         const straightLatIsometric = await loadSprite(isometricRoadSpritesAddressPrefix + '02_Straight_Latitude.png');
         const straightLatCartesian = await loadSprite(cartesianRoadSpritesAddressPrefix + '02_Straight_Latitude.png');
         terrainTiles[TileType.STRAIGHT_LATITUDE] = createTerrainTile(TileType.STRAIGHT_LATITUDE, straightLatIsometric, straightLatCartesian);
+        terrainTiles[TileType.STRAIGHT_LATITUDE].setRoadSockets(false, true, false, true);
 
         // Straight Longitude 
         const straightLongIsometric = await loadSprite(isometricRoadSpritesAddressPrefix + '03_Straight_Longitude.png');
         const straightLongCartesian = await loadSprite(cartesianRoadSpritesAddressPrefix + '03_Straight_Longitude.png');
         terrainTiles[TileType.STRAIGHT_LONGITUDE] = createTerrainTile(TileType.STRAIGHT_LONGITUDE, straightLongIsometric, straightLongCartesian);
+        terrainTiles[TileType.STRAIGHT_LONGITUDE].setRoadSockets(true, false, true, false);
+
+        // L Curve Top Left (NE)
+        const lCurveTopLeftIsometric = await loadSprite(isometricRoadSpritesAddressPrefix + 'L_Curves/04_NE.png');
+        const lCurveTopLeftCartesian = await loadSprite(cartesianRoadSpritesAddressPrefix + 'L_Curves/04_NE.png');
+        terrainTiles[TileType.L_CURVE_TOP_LEFT] = createTerrainTile(TileType.L_CURVE_TOP_LEFT, lCurveTopLeftIsometric, lCurveTopLeftCartesian);
+        terrainTiles[TileType.L_CURVE_TOP_LEFT].setRoadSockets(true, false, false, true);
+
+        // L Curve Top Right (ES)
+        const lCurveTopRightIsometric = await loadSprite(isometricRoadSpritesAddressPrefix + 'L_Curves/01_ES.png');
+        const lCurveTopRightCartesian = await loadSprite(cartesianRoadSpritesAddressPrefix + 'L_Curves/01_ES.png');
+        terrainTiles[TileType.L_CURVE_TOP_RIGHT] = createTerrainTile(TileType.L_CURVE_TOP_RIGHT, lCurveTopRightIsometric, lCurveTopRightCartesian);
+        terrainTiles[TileType.L_CURVE_TOP_RIGHT].setRoadSockets(true, true, false, false);
+
+        // L Curve Bottom Left (WN)
+        const lCurveBottomLeftIsometric = await loadSprite(isometricRoadSpritesAddressPrefix + 'L_Curves/03_WN.png');
+        const lCurveBottomLeftCartesian = await loadSprite(cartesianRoadSpritesAddressPrefix + 'L_Curves/03_WN.png');
+        terrainTiles[TileType.L_CURVE_BOTTOM_LEFT] = createTerrainTile(TileType.L_CURVE_BOTTOM_LEFT, lCurveBottomLeftIsometric, lCurveBottomLeftCartesian);
+        terrainTiles[TileType.L_CURVE_BOTTOM_LEFT].setRoadSockets(false, false, true, true);
+
+        // L Curve Bottom Right (SW)
+        const lCurveBottomRightIsometric = await loadSprite(isometricRoadSpritesAddressPrefix + 'L_Curves/02_SW.png');
+        const lCurveBottomRightCartesian = await loadSprite(cartesianRoadSpritesAddressPrefix + 'L_Curves/02_SW.png');
+        terrainTiles[TileType.L_CURVE_BOTTOM_RIGHT] = createTerrainTile(TileType.L_CURVE_BOTTOM_RIGHT, lCurveBottomRightIsometric, lCurveBottomRightCartesian);
+        terrainTiles[TileType.L_CURVE_BOTTOM_RIGHT].setRoadSockets(false, true, true, false);
+
+        // T Junction Top (ESW)
+        const tJunctionTopIsometric = await loadSprite(isometricRoadSpritesAddressPrefix + 'T_Junctions/01_ESW.png');
+        const tJunctionTopCartesian = await loadSprite(cartesianRoadSpritesAddressPrefix + 'T_Junctions/01_ESW.png');
+        terrainTiles[TileType.T_JUNCTION_TOP] = createTerrainTile(TileType.T_JUNCTION_TOP, tJunctionTopIsometric, tJunctionTopCartesian);
+        terrainTiles[TileType.T_JUNCTION_TOP].setRoadSockets(true, true, false, true);
+
+        // T Junction Right (SWN)
+        const tJunctionRightIsometric = await loadSprite(isometricRoadSpritesAddressPrefix + 'T_Junctions/02_SWN.png');
+        const tJunctionRightCartesian = await loadSprite(cartesianRoadSpritesAddressPrefix + 'T_Junctions/02_SWN.png');
+        terrainTiles[TileType.T_JUNCTION_RIGHT] = createTerrainTile(TileType.T_JUNCTION_RIGHT, tJunctionRightIsometric, tJunctionRightCartesian);
+        terrainTiles[TileType.T_JUNCTION_RIGHT].setRoadSockets(true, true, true, false);
+
+        // T Junction Bottom (WNE)
+        const tJunctionBottomIsometric = await loadSprite(isometricRoadSpritesAddressPrefix + 'T_Junctions/03_WNE.png');
+        const tJunctionBottomCartesian = await loadSprite(cartesianRoadSpritesAddressPrefix + 'T_Junctions/03_WNE.png');
+        terrainTiles[TileType.T_JUNCTION_BOTTOM] = createTerrainTile(TileType.T_JUNCTION_BOTTOM, tJunctionBottomIsometric, tJunctionBottomCartesian);
+        terrainTiles[TileType.T_JUNCTION_BOTTOM].setRoadSockets(false, true, true, true);
+
+        // T Junction Left (NES)
+        const tJunctionLeftIsometric = await loadSprite(isometricRoadSpritesAddressPrefix + 'T_Junctions/04_NES.png');
+        const tJunctionLeftCartesian = await loadSprite(cartesianRoadSpritesAddressPrefix + 'T_Junctions/04_NES.png');
+        terrainTiles[TileType.T_JUNCTION_LEFT] = createTerrainTile(TileType.T_JUNCTION_LEFT, tJunctionLeftIsometric, tJunctionLeftCartesian);
+        terrainTiles[TileType.T_JUNCTION_LEFT].setRoadSockets(true, false, true, true);
 
         /* Train Tracks */
         const isometricTrainTrackSpritesAddressPrefix = 'Assets/Terrain_Tile_Sprites/Isometric/03_Train_Tracks/';
         const cartesianTrainTrackSpritesAddressPrefix = 'Assets/Terrain_Tile_Sprites/Cartesian/03_Train_Tracks/';
-
 
         /* Power Lines */
         const isometricPowerLineSpritesAddressPrefix = 'Assets/Terrain_Tile_Sprites/Isometric/04_Power_Lines/';
@@ -214,8 +262,6 @@ export async function loadTerrainTiles() {
         /* Pipes */
         const isometricPipeSpritesAddressPrefix = 'Assets/Terrain_Tile_Sprites/Isometric/05_Pipes/';
         const cartesianPipeSpritesAddressPrefix = 'Assets/Terrain_Tile_Sprites/Cartesian/05_Pipes/';
-
-
 
     } catch (error) {
         console.error('Error loading terrain tiles:', error);

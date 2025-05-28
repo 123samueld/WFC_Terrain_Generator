@@ -10,6 +10,7 @@ import { cartesianToIsometric,
 import { drawGridOverlay } from './ProfilingTools.js';
 import { inputState } from './Input.js';
 import { buildMenu } from './BuildMenu.js';
+import { TERRAIN_GENERATOR, OPTIONS } from './FilePathRouter.js';
 
 // Add toggle at the top level
 let drawGrid = true;
@@ -63,6 +64,13 @@ function drawTileHighlights(ctx, gameStateBufferRead) {
             drawTileHighlight(ctx, screenX, screenY, 'rgba(255, 255, 255, 0.4)', 2);
         }
     }
+}
+
+// Draw WFC generation visualization
+function drawWFCVisualization(ctx, gameStateBufferRead) {
+    if (!OPTIONS.options.visualiseTerrainGenerationProcss) return;
+
+
 }
 
 // Occlusion culling based on 6 tiles in each direction from center
@@ -167,7 +175,6 @@ function drawMiniMap(gameStateBufferRead) {
     miniMapCtx.strokeRect(camMiniX, camMiniY, viewportWidth, viewportHeight);
 }
 
-
 function drawMainMap(gameStateBufferRead, visibleTiles) {
     const ctx = getCanvasContext();
     const terrainTiles = getTerrainTiles();
@@ -195,11 +202,13 @@ export function renderingLoop(gameStateBufferRead) {
     const visibleTiles = calculateVisibleTiles(gameStateBufferRead);
 
     // Draw grid overlay
-      drawGridOverlay(gameStateBufferRead);
-
+    drawGridOverlay(gameStateBufferRead);
 
     // Draw only visible tiles
     drawMainMap(gameStateBufferRead, visibleTiles);
+
+    // Draw WFC generation visualization if active
+    drawWFCVisualization(ctx, gameStateBufferRead);
 
     // Highlight selected or hovered tiles
     drawTileHighlights(ctx, gameStateBufferRead);

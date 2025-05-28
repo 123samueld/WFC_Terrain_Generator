@@ -3,6 +3,7 @@ import { hotkeyManager } from './HotkeyManager.js';
 import { menuItems } from './MenuItems.js';
 import { inputState } from './Input.js';
 import { getGameStateBuffers } from './Initialise.js';
+import { wfc } from './TerrainGenerator/WFC.js';
 
 
 
@@ -140,6 +141,22 @@ class BuildMenu {
     
         if (!selectedItem) {
             console.warn(`No menu item at index '${keyPressedID}' in menu '${menuName}'.`);
+            return;
+        }
+
+        // Handle menu actions
+        if (selectedItem.action) {
+            switch (selectedItem.action) {
+                case 'generate':
+                    wfc.generateWFC();
+                    break;
+                case 'weights':
+                    // TODO: Implement weight adjustment
+                    break;
+                case 'undo':
+                    // TODO: Implement undo functionality
+                    break;
+            }
             return;
         }
 

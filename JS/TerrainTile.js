@@ -1,5 +1,13 @@
 // TerrainTile.js
 
+// Utility types for resource management
+export const UtilityType = {
+    POWER: 'power',
+    OIL: 'oil',
+    ORE: 'ore',
+    PEOPLE: 'people'
+};
+
 export class TerrainTile {
     constructor(name, isometricSprite, cartesianSprite, tileHeightSpillOver, area) {
         this.name = name;
@@ -8,6 +16,111 @@ export class TerrainTile {
         this.tileHeightSpillOver = 0; 
         this.area = 1;
         this.miniMapTileColour = 'rgba(0, 255, 0, 0.8)';
+        
+        // Road sockets
+        this.roadSockets = {
+            north: false,
+            east: false,
+            south: false,
+            west: false
+        };
+
+        // Train line sockets
+        this.trackSockets = {
+            north: false,
+            east: false,
+            south: false,
+            west: false
+        };
+
+        // Power line sockets
+        this.powerSockets = {
+            north: false,
+            east: false,
+            south: false,
+            west: false
+        };
+
+        // Pipe line sockets
+        this.pipeSockets = {
+            north: false,
+            east: false,
+            south: false,
+            west: false
+        };
+
+        // Utilities system
+        this.utilities = {
+            delivered: {
+                [UtilityType.POWER]: 0,  // Power required
+                [UtilityType.OIL]: 0,    // Oil required
+                [UtilityType.ORE]: 0,    // Ore required
+                [UtilityType.PEOPLE]: 0  // People required
+            },
+            // Positive value is supply, negative value is demand
+            supply_demand: {
+                [UtilityType.POWER]: 0,  // Power produced
+                [UtilityType.OIL]: 0,    // Oil produced
+                [UtilityType.ORE]: 0,    // Ore produced
+                [UtilityType.PEOPLE]: 0  // People produced
+            }
+        };
+
+        // Arrays for future use
+        this.scenery = [];  // Will store scenery objects
+        this.population = [];  // Will store population objects
+    }
+
+    // Socket management
+    setRoadSockets(north, east, south, west) {
+        this.roadSockets.north = north;
+        this.roadSockets.east = east;
+        this.roadSockets.south = south;
+        this.roadSockets.west = west;
+    }
+
+    setTrackSockets(north, east, south, west) {
+        this.trackSockets.north = north;
+        this.trackSockets.east = east;
+        this.trackSockets.south = south;
+        this.trackSockets.west = west;
+    }
+
+    setPowerSockets(north, east, south, west) {
+        this.powerSockets.north = north;
+        this.powerSockets.east = east;
+        this.powerSockets.south = south;
+        this.powerSockets.west = west;
+    }
+
+    setPipeSockets(north, east, south, west) {
+        this.pipeSockets.north = north;
+        this.pipeSockets.east = east;
+        this.pipeSockets.south = south;
+        this.pipeSockets.west = west;
+    }
+
+    // Utility management
+    setSupplyDemand(power = 0, oil = 0, ore = 0, people = 0) {
+        this.utilities.supply_demand[UtilityType.POWER] = power;
+        this.utilities.supply_demand[UtilityType.OIL] = oil;
+        this.utilities.supply_demand[UtilityType.ORE] = ore;
+        this.utilities.supply_demand[UtilityType.PEOPLE] = people;
+    }
+
+    getSupplyDemand(utilityType) {
+        return this.utilities.supply_demand[utilityType];
+    }
+
+    setDelivered(power = 0, oil = 0, ore = 0, people = 0) {
+        this.utilities.delivered[UtilityType.POWER] = power;
+        this.utilities.delivered[UtilityType.OIL] = oil;
+        this.utilities.delivered[UtilityType.ORE] = ore;
+        this.utilities.delivered[UtilityType.PEOPLE] = people;
+    }
+
+    getDelivered(utilityType) {
+        return this.utilities.delivered[utilityType];
     }
 
     draw(ctx, x, y, projection = 'isometric') {
@@ -40,7 +153,6 @@ export const TileType = {
     TRAIN_STATION: 'Train_Station',
     PROMETHIUM_REFINERY: 'Promethium_Refinery',
     HAB_BLOCK: 'Hab_Block'
-
 };
 
 // Factory function to create terrain tiles

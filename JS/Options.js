@@ -4,5 +4,6 @@ export const options = {
     play: true,
     showGrid: true,
     scrollSpeed: 1,
-    showHotkeyReminders: false
+    showHotkeyReminders: false,
+    visualiseTerrainGenerationProcss: false
 };
