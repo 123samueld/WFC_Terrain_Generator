@@ -25,6 +25,7 @@ export * as RENDERING from './Rendering.js';
 export * as SIMULATION from './Simulation.js';
 export * as TERRAIN_TILE from './TerrainTile.js';
 export * as TERRAIN_GENERATOR from './TerrainGenerator/WFC.js';
+export * as COLLAPSE_RULES from './TerrainGenerator/CollapseRules.js';  
 
 /** Non-JS file paths (HTML, assets, docs, etc.) */
 export const PATHS = {
@@ -52,6 +53,7 @@ export const PATHS = {
         BUILD_OPTIONS: './Assets/Nested_Menu_Icons/01_Main_Menu_Icons/01_Build_Options_Menu_Icons/',
         GENERATE_OPTIONS: './Assets/Nested_Menu_Icons/01_Main_Menu_Icons/02_Generate_Options_Menu_Icons/',
         POPULATION_OPTIONS: './Assets/Nested_Menu_Icons/01_Main_Menu_Icons/03_Population_Options_Menu_Icons/',
+        VISUALISATION_OPTIONS: './Assets/Nested_Menu_Icons/01_Main_Menu_Icons/02_Generate_Options_Menu_Icons/04_Visualise_Process_Menu_Icons/',
         BUILDINGS: './Assets/Nested_Menu_Icons/01_Main_Menu_Icons/01_Build_Options_Menu_Icons/01_Buildings_Menu_Icons/',
         ROADS: './Assets/Nested_Menu_Icons/01_Main_Menu_Icons/01_Build_Options_Menu_Icons/02_Road_Menu_Icons/',
         TRAIN_TRACKS: './Assets/Nested_Menu_Icons/01_Main_Menu_Icons/01_Build_Options_Menu_Icons/03_Train_Tracks_Menu_Icons/',

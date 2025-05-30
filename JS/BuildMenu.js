@@ -146,16 +146,40 @@ class BuildMenu {
 
         // Handle menu actions
         if (selectedItem.action) {
-            switch (selectedItem.action) {
-                case 'generate':
-                    wfc.generateWFC();
-                    break;
-                case 'weights':
-                    // TODO: Implement weight adjustment
-                    break;
-                case 'undo':
-                    // TODO: Implement undo functionality
-                    break;
+            // Handle Generate Options menu actions
+            if (menuName === 'Generate Options') {
+                switch (selectedItem.action) {
+                    case 'generate':
+                        wfc.generateWFC();
+                        break;
+                    case 'weights':
+                        // TODO: Implement weight adjustment
+                        break;
+                    case 'undo':
+                        // TODO: Implement undo functionality
+                        break;
+                }
+            }
+            // Handle Generation Visualisation menu actions
+            else if (menuName === 'Generation Visualisation') {
+                switch (selectedItem.action) {
+                    case 'step_back':
+                        console.log('Step back in visualization');
+                        // TODO: Implement step back
+                        break;
+                    case 'play':
+                        console.log('Play visualization');
+                        // TODO: Implement play
+                        break;
+                    case 'pause':
+                        console.log('Pause visualization');
+                        // TODO: Implement pause
+                        break;
+                    case 'step_forward':
+                        console.log('Step forward in visualization');
+                        // TODO: Implement step forward
+                        break;
+                }
             }
             return;
         }

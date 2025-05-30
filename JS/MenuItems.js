@@ -506,7 +506,10 @@ export const menuItems = {
             },
             {
                 id: 3,
-                placeholder: true
+                image: PATHS.ASSETS.MENU_ICONS.GENERATE_OPTIONS + '04_Visualise_Process.png',
+                text: 'Visualise\nProcess',
+                menu: 'Generate Options',
+                nextMenu: 'Generation Visualisation'
             },
             {
                 id: 4,
@@ -529,6 +532,74 @@ export const menuItems = {
                 image: PATHS.ASSETS.MENU_ICONS.MAIN + '08_Back.png',
                 text: 'Back',
                 menu: 'Generate Options'
+            },
+            {
+                id: 9,
+                placeholder: true
+            },
+            {
+                id: 10,
+                placeholder: true
+            },
+            {
+                id: 11,
+                placeholder: true
+            }
+        ]
+    },
+
+    'Generation Visualisation': {
+        isLeafMenu: false,
+        items: [
+            {
+                id: 0,
+                image: PATHS.ASSETS.MENU_ICONS.VISUALISATION_OPTIONS + '01_Step_Back.png',
+                text: 'Step\nBack',
+                menu: 'Generation Visualisation',
+                action: 'step_back'
+            },
+            {
+                id: 1,
+                image: PATHS.ASSETS.MENU_ICONS.VISUALISATION_OPTIONS + '02_Play.png',
+                text: 'Play',
+                menu: 'Generation Visualisation',
+                action: 'play'
+            },
+            {
+                id: 2,
+                image: PATHS.ASSETS.MENU_ICONS.VISUALISATION_OPTIONS + '03_Pause.png',
+                text: 'Pause',
+                menu: 'Generation Visualisation',
+                action: 'pause'
+            },
+            {
+                id: 3,
+                image: PATHS.ASSETS.MENU_ICONS.VISUALISATION_OPTIONS + '04_Step_Forward.png',
+                text: 'Step\nForward',
+                menu: 'Generation Visualisation',
+                action: 'step_forward'
+            },
+            {
+                id: 4,
+                placeholder: true
+            },
+            {
+                id: 5,
+                placeholder: true
+            },
+            {
+                id: 6,
+                placeholder: true
+            },
+            {
+                id: 7,
+                placeholder: true
+            },
+            {
+                id: 8,
+                image: PATHS.ASSETS.MENU_ICONS.MAIN + '08_Back.png',
+                text: 'Back',
+                menu: 'Generation Visualisation'
             },
             {
                 id: 9,
