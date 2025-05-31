@@ -68,7 +68,7 @@ function drawTileHighlights(ctx, gameStateBufferRead) {
 
 // Draw WFC generation visualization
 function drawWFCVisualization(ctx, gameStateBufferRead) {
-    if (!OPTIONS.options.visualiseTerrainGenerationProcss) return;
+    if (!OPTIONS.visualiseTerrainGenerationProcess) return;
 
 
 }

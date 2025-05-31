@@ -4,7 +4,8 @@ import { menuItems } from './MenuItems.js';
 import { inputState } from './Input.js';
 import { getGameStateBuffers } from './Initialise.js';
 import { wfc } from './TerrainGenerator/WFC.js';
-
+import { GENERATION_PROCESS_VISUALISER, OPTIONS } from './FilePathRouter.js';
+import { options } from './Options.js';
 
 
 class BuildMenu {
@@ -20,9 +21,13 @@ class BuildMenu {
             "Power Lines", 
             "Pipes"
         ];
+        this.isVisualisationMenu = false;  // Add flag for visualisation menu state
 
         // Store menu items
         this.menuItems = menuItems;
+        
+        // Preload menu icons
+        this.preloadMenuIcons();
 
         this.bindings = {
             q: this.actionQ,
@@ -40,6 +45,26 @@ class BuildMenu {
             b: this.actionB
         };
         this.selectedMenuItem = null;
+    }
+
+    preloadMenuIcons() {
+        // Create a Set to store unique image paths
+        const imagePaths = new Set();
+        
+        // Collect all unique image paths from menu items
+        Object.values(this.menuItems).forEach(menu => {
+            menu.items.forEach(item => {
+                if (item.image) {
+                    imagePaths.add(item.image);
+                }
+            });
+        });
+        
+        // Preload each image
+        imagePaths.forEach(path => {
+            const img = new Image();
+            img.src = path;
+        });
     }
 
     getSelectedMenuItem() {
@@ -160,8 +185,8 @@ class BuildMenu {
                         break;
                 }
             }
-            // Handle Generation Visualisation menu actions
-            else if (menuName === 'Generation Visualisation') {
+            // Handle Visualise Generation Process menu actions
+            else if (menuName === 'Visualise Generation Process') {
                 switch (selectedItem.action) {
                     case 'step_back':
                         console.log('Step back in visualization');
@@ -179,6 +204,43 @@ class BuildMenu {
                         console.log('Step forward in visualization');
                         // TODO: Implement step forward
                         break;
+                    case 'play_speed':
+                        const modal = document.getElementById('playSpeedModal');
+                        const closeBtn = modal.querySelector('.modal-close');
+                        const select = document.getElementById('playSpeedSelect');
+                        const setSpeedBtn = document.getElementById('setSpeedBtn');
+                        
+                        // Set initial value
+                        select.value = options.playSpeed;
+                        
+                        // Add change event listener for select
+                        select.onchange = (e) => {
+                            // Just update the select value, don't change options yet
+                            select.value = e.target.value;
+                        };
+                        
+                        // Add click event listener for Set Speed button
+                        setSpeedBtn.onclick = () => {
+                            options.playSpeed = parseInt(select.value);
+                            console.log(`Play speed set to ${options.playSpeed}`);
+                            modal.style.display = 'none';
+                        };
+                        
+                        // Show modal
+                        modal.style.display = 'block';
+                        
+                        // Close button handler
+                        closeBtn.onclick = () => {
+                            modal.style.display = 'none';
+                        };
+                        
+                        // Click outside to close
+                        window.onclick = (event) => {
+                            if (event.target === modal) {
+                                modal.style.display = 'none';
+                            }
+                        };
+                        break;
                 }
             }
             return;
@@ -195,11 +257,12 @@ class BuildMenu {
             console.warn(`No next menu specified for item in menu '${menuName}'.`);
             return;
         }
-    
-        const nextMenuData = this.menuItems[nextMenuName];
-        if (!nextMenuData || !Array.isArray(nextMenuData.items)) {
-            console.warn(`Submenu '${nextMenuName}' not found or malformed.`);
-            return;
+
+        // Set visualization flag when entering visualization menu
+        if (nextMenuName === 'Visualise Generation Process') {
+            options.visualiseTerrainGenerationProcess = true;
+            this.isVisualisationMenu = true;
+            console.log("Visualisation enabled");   
         }
     
         // Navigate to the selected menu
@@ -233,6 +296,13 @@ class BuildMenu {
         const previousMenu = this.menuChain.length > 0
             ? this.menuChain[this.menuChain.length - 1]
             : 'Main';
+
+        // If we're leaving the Visualise Generation Process menu
+        if (this.activeMenu === 'Visualise Generation Process') {
+            options.visualiseTerrainGenerationProcess = false;
+            this.isVisualisationMenu = false;
+            console.log("Visualisation disabled");
+        }
     
         // Update activeMenu and regenerate the menu
         this.activeMenu = previousMenu;

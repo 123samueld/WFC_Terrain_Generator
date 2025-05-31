@@ -73,11 +73,50 @@
           <button id="btnV" class="menu-button" style="background-image: url('./Assets/Nested_Menu_Icons/Main_Menu_Icons/Back.png');"></button>
           <span id="VButtonText">Back</span>
         </div>
+        <div class="menu-grid">
+          <button id="btnQ" class="menu-button"><span id="QButtonText"></span></button>
+          <button id="btnW" class="menu-button"><span id="WButtonText"></span></button>
+          <button id="btnE" class="menu-button"><span id="EButtonText"></span></button>
+          <button id="btnR" class="menu-button"><span id="RButtonText"></span></button>
+          <button id="btnA" class="menu-button"><span id="AButtonText"></span></button>
+          <button id="btnS" class="menu-button"><span id="SButtonText"></span></button>
+          <button id="btnD" class="menu-button"><span id="DButtonText"></span></button>
+          <button id="btnF" class="menu-button"><span id="FButtonText"></span></button>
+          <button id="btnZ" class="menu-button"><span id="ZButtonText"></span></button>
+          <button id="btnX" class="menu-button"><span id="XButtonText"></span></button>
+          <button id="btnC" class="menu-button"><span id="CButtonText"></span></button>
+          <button id="btnV" class="menu-button"><span id="VButtonText"></span></button>
+        </div>
+        <select id="playSpeedSelect" style="display: none;">
+          <option value="1">Speed 1</option>
+          <option value="2">Speed 2</option>
+          <option value="3">Speed 3</option>
+          <option value="4">Speed 4</option>
+          <option value="5">Speed 5</option>
+        </select>
       </div>
       <div class="metal-line" id="bottomLine"></div>
     </div>
   
     <button id="neonButton">Map Tools</button>
+  </div>
+
+  <!-- Play Speed Modal -->
+  <div id="playSpeedModal" class="modal">
+    <div class="modal-content">
+      <h2>Play Speed</h2>
+      <div class="modal-body">
+        <select id="playSpeedSelect">
+          <option value="1">Speed 1</option>
+          <option value="2">Speed 2</option>
+          <option value="3">Speed 3</option>
+          <option value="4">Speed 4</option>
+          <option value="5">Speed 5</option>
+        </select>
+        <button id="setSpeedBtn" class="modal-button">Set Speed</button>
+      </div>
+      <button class="modal-close">Close</button>
+    </div>
   </div>
   
 

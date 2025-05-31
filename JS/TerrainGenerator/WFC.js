@@ -1,5 +1,5 @@
     // WFC.js - Wave Function Collapse algorithm for terrain generation
-    import { INITIALISE, TERRAIN_TILE, COLLAPSE_RULES } from '../FilePathRouter.js';
+    import { INITIALISE, TERRAIN_TILE, COLLAPSE_RULES,GENERATION_PROCESS_VISUALISER } from '../FilePathRouter.js';
 
     class WFC {
         constructor(gridSize = 36) {

@@ -1,9 +1,12 @@
 //Options
 
-export const options = {
+const options = {
     play: true,
     showGrid: true,
     scrollSpeed: 1,
     showHotkeyReminders: false,
-    visualiseTerrainGenerationProcss: false
+    visualiseTerrainGenerationProcess: false,
+    playSpeed: 3  // Default to middle speed
 };
+
+export { options };
