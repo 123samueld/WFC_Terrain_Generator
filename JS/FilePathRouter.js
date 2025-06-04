@@ -24,9 +24,11 @@ export * as PROFILING_TOOLS from './ProfilingTools.js';
 export * as RENDERING from './Rendering.js';
 export * as SIMULATION from './Simulation.js';
 export * as TERRAIN_TILE from './TerrainTile.js';
-export * as TERRAIN_GENERATOR from './TerrainGenerator/WFC.js';
+export { wfc as TERRAIN_GENERATOR } from './TerrainGenerator/WFC.js';
 export * as COLLAPSE_RULES from './TerrainGenerator/CollapseRules.js';  
 export * as GENERATION_PROCESS_VISUALISER from './TerrainGenerator/GenerationProcessVisualiser.js';
+export * as TERRAIN_STATE_DISPLAY from './TerrainGenerator/TerrainStateDisplay.js';
+
 /** Non-JS file paths (HTML, assets, docs, etc.) */
 export const PATHS = {
     HTML: {

@@ -4,8 +4,9 @@ import { menuItems } from './MenuItems.js';
 import { inputState } from './Input.js';
 import { getGameStateBuffers } from './Initialise.js';
 import { wfc } from './TerrainGenerator/WFC.js';
-import { GENERATION_PROCESS_VISUALISER, OPTIONS } from './FilePathRouter.js';
+import { GENERATION_PROCESS_VISUALISER } from './FilePathRouter.js';
 import { options } from './Options.js';
+import { generationProcessVisualiser } from './TerrainGenerator/GenerationProcessVisualiser.js';
 
 
 class BuildMenu {
@@ -190,19 +191,19 @@ class BuildMenu {
                 switch (selectedItem.action) {
                     case 'step_back':
                         console.log('Step back in visualization');
-                        // TODO: Implement step back
+                        generationProcessVisualiser.stepBack();
                         break;
                     case 'play':
                         console.log('Play visualization');
-                        // TODO: Implement play
+                        generationProcessVisualiser.play();
                         break;
                     case 'pause':
                         console.log('Pause visualization');
-                        // TODO: Implement pause
+                        generationProcessVisualiser.pause();
                         break;
                     case 'step_forward':
                         console.log('Step forward in visualization');
-                        // TODO: Implement step forward
+                        generationProcessVisualiser.stepForward();
                         break;
                     case 'play_speed':
                         const modal = document.getElementById('playSpeedModal');
@@ -222,9 +223,24 @@ class BuildMenu {
                         // Add click event listener for Set Speed button
                         setSpeedBtn.onclick = () => {
                             options.playSpeed = parseInt(select.value);
+                            generationProcessVisualiser.setPlaySpeed(options.playSpeed * 100); // Convert to milliseconds
                             console.log(`Play speed set to ${options.playSpeed}`);
                             modal.style.display = 'none';
+                            // Remove escape key listener when modal closes
+                            document.removeEventListener('keydown', handleEscape);
                         };
+                        
+                        // Function to handle escape key
+                        const handleEscape = (event) => {
+                            if (event.key === 'Escape') {
+                                modal.style.display = 'none';
+                                // Remove the event listener when modal closes
+                                document.removeEventListener('keydown', handleEscape);
+                            }
+                        };
+                        
+                        // Add escape key listener when modal opens
+                        document.addEventListener('keydown', handleEscape);
                         
                         // Show modal
                         modal.style.display = 'block';
@@ -232,12 +248,16 @@ class BuildMenu {
                         // Close button handler
                         closeBtn.onclick = () => {
                             modal.style.display = 'none';
+                            // Remove escape key listener when modal closes
+                            document.removeEventListener('keydown', handleEscape);
                         };
                         
                         // Click outside to close
                         window.onclick = (event) => {
                             if (event.target === modal) {
                                 modal.style.display = 'none';
+                                // Remove escape key listener when modal closes
+                                document.removeEventListener('keydown', handleEscape);
                             }
                         };
                         break;
@@ -262,7 +282,6 @@ class BuildMenu {
         if (nextMenuName === 'Visualise Generation Process') {
             options.visualiseTerrainGenerationProcess = true;
             this.isVisualisationMenu = true;
-            console.log("Visualisation enabled");   
         }
     
         // Navigate to the selected menu

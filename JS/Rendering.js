@@ -10,7 +10,8 @@ import { cartesianToIsometric,
 import { drawGridOverlay } from './ProfilingTools.js';
 import { inputState } from './Input.js';
 import { buildMenu } from './BuildMenu.js';
-import { TERRAIN_GENERATOR, OPTIONS } from './FilePathRouter.js';
+import { TERRAIN_GENERATOR, GENERATION_PROCESS_VISUALISER, TERRAIN_STATE_DISPLAY } from './FilePathRouter.js';
+import { options } from './Options.js';
 
 // Add toggle at the top level
 let drawGrid = true;
@@ -68,9 +69,9 @@ function drawTileHighlights(ctx, gameStateBufferRead) {
 
 // Draw WFC generation visualization
 function drawWFCVisualization(ctx, gameStateBufferRead) {
-    if (!OPTIONS.visualiseTerrainGenerationProcess) return;
-
-
+    if (!options.visualiseTerrainGenerationProcess) return;
+    GENERATION_PROCESS_VISUALISER.generationProcessVisualiser.draw(ctx, gameStateBufferRead.camera);
+    TERRAIN_STATE_DISPLAY.terrainStateDisplay.update();
 }
 
 // Occlusion culling based on 6 tiles in each direction from center

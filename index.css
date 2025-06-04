@@ -412,5 +412,146 @@ canvas {
     background-color: rgba(255, 255, 255, 0.1);
 }
 
+#terrainGeneratorStateDisplay {
+    position: absolute;
+    top: 80px;  /* Same as canvas's bottom position */
+    right: 45px;
+    width: 250px;
+    z-index: 6;
+    transition: height 0.3s ease;
+    overflow: hidden;
+}
+
+#generatorDisplayTitle {
+    position: relative;
+    width: 100%;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-image: url('./Assets/scratched_metal.jpg');
+    background-size: cover;
+    background-position: center;
+    border: 4px solid;
+    border-image: linear-gradient(
+        135deg,
+        #ccc,
+        #999,
+        #eee,
+        #666,
+        #ccc
+    ) 1;
+    margin-bottom: 0;
+    z-index: 3;
+}
+
+#generatorDisplayTitle::before {
+    content: "Terrain State";
+    position: absolute;
+    width: 100%;
+    font-size: 1.5em;
+    letter-spacing: 2px;
+    color: #000;
+    background-position: center;
+    text-align: center;
+    text-shadow:
+        0 0 3px rgba(255, 255, 255, 0.5),
+        1px 1px 4px rgba(255, 255, 255, 0.4),
+       -1px 1px 4px rgba(255, 255, 255, 0.4),
+        1px -1px 4px rgba(255, 255, 255, 0.4),
+       -1px -1px 4px rgba(255, 255, 255, 0.4),
+        2px 2px 6px rgba(255, 255, 255, 0.3),
+       -2px 2px 6px rgba(255, 255, 255, 0.3),
+        2px -2px 6px rgba(255, 255, 255, 0.3),
+       -2px -2px 6px rgba(255, 255, 255, 0.3);
+    z-index: 4;
+}
+
+#generatorDisplayTitle::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 120%;
+    height: 60%;
+    border-radius: 50%;
+    background: radial-gradient(
+        circle,
+        rgba(255, 140, 0, 0.8) 0%,
+        rgba(255, 140, 0, 0.5) 40%,
+        rgba(255, 140, 0, 0.1) 85%
+    );
+    animation: orangePulse 3s infinite ease-in-out;
+    z-index: 2;
+    pointer-events: none;
+    filter: blur(6px);
+}
+
+#generatorDisplayTopLine {
+    position: relative;
+    transition: transform 0.3s ease;
+}
+
+#generatorDisplayBottomLine {
+    position: relative;
+}
+
+#generatorDisplayMenuContent {
+    height: 0;
+    background-color: rgba(255, 255, 255, 0.5);
+    opacity: 0;
+    transition: opacity 0.3s ease, height 0.3s ease;
+    overflow: hidden;
+    padding: 0;
+}
+
+/* Show the menu content when active */
+#terrainGeneratorStateDisplay.active #generatorDisplayMenuContent {
+    opacity: 1;
+    height: 300px;
+    padding: 10px;
+}
+
+#generatorDisplayMenuHeader {
+    text-align: center;
+    margin: 0 0 10px 0;
+    color: #000;
+    font-size: 20px;
+}
+
+.state-info {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-height: 200px;  /* Ensure there's always space for the content */
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 8px;
+    background-color: rgba(255, 255, 255, 0.3);
+    border-radius: 3px;
+    min-height: 24px;  /* Ensure each row has a minimum height */
+}
+
+.info-label {
+    font-weight: bold;
+    color: #000;
+}
+
+#currentStepValue,
+#collapsedTilesValue,
+#superpositionTilesValue,
+#setTilesValue,
+#historyIndexValue,
+#historyLengthValue {
+    color: #000;
+    font-family: monospace;
+    font-size: 14px;
+}
+
 
 

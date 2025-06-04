@@ -10,13 +10,51 @@
   <div id="title-wrapper">
     <img id="title-bg" src="./Assets/title_plaque.png" alt="Title Plaque Background" />
     <div id="title-glow"></div>
-    <h1 id="title">WFC Terrain Generator</h1>
-    <h1 id="title-outline">WFC Terrain Generator</h1>
+    <h1 id="title">Ultimate WFC Generator</h1>
+    <h1 id="title-outline">Ultimate WFC Generator</h1>
   </div>
 
   <!-- Canvas element where the game will be drawn -->
   <canvas id="gameCanvas"></canvas>
   <canvas id="miniMapCanvas"></canvas>
+
+  <!-- Terrain Generator State Information Display -->
+  <div id="terrainGeneratorStateDisplay">
+    <div id="generatorDisplayTitle">Terrain State</div>
+    <div class="metal-line" id="generatorDisplayTopLine"></div>
+    <div class="menu-content" id="generatorDisplayMenuContent">
+      <div class="header-row">
+        <h2 id="generatorDisplayMenuHeader">Terrain State Display</h2>
+      </div>
+      <div class="state-info">
+        <div class="info-row">
+          <span class="info-label">Current Step:</span>
+          <span id="currentStepValue">0</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Collapsed Tiles:</span>
+          <span id="collapsedTilesValue">0</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Superposition Tiles:</span>
+          <span id="superpositionTilesValue">0</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Set Tiles:</span>
+          <span id="setTilesValue">0</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">History Index:</span>
+          <span id="historyIndexValue">0</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">History Length:</span>
+          <span id="historyLengthValue">0</span>
+        </div>
+      </div>
+    </div>
+    <div class="metal-line" id="generatorDisplayBottomLine"></div>
+  </div>
 
   <div id="nestedMenuComponent">
     <div id="buildMenu">
