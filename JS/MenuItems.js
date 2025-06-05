@@ -155,31 +155,33 @@ export const menuItems = {
         items: [
             {
                 id: 0,
-                image: PATHS.ASSETS.MENU_ICONS.ROADS + 'L_Curves/01_ES.png',
-                text: 'L_ES',
+                image: PATHS.ASSETS.MENU_ICONS.ROADS + '01_Cross.png',
+                text: 'Cross',
                 menu: 'Roads'
             },
             {
                 id: 1,
-                image: PATHS.ASSETS.MENU_ICONS.ROADS + 'L_Curves/02_SW.png',
-                text: 'L_SW',
+                image: PATHS.ASSETS.MENU_ICONS.ROADS + '02_Straight.png',
+                text: 'Straight',
                 menu: 'Roads'
             },
             {
                 id: 2,
-                image: PATHS.ASSETS.MENU_ICONS.ROADS + 'L_Curves/03_WN.png',
-                text: 'L_WN',
+                image: PATHS.ASSETS.MENU_ICONS.ROADS + '03_T.png',
+                text: 'T',
                 menu: 'Roads'
             },
             {
                 id: 3,
-                image: PATHS.ASSETS.MENU_ICONS.ROADS + 'L_Curves/04_NE.png',
-                text: 'L_NE',
+                image: PATHS.ASSETS.MENU_ICONS.ROADS + '04_L.png',
+                text: 'L',
                 menu: 'Roads'
             },
             {
                 id: 4,
-                placeholder: true
+                image: PATHS.ASSETS.MENU_ICONS.ROADS + '05_Diagonal.png',
+                text: 'Diagonal',
+                menu: 'Roads'
             },
             {
                 id: 5,
@@ -293,27 +295,19 @@ export const menuItems = {
         items: [
             {
                 id: 0,
-                image: './Assets/Nested_Menu_Icons/Train_Menu_Icons/Straight.png',
-                text: 'Straight',
-                menu: 'Train_Tracks'
+                placeholder: true
             },
             {
                 id: 1,
-                image: './Assets/Nested_Menu_Icons/Train_Menu_Icons/Curve.png',
-                text: 'Curve',
-                menu: 'Train_Tracks'
+                placeholder: true
             },
             {
                 id: 2,
-                image: './Assets/Nested_Menu_Icons/Train_Menu_Icons/Station.png',
-                text: 'Station',
-                menu: 'Train_Tracks'
+                placeholder: true
             },
             {
                 id: 3,
-                image: './Assets/Nested_Menu_Icons/Train_Menu_Icons/Switch.png',
-                text: 'Switch',
-                menu: 'Train_Tracks'
+                placeholder: true
             },
             {
                 id: 4,
@@ -333,7 +327,7 @@ export const menuItems = {
             },
             {
                 id: 8,
-                image: MENU_ICON_PATHS.MAIN + '08_Back.png',
+                image: PATHS.ASSETS.MENU_ICONS.MAIN + '08_Back.png',
                 text: 'Back',
                 menu: 'Train_Tracks'
             },
@@ -357,27 +351,19 @@ export const menuItems = {
         items: [
             {
                 id: 0,
-                image: './Assets/Nested_Menu_Icons/Nested_Menu_Icons/Template.png',
-                text: 'Straight',
-                menu: 'Power_Lines'
+                placeholder: true
             },
             {
                 id: 1,
-                image: './Assets/Nested_Menu_Icons/Template.png',
-                text: 'Curve',
-                menu: 'Power_Lines'
+                placeholder: true
             },
             {
                 id: 2,
-                image: './Assets/Nested_Menu_Icons/Template.png',
-                text: 'Substation',
-                menu: 'Power_Lines'
+                placeholder: true
             },
             {
                 id: 3,
-                image: './Assets/Nested_Menu_Icons/Template.png',
-                text: 'Transformer',
-                menu: 'Power_Lines'
+                placeholder: true
             },
             {
                 id: 4,
@@ -397,7 +383,7 @@ export const menuItems = {
             },
             {
                 id: 8,
-                image: MENU_ICON_PATHS.MAIN + '08_Back.png',
+                image: PATHS.ASSETS.MENU_ICONS.MAIN + '08_Back.png',
                 text: 'Back',
                 menu: 'Power_Lines'
             },
@@ -421,27 +407,19 @@ export const menuItems = {
         items: [
             {
                 id: 0,
-                image: './Assets/Nested_Menu_Icons/Nested_Menu_Icons/Template.png',
-                text: 'Straight',
-                menu: 'Pipes'
+                placeholder: true
             },
             {
                 id: 1,
-                image: './Assets/Nested_Menu_Icons/Nested_Menu_Icons/Template.png',
-                text: 'Curve',
-                menu: 'Pipes'
+                placeholder: true
             },
             {
                 id: 2,
-                image: './Assets/Nested_Menu_Icons/Nested_Menu_Icons/Template.png',
-                text: 'Valve',
-                menu: 'Pipes'
+                placeholder: true
             },
             {
                 id: 3,
-                image: './Assets/Nested_Menu_Icons/Nested_Menu_Icons/Template.png',
-                text: 'Pump',
-                menu: 'Pipes'
+                placeholder: true
             },
             {
                 id: 4,
@@ -461,7 +439,7 @@ export const menuItems = {
             },
             {
                 id: 8,
-                image: MENU_ICON_PATHS.MAIN + '08_Back.png',
+                image: PATHS.ASSETS.MENU_ICONS.MAIN + '08_Back.png',
                 text: 'Back',
                 menu: 'Pipes'
             },

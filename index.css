@@ -414,9 +414,9 @@ canvas {
 
 #terrainGeneratorStateDisplay {
     position: absolute;
-    top: 80px;  /* Same as canvas's bottom position */
+    top: 80px;
     right: 45px;
-    width: 250px;
+    width: 290px;  /* Increased from 250px to 290px */
     z-index: 6;
     transition: height 0.3s ease;
     overflow: hidden;
@@ -504,13 +504,16 @@ canvas {
     transition: opacity 0.3s ease, height 0.3s ease;
     overflow: hidden;
     padding: 0;
+    display: flex;
+    flex-direction: column;
 }
 
 /* Show the menu content when active */
 #terrainGeneratorStateDisplay.active #generatorDisplayMenuContent {
     opacity: 1;
-    height: 300px;
+    height: 650px;
     padding: 10px;
+    overflow-y: auto;
 }
 
 #generatorDisplayMenuHeader {
@@ -524,7 +527,8 @@ canvas {
     display: flex;
     flex-direction: column;
     gap: 8px;
-    min-height: 200px;  /* Ensure there's always space for the content */
+    margin-bottom: 20px;
+    width: 100%;  /* Ensure full width */
 }
 
 .info-row {
@@ -551,6 +555,54 @@ canvas {
     color: #000;
     font-family: monospace;
     font-size: 14px;
+}
+
+.neighbors-section {
+    margin-top: 20px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(255, 255, 255, 0.3);
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;  /* Center the content horizontally */
+}
+
+.neighbors-title {
+    color: #000;
+    font-size: 16px;
+    margin: 0 0 10px 0;
+    text-align: center;
+    width: 100%;
+}
+
+.neighbors-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(3, 60px);
+    gap: 8px;
+    background-color: rgba(255, 255, 255, 0.2);
+    padding: 8px;
+    border-radius: 4px;
+    margin-top: 10px;
+    width: calc(100% - 16px);  /* Account for padding */
+}
+
+.neighbor-cell {
+    background-color: rgba(255, 255, 255, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 3px;
+    padding: 4px;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #000;
+    font-size: 14px;
+    aspect-ratio: 1;  /* Ensure cells are square */
+}
+
+.neighbor-cell:hover {
+    background-color: rgba(255, 255, 255, 0.4);
 }
 
 

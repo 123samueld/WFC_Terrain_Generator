@@ -27,10 +27,6 @@
 
         // Save current state to history
         saveState() {
-            console.log(`\n=== Saving State ===`);
-            console.log(`Current history index: ${this.currentHistoryIndex}`);
-            console.log(`History length: ${this.stateHistory.length}`);
-            
             // Create a deep copy of the current state
             const state = {
                 grid: [...this.grid],
@@ -53,19 +49,12 @@
             // Add new state to history
             this.stateHistory.push(state);
             this.currentHistoryIndex = this.stateHistory.length - 1;
-            
-            console.log(`New history length: ${this.stateHistory.length}`);
-            console.log(`New history index: ${this.currentHistoryIndex}`);
-            console.log(`Collapsed tiles: ${this.collapsedTiles.size}`);
-            console.log(`Superposition tiles: ${this.superpositionTiles.size}`);
+
         }
 
         // Restore state from history
         restoreState(index) {
-            console.log(`\n=== Restoring State ===`);
-            console.log(`Target history index: ${index}`);
-            console.log(`Current history index: ${this.currentHistoryIndex}`);
-            console.log(`History length: ${this.stateHistory.length}`);
+
             
             if (index < 0 || index >= this.stateHistory.length) {
                 console.log(`Invalid history index`);
@@ -86,11 +75,6 @@
             this.lastUpdatedCell = state.lastUpdatedCell;
 
             this.currentHistoryIndex = index;
-            
-            console.log(`State restored successfully`);
-            console.log(`New history index: ${this.currentHistoryIndex}`);
-            console.log(`Collapsed tiles: ${this.collapsedTiles.size}`);
-            console.log(`Superposition tiles: ${this.superpositionTiles.size}`);
             return true;
         }
 
@@ -255,8 +239,8 @@
                     } else if (entropy === lowestEntropy) {
                         // Found another cell with the same lowest entropy
                         lowestEntropyCells.push(index);
-                    }
                 }
+            }
             }
 
             // If no valid cells found, return null

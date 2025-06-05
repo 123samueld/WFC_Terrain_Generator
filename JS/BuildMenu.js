@@ -190,19 +190,15 @@ class BuildMenu {
             else if (menuName === 'Visualise Generation Process') {
                 switch (selectedItem.action) {
                     case 'step_back':
-                        console.log('Step back in visualization');
                         generationProcessVisualiser.stepBack();
                         break;
                     case 'play':
-                        console.log('Play visualization');
                         generationProcessVisualiser.play();
                         break;
                     case 'pause':
-                        console.log('Pause visualization');
                         generationProcessVisualiser.pause();
                         break;
                     case 'step_forward':
-                        console.log('Step forward in visualization');
                         generationProcessVisualiser.stepForward();
                         break;
                     case 'play_speed':

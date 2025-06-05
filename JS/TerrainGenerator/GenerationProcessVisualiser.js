@@ -28,6 +28,7 @@ class GenerationProcessVisualiser {
             type: this.StepType.FINDING_CELL,
             currentCell: null,
             currentNeighbor: null,
+            potentialNeighborRoadTypes: [],  // Array of potential neighbor cells
             stepNumber: 0
         };
 
@@ -376,7 +377,7 @@ class GenerationProcessVisualiser {
         if (this.isPlaying) return false;
         
         this.shouldDrawHighlights = true;
-        
+    
         // If this is the first step, run initialization
         if (this.currentStep === 0) {
             return this.firstStep();

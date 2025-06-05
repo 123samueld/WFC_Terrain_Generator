@@ -18,40 +18,34 @@
   <canvas id="gameCanvas"></canvas>
   <canvas id="miniMapCanvas"></canvas>
 
-  <!-- Terrain Generator State Information Display -->
+  <!-- Terrain Generator State Display -->
   <div id="terrainGeneratorStateDisplay">
     <div id="generatorDisplayTitle">Terrain State</div>
     <div class="metal-line" id="generatorDisplayTopLine"></div>
     <div class="menu-content" id="generatorDisplayMenuContent">
-      <div class="header-row">
-        <h2 id="generatorDisplayMenuHeader">Terrain State Display</h2>
-      </div>
-      <div class="state-info">
-        <div class="info-row">
-          <span class="info-label">Current Step:</span>
-          <span id="currentStepValue">0</span>
+        <div class="header-row">
+            <h2 id="generatorDisplayMenuHeader">Terrain State Display</h2>
         </div>
-        <div class="info-row">
-          <span class="info-label">Collapsed Tiles:</span>
-          <span id="collapsedTilesValue">0</span>
+        <div id="stateInfo" class="state-info">
+            <!-- Items will be dynamically inserted here -->
         </div>
-        <div class="info-row">
-          <span class="info-label">Superposition Tiles:</span>
-          <span id="superpositionTilesValue">0</span>
+        <div class="neighbors-section">
+            <h4 class="neighbors-title">Potential Neighbors</h4>
+            <div class="neighbors-grid">
+                <div class="neighbor-cell" id="neighbor0"></div>
+                <div class="neighbor-cell" id="neighbor1"></div>
+                <div class="neighbor-cell" id="neighbor2"></div>
+                <div class="neighbor-cell" id="neighbor3"></div>
+                <div class="neighbor-cell" id="neighbor4"></div>
+                <div class="neighbor-cell" id="neighbor5"></div>
+                <div class="neighbor-cell" id="neighbor6"></div>
+                <div class="neighbor-cell" id="neighbor7"></div>
+                <div class="neighbor-cell" id="neighbor8"></div>
+                <div class="neighbor-cell" id="neighbor9"></div>
+                <div class="neighbor-cell" id="neighbor10"></div>
+                <div class="neighbor-cell" id="neighbor11"></div>
+            </div>
         </div>
-        <div class="info-row">
-          <span class="info-label">Set Tiles:</span>
-          <span id="setTilesValue">0</span>
-        </div>
-        <div class="info-row">
-          <span class="info-label">History Index:</span>
-          <span id="historyIndexValue">0</span>
-        </div>
-        <div class="info-row">
-          <span class="info-label">History Length:</span>
-          <span id="historyLengthValue">0</span>
-        </div>
-      </div>
     </div>
     <div class="metal-line" id="generatorDisplayBottomLine"></div>
   </div>
@@ -64,51 +58,51 @@
           <h2 id="menuHeader"></h2>
         </div>
         <div class="button-container QContainer" id="QButtonContainer">
-          <button id="btnQ" class="menu-button" style="background-image: url('./Assets/Nested_Menu_Icons/Main_Menu_Icons/Back.png');"></button>
+          <button id="btnQ" class="menu-button" style="background-image: url('./Assets/Nested_Menu_Icons/01_Main_Menu_Icons/08_Back.png');"></button>
           <span id="QButtonText">Back</span>
         </div>
         <div class="button-container WContainer" id="WButtonContainer">
-          <button id="btnW" class="menu-button" style="background-image: url('./Assets/Nested_Menu_Icons/Main_Menu_Icons/Back.png');"></button>
+          <button id="btnW" class="menu-button" style="background-image: url('./Assets/Nested_Menu_Icons/01_Main_Menu_Icons/08_Back.png');"></button>
           <span id="WButtonText">Back</span>
         </div>
         <div class="button-container EContainer" id="EButtonContainer">
-          <button id="btnE" class="menu-button" style="background-image: url('./Assets/Nested_Menu_Icons/Main_Menu_Icons/Back.png');"></button>
+          <button id="btnE" class="menu-button" style="background-image: url('./Assets/Nested_Menu_Icons/01_Main_Menu_Icons/08_Back.png');"></button>
           <span id="EButtonText">Back</span>
         </div>
         <div class="button-container RContainer" id="RButtonContainer">
-          <button id="btnR" class="menu-button" style="background-image: url('./Assets/Nested_Menu_Icons/Main_Menu_Icons/Back.png');"></button>
+          <button id="btnR" class="menu-button" style="background-image: url('./Assets/Nested_Menu_Icons/01_Main_Menu_Icons/08_Back.png');"></button>
           <span id="RButtonText">Back</span>
         </div>
         <div class="button-container AContainer" id="AButtonContainer">
-          <button id="btnA" class="menu-button" style="background-image: url('./Assets/Nested_Menu_Icons/Main_Menu_Icons/Back.png');"></button>
+          <button id="btnA" class="menu-button" style="background-image: url('./Assets/Nested_Menu_Icons/01_Main_Menu_Icons/08_Back.png');"></button>
           <span id="AButtonText">Back</span>
         </div>
         <div class="button-container SContainer" id="SButtonContainer">
-          <button id="btnS" class="menu-button" style="background-image: url('./Assets/Nested_Menu_Icons/Main_Menu_Icons/Back.png');"></button>
+          <button id="btnS" class="menu-button" style="background-image: url('./Assets/Nested_Menu_Icons/01_Main_Menu_Icons/08_Back.png');"></button>
           <span id="SButtonText">Back</span>
         </div>
         <div class="button-container DContainer" id="DButtonContainer">
-          <button id="btnD" class="menu-button" style="background-image: url('./Assets/Nested_Menu_Icons/Main_Menu_Icons/Back.png');"></button>
+          <button id="btnD" class="menu-button" style="background-image: url('./Assets/Nested_Menu_Icons/01_Main_Menu_Icons/08_Back.png');"></button>
           <span id="DButtonText">Back</span>
         </div>
         <div class="button-container FContainer" id="FButtonContainer">
-          <button id="btnF" class="menu-button" style="background-image: url('./Assets/Nested_Menu_Icons/Main_Menu_Icons/Back.png');"></button>
+          <button id="btnF" class="menu-button" style="background-image: url('./Assets/Nested_Menu_Icons/01_Main_Menu_Icons/08_Back.png');"></button>
           <span id="FButtonText">Back</span>
         </div>
         <div class="button-container ZContainer" id="ZButtonContainer">
-          <button id="btnZ" class="menu-button" style="background-image: url('./Assets/Nested_Menu_Icons/Main_Menu_Icons/Back.png');"></button>
+          <button id="btnZ" class="menu-button" style="background-image: url('./Assets/Nested_Menu_Icons/01_Main_Menu_Icons/08_Back.png');"></button>
           <span id="ZButtonText">Back</span>
         </div>
         <div class="button-container XContainer" id="XButtonContainer">
-          <button id="btnX" class="menu-button" style="background-image: url('./Assets/Nested_Menu_Icons/Main_Menu_Icons/Back.png');"></button>
+          <button id="btnX" class="menu-button" style="background-image: url('./Assets/Nested_Menu_Icons/01_Main_Menu_Icons/08_Back.png');"></button>
           <span id="XButtonText">Back</span>
         </div>
         <div class="button-container CContainer" id="CButtonContainer">
-          <button id="btnC" class="menu-button" style="background-image: url('./Assets/Nested_Menu_Icons/Main_Menu_Icons/Back.png');"></button>
+          <button id="btnC" class="menu-button" style="background-image: url('./Assets/Nested_Menu_Icons/01_Main_Menu_Icons/08_Back.png');"></button>
           <span id="CButtonText">Back</span>
         </div>
         <div class="button-container VContainer" id="VButtonContainer">
-          <button id="btnV" class="menu-button" style="background-image: url('./Assets/Nested_Menu_Icons/Main_Menu_Icons/Back.png');"></button>
+          <button id="btnV" class="menu-button" style="background-image: url('./Assets/Nested_Menu_Icons/01_Main_Menu_Icons/08_Back.png');"></button>
           <span id="VButtonText">Back</span>
         </div>
         <div class="menu-grid">
