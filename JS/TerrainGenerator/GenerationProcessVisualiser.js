@@ -1,4 +1,4 @@
-import { MATH, TERRAIN_GENERATOR, INITIALISE } from '../FilePathRouter.js';
+import { MATH, TERRAIN_GENERATOR, INITIALISE, COLLAPSE_RULES, TERRAIN_TILE } from '../FilePathRouter.js';
 import { options } from '../Options.js';
 
 class GenerationProcessVisualiser {
@@ -28,7 +28,6 @@ class GenerationProcessVisualiser {
             type: this.StepType.FINDING_CELL,
             currentCell: null,
             currentNeighbor: null,
-            potentialNeighborRoadTypes: [],  // Array of potential neighbor cells
             stepNumber: 0
         };
 
@@ -229,7 +228,7 @@ class GenerationProcessVisualiser {
     }
 
     // Step-by-step generation for visualization
-    generateStep() {
+    generateStepVisualisation() {
         this.generationStepCount++;
         this.stepState.stepNumber = this.generationStepCount;
 
@@ -258,14 +257,6 @@ class GenerationProcessVisualiser {
             // Center camera on the new cell
             this.centerCameraOnCell(x, y);
             
-            // Update step state
-            this.stepState = {
-                type: this.StepType.FINDING_CELL,
-                currentCell: { x, y },
-                currentNeighbor: null,
-                stepNumber: this.generationStepCount
-            };
-
             // Get and store neighbors for processing
             this.neighborIndices = TERRAIN_GENERATOR.getNeighbourCells(cellIndex);
             
@@ -278,6 +269,20 @@ class GenerationProcessVisualiser {
                     this.neighbourCells.add({ x: nx, y: ny });
                 }
             });
+
+            // Analyze socket configuration for visualization
+            const socketConfig = COLLAPSE_RULES.analyseCellSockets(cellIndex, TERRAIN_TILE.terrainTiles, TERRAIN_GENERATOR.grid, TERRAIN_GENERATOR.gridSize);
+            if (socketConfig) {
+                console.log("Socket configuration:", socketConfig);
+            }
+
+            // Update step state
+            this.stepState = {
+                type: this.StepType.FINDING_CELL,
+                currentCell: { x, y },
+                currentNeighbor: null,
+                stepNumber: this.generationStepCount
+            };
             
             // Start with the first neighbor
             if (this.neighbourCells.size > 0) {
@@ -305,7 +310,6 @@ class GenerationProcessVisualiser {
             
             // Process current neighbor
             const neighborIndex = this.currentNeighbor.y * 36 + this.currentNeighbor.x;
-            TERRAIN_GENERATOR.propagateConstraints(neighborIndex);
             
             // Move to next neighbor
             const neighbors = Array.from(this.neighbourCells);
@@ -323,9 +327,9 @@ class GenerationProcessVisualiser {
                     stepNumber: this.generationStepCount
                 };
             } else {
-                // All neighbors processed, collapse the current cell
+                // All neighbors processed, process the complete step
                 const cellIndex = this.currentCell.y * 36 + this.currentCell.x;
-                TERRAIN_GENERATOR.collapseCell(cellIndex);
+                TERRAIN_GENERATOR.processStep(cellIndex);
                 
                 // Clear everything for next step
                 this.currentCell = null;
@@ -359,7 +363,7 @@ class GenerationProcessVisualiser {
         
         // Start the play interval
         this.playInterval = setInterval(() => {
-            if (!this.generateStep()) {
+            if (!this.generateStepVisualisation()) {
                 this.pause();
             }
         }, this.playSpeed);
@@ -383,7 +387,7 @@ class GenerationProcessVisualiser {
             return this.firstStep();
         }
         
-        return this.generateStep();
+        return this.generateStepVisualisation();
     }
 
     stepBack() {

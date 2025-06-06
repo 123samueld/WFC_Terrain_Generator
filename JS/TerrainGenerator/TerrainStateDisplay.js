@@ -37,47 +37,79 @@ class TerrainStateDisplay {
     }
 
     updatePotentialNeighborsGrid(wfc) {
-        // Check if neighbors have changed
-        const currentNeighbors = wfc.neighbourCells;
-        if (this.lastHighlightedNeighbors.size === currentNeighbors.size && 
-            [...this.lastHighlightedNeighbors].every(n => currentNeighbors.has(n))) {
-            return; // No change in neighbors
-        }
-
-        console.log('Updating Potential Neighbors grid');
-        this.lastHighlightedNeighbors = new Set(currentNeighbors);
-
-        // Initialize the neighbors grid with road icons
-        const roadIcons = [
-            './Assets/Nested_Menu_Icons/01_Main_Menu_Icons/01_Build_Options_Menu_Icons/02_Road_Menu_Icons/01_Cross.png',
-            './Assets/Nested_Menu_Icons/01_Main_Menu_Icons/01_Build_Options_Menu_Icons/02_Road_Menu_Icons/02_Straight.png',
-            './Assets/Nested_Menu_Icons/01_Main_Menu_Icons/01_Build_Options_Menu_Icons/02_Road_Menu_Icons/03_T.png',
-            './Assets/Nested_Menu_Icons/01_Main_Menu_Icons/01_Build_Options_Menu_Icons/02_Road_Menu_Icons/04_L.png',
-            './Assets/Nested_Menu_Icons/01_Main_Menu_Icons/01_Build_Options_Menu_Icons/02_Road_Menu_Icons/05_Diagonal.png'
-        ];
-
+        // Get the current step state from the visualizer
+        const stepState = GENERATION_PROCESS_VISUALISER.generationProcessVisualiser.stepState;
+        
         // Clear existing content
         for (let i = 0; i < 12; i++) {
             const cell = document.getElementById(`neighbor${i}`);
             if (cell) {
                 cell.innerHTML = '';
+                cell.style.backgroundColor = '';
             }
         }
 
-        // Add road icons to first 5 cells
-        for (let i = 0; i < 5; i++) {
-            const cell = document.getElementById(`neighbor${i}`);
-            if (cell) {
-                console.log('Adding icon to cell:', i);
-                const img = document.createElement('img');
-                img.src = roadIcons[i];
-                img.style.width = '80%';
-                img.style.height = '80%';
-                img.style.objectFit = 'contain';
-                cell.appendChild(img);
-            } else {
-                console.log('Cell not found:', i);
-            }
+        // If we have potential neighbor road types, display them
+        if (stepState.potentialNeighborRoadTypes && stepState.potentialNeighborRoadTypes.length > 0) {
+            console.log('Updating Potential Neighbors grid with road types:', stepState.potentialNeighborRoadTypes);
+            
+            // Map of road types to their icon paths
+            const roadIcons = {
+                [TERRAIN_TILE.TileType.CROSS]: './Assets/Nested_Menu_Icons/01_Main_Menu_Icons/01_Build_Options_Menu_Icons/02_Road_Menu_Icons/01_Cross.png',
+                [TERRAIN_TILE.TileType.STRAIGHT_LATITUDE]: './Assets/Nested_Menu_Icons/01_Main_Menu_Icons/01_Build_Options_Menu_Icons/02_Road_Menu_Icons/02_Straight.png',
+                [TERRAIN_TILE.TileType.STRAIGHT_LONGITUDE]: './Assets/Nested_Menu_Icons/01_Main_Menu_Icons/01_Build_Options_Menu_Icons/02_Road_Menu_Icons/02_Straight.png',
+                [TERRAIN_TILE.TileType.T_JUNCTION_TOP]: './Assets/Nested_Menu_Icons/01_Main_Menu_Icons/01_Build_Options_Menu_Icons/02_Road_Menu_Icons/03_T.png',
+                [TERRAIN_TILE.TileType.T_JUNCTION_RIGHT]: './Assets/Nested_Menu_Icons/01_Main_Menu_Icons/01_Build_Options_Menu_Icons/02_Road_Menu_Icons/03_T.png',
+                [TERRAIN_TILE.TileType.T_JUNCTION_BOTTOM]: './Assets/Nested_Menu_Icons/01_Main_Menu_Icons/01_Build_Options_Menu_Icons/02_Road_Menu_Icons/03_T.png',
+                [TERRAIN_TILE.TileType.T_JUNCTION_LEFT]: './Assets/Nested_Menu_Icons/01_Main_Menu_Icons/01_Build_Options_Menu_Icons/02_Road_Menu_Icons/03_T.png',
+                [TERRAIN_TILE.TileType.L_CURVE_TOP_LEFT]: './Assets/Nested_Menu_Icons/01_Main_Menu_Icons/01_Build_Options_Menu_Icons/02_Road_Menu_Icons/04_L.png',
+                [TERRAIN_TILE.TileType.L_CURVE_TOP_RIGHT]: './Assets/Nested_Menu_Icons/01_Main_Menu_Icons/01_Build_Options_Menu_Icons/02_Road_Menu_Icons/04_L.png',
+                [TERRAIN_TILE.TileType.L_CURVE_BOTTOM_LEFT]: './Assets/Nested_Menu_Icons/01_Main_Menu_Icons/01_Build_Options_Menu_Icons/02_Road_Menu_Icons/04_L.png',
+                [TERRAIN_TILE.TileType.L_CURVE_BOTTOM_RIGHT]: './Assets/Nested_Menu_Icons/01_Main_Menu_Icons/01_Build_Options_Menu_Icons/02_Road_Menu_Icons/04_L.png'
+            };
+
+            // Add road icons for each neighbor's possible road types
+            stepState.potentialNeighborRoadTypes.forEach((roadTypes, index) => {
+                const cell = document.getElementById(`neighbor${index}`);
+                if (cell && roadTypes.length > 0) {
+                    console.log(`Adding road types for neighbor ${index}:`, roadTypes);
+                    
+                    // Create a container for multiple road types
+                    const container = document.createElement('div');
+                    container.style.display = 'flex';
+                    container.style.flexWrap = 'wrap';
+                    container.style.justifyContent = 'center';
+                    container.style.alignItems = 'center';
+                    container.style.gap = '2px';
+                    
+                    // Add icons for each possible road type
+                    roadTypes.forEach(roadType => {
+                        const iconPath = roadIcons[roadType];
+                        if (iconPath) {
+                            const img = document.createElement('img');
+                            img.src = iconPath;
+                            img.style.width = '40%';
+                            img.style.height = '40%';
+                            img.style.objectFit = 'contain';
+                            
+                            // Add error handling for image loading
+                            img.onerror = () => {
+                                console.error(`Failed to load road icon: ${iconPath}`);
+                                cell.innerHTML = `Road ${roadType}`;
+                                cell.style.backgroundColor = '#ffcccc';
+                            };
+                            
+                            img.onload = () => {
+                                console.log(`Successfully loaded road icon: ${iconPath}`);
+                            };
+                            
+                            container.appendChild(img);
+                        }
+                    });
+                    
+                    cell.appendChild(container);
+                }
+            });
         }
     }
 

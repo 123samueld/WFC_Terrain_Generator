@@ -111,7 +111,11 @@
                 TERRAIN_TILE.TileType.T_JUNCTION_TOP,
                 TERRAIN_TILE.TileType.T_JUNCTION_RIGHT,
                 TERRAIN_TILE.TileType.T_JUNCTION_BOTTOM,
-                TERRAIN_TILE.TileType.T_JUNCTION_LEFT
+                TERRAIN_TILE.TileType.T_JUNCTION_LEFT,
+                TERRAIN_TILE.TileType.DIAGONAL_TOP_LEFT,
+                TERRAIN_TILE.TileType.DIAGONAL_TOP_RIGHT,
+                TERRAIN_TILE.TileType.DIAGONAL_BOTTOM_LEFT,
+                TERRAIN_TILE.TileType.DIAGONAL_BOTTOM_RIGHT
             ];
 
             // First pass: Initialize all cells and identify pre-placed tiles
@@ -205,17 +209,41 @@
         updateEntropy(index = null) {
             if (index !== null) {
                 // Update single cell
-                const possibleTiles = this.superpositionTiles.get(index) || this.possibleTiles[index];
-                if (!possibleTiles) {
-                    this.entropy[index] = 0;
-                    return;
+                if (this.collapsedTiles.has(index)) {
+                    // For collapsed cells, calculate entropy based on neighbors
+                    const neighbors = this.getNeighbourCells(index);
+                    let totalNeighborEntropy = 0;
+                    for (const neighborIndex of neighbors) {
+                        const possibleTiles = this.superpositionTiles.get(neighborIndex);
+                        if (possibleTiles) {
+                            totalNeighborEntropy += possibleTiles.size;
+                        }
+                    }
+                    this.entropy[index] = totalNeighborEntropy;
+                } else {
+                    // For cells in superposition, use number of possible tiles
+                    const possibleTiles = this.superpositionTiles.get(index) || this.possibleTiles[index];
+                    this.entropy[index] = possibleTiles ? possibleTiles.size : 0;
                 }
-                this.entropy[index] = possibleTiles.size;
             } else {
                 // Update all cells
                 for (let i = 0; i < this.gridSize * this.gridSize; i++) {
-                    const possibleTiles = this.superpositionTiles.get(i) || this.possibleTiles[i];
-                    this.entropy[i] = possibleTiles ? possibleTiles.size : 0;
+                    if (this.collapsedTiles.has(i)) {
+                        // For collapsed cells, calculate entropy based on neighbors
+                        const neighbors = this.getNeighbourCells(i);
+                        let totalNeighborEntropy = 0;
+                        for (const neighborIndex of neighbors) {
+                            const possibleTiles = this.superpositionTiles.get(neighborIndex);
+                            if (possibleTiles) {
+                                totalNeighborEntropy += possibleTiles.size;
+                            }
+                        }
+                        this.entropy[i] = totalNeighborEntropy;
+                    } else {
+                        // For cells in superposition, use number of possible tiles
+                        const possibleTiles = this.superpositionTiles.get(i) || this.possibleTiles[i];
+                        this.entropy[i] = possibleTiles ? possibleTiles.size : 0;
+                    }
                 }
             }
         }
@@ -225,22 +253,21 @@
             let lowestEntropy = Infinity;
             let lowestEntropyCells = [];  // Array to store cells with equal lowest entropy
 
-            // Only consider cells in superposition that aren't in setTiles
-            for (const [index, possibleTiles] of this.superpositionTiles) {
-                if (!this.setTiles.has(index)) {
-                    const entropy = this.entropy[index];
-                    const x = index % this.gridSize;
-                    const y = Math.floor(index / this.gridSize);
-                    
-                    if (entropy < lowestEntropy) {
-                        // Found a new lowest entropy
-                        lowestEntropy = entropy;
-                        lowestEntropyCells = [index];
-                    } else if (entropy === lowestEntropy) {
-                        // Found another cell with the same lowest entropy
-                        lowestEntropyCells.push(index);
+            // Only consider cells that are in collapsedTiles (have a terrain type)
+            for (const index of this.collapsedTiles) {
+                // Skip cells that are already in setTiles
+                if (this.setTiles.has(index)) continue;
+
+                const entropy = this.entropy[index];
+                
+                if (entropy < lowestEntropy) {
+                    // Found a new lowest entropy
+                    lowestEntropy = entropy;
+                    lowestEntropyCells = [index];
+                } else if (entropy === lowestEntropy) {
+                    // Found another cell with the same lowest entropy
+                    lowestEntropyCells.push(index);
                 }
-            }
             }
 
             // If no valid cells found, return null
@@ -250,9 +277,6 @@
 
             // Randomly select from cells with equal lowest entropy
             const selectedIndex = lowestEntropyCells[Math.floor(Math.random() * lowestEntropyCells.length)];
-            const selectedX = selectedIndex % this.gridSize;
-            const selectedY = Math.floor(selectedIndex / this.gridSize);
-            
             return selectedIndex;
         }
 
@@ -273,6 +297,14 @@
                 !this.collapsedTiles.has(neighborIndex) &&
                 !this.setTiles.has(neighborIndex)
             );
+
+            // Update the neighbourCells Set with the new valid neighbors
+            this.neighbourCells.clear();
+            validNeighbors.forEach(index => {
+                const nx = index % this.gridSize;
+                const ny = Math.floor(index / this.gridSize);
+                this.neighbourCells.add({ x: nx, y: ny });
+            });
 
             return validNeighbors;
         }
@@ -298,34 +330,87 @@
             // Update the grid and remove from superposition
             this.grid[cell] = selectedTile;
             this.superpositionTiles.delete(cell);
+            
+            // Add to collapsedTiles
             this.collapsedTiles.add(cell);
             
             // Check if all neighbors are collapsed
             const neighbors = this.getNeighbourCells(cell);
             const allNeighborsCollapsed = neighbors.every(neighborIndex => this.collapsedTiles.has(neighborIndex));
+            
+            // If all neighbors are collapsed, move from collapsedTiles to setTiles
             if (allNeighborsCollapsed) {
+                this.collapsedTiles.delete(cell);
                 this.setTiles.add(cell);
-                const x = cell % this.gridSize;
-                const y = Math.floor(cell / this.gridSize);
             }
         }
 
         propagateConstraints(cell) {
+            // Get the current cell's tile type and its socket configuration
+            const currentTileType = this.grid[cell];
+            if (!currentTileType) return;
+
+            const currentTile = TERRAIN_TILE.terrainTiles[currentTileType];
+            if (!currentTile) return;
+
             // Get the neighbour cells that are still in superposition
             const neighbors = this.getNeighbourCells(cell);
             
             // For each neighbor that's still in superposition
             for (const neighborIndex of neighbors) {
                 if (this.superpositionTiles.has(neighborIndex)) {
-                    // For now, just update entropy without actual constraint checking
-                    this.updateEntropy(neighborIndex);
+                    // Determine the direction of this neighbor relative to the current cell
+                    const currentX = cell % this.gridSize;
+                    const currentY = Math.floor(cell / this.gridSize);
+                    const neighborX = neighborIndex % this.gridSize;
+                    const neighborY = Math.floor(neighborIndex / this.gridSize);
                     
-                    // Check if this neighbor should be added to setTiles
-                    const neighborNeighbors = this.getNeighbourCells(neighborIndex);
-                    const allNeighborNeighborsCollapsed = neighborNeighbors.every(nnIndex => this.collapsedTiles.has(nnIndex));
-                    if (allNeighborNeighborsCollapsed) {
-                        this.setTiles.add(neighborIndex);
+                    // Determine which direction this neighbor is in
+                    let direction;
+                    if (neighborX < currentX) direction = 'west';
+                    else if (neighborX > currentX) direction = 'east';
+                    else if (neighborY < currentY) direction = 'north';
+                    else if (neighborY > currentY) direction = 'south';
+                    
+                    // Get the opposite direction for socket matching
+                    const oppositeDirection = {
+                        'north': 'south',
+                        'south': 'north',
+                        'east': 'west',
+                        'west': 'east'
+                    }[direction];
+                    
+                    // Get the current cell's socket state for this direction
+                    const currentSocketState = currentTile.roadSockets[direction];
+                    
+                    // Filter the neighbor's possible tiles to only those that have matching sockets
+                    const possibleTiles = this.superpositionTiles.get(neighborIndex);
+                    if (possibleTiles) {
+                        const validTiles = new Set();
+                        for (const tileType of possibleTiles) {
+                            const tile = TERRAIN_TILE.terrainTiles[tileType];
+                            if (tile && tile.roadSockets[oppositeDirection] === currentSocketState) {
+                                validTiles.add(tileType);
+                            }
+                        }
+                        
+                        // Update the neighbor's possible tiles
+                        this.superpositionTiles.set(neighborIndex, validTiles);
+                        this.updateEntropy(neighborIndex);
                     }
+                }
+            }
+
+            // After propagating constraints, check if any collapsed cells should be moved to setTiles
+            for (const collapsedIndex of this.collapsedTiles) {
+                const collapsedNeighbors = this.getNeighbourCells(collapsedIndex);
+                const allNeighborsCollapsed = collapsedNeighbors.every(neighborIndex => 
+                    this.collapsedTiles.has(neighborIndex) || this.setTiles.has(neighborIndex)
+                );
+                
+                if (allNeighborsCollapsed) {
+                    this.collapsedTiles.delete(collapsedIndex);
+                    this.setTiles.add(collapsedIndex);
                 }
             }
         }
@@ -363,41 +448,45 @@
 
         // Step-by-step generation for visualization
         generateStep() {
-            console.log(`\n=== Generating Step ${this.generationStep + 1} ===`);
-            console.log(`Current state before saving:`);
-            console.log(`- Collapsed tiles: ${this.collapsedTiles.size}`);
-            console.log(`- Superposition tiles: ${this.superpositionTiles.size}`);
-            console.log(`- Set tiles: ${this.setTiles.size}`);
-            
             // Save state before making changes
             this.saveState();
 
             // Check if we're done
             if (this.superPositionTileSetEmpty()) {
-                console.log(`Generation complete - no more cells in superposition`);
                 return false;
             }
 
             // Find the cell with lowest entropy
             let cellIndex = this.findLowestEntropyCell();
             if (cellIndex === null) {
-                console.log(`No valid cell found to collapse`);
                 return false;
             }
-
-            console.log(`Found cell to collapse at index: ${cellIndex}`);
-            console.log(`- X: ${cellIndex % this.gridSize}`);
-            console.log(`- Y: ${Math.floor(cellIndex / this.gridSize)}`);
 
             // Collapse the cell and propagate constraints
             this.collapseCell(cellIndex);
             this.propagateConstraints(cellIndex);
             this.generationStep++;
 
-            console.log(`Step ${this.generationStep} completed:`);
-            console.log(`- New collapsed tiles: ${this.collapsedTiles.size}`);
-            console.log(`- New superposition tiles: ${this.superpositionTiles.size}`);
-            console.log(`- New set tiles: ${this.setTiles.size}`);
+            return true;
+        }
+
+        // Process a complete step including neighbor handling
+        processStep(cellIndex) {
+            if (!cellIndex) {
+                cellIndex = this.findLowestEntropyCell();
+                if (cellIndex === null) return false;
+            }
+
+            // Get neighbors before collapsing
+            const neighbors = this.getNeighbourCells(cellIndex);
+            
+            // Collapse the cell
+            this.collapseCell(cellIndex);
+            
+            // Process each neighbor
+            for (const neighborIndex of neighbors) {
+                this.propagateConstraints(neighborIndex);
+            }
 
             return true;
         }
