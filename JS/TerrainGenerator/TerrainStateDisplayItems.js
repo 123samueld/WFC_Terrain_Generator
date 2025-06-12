@@ -8,18 +8,18 @@ export const terrainStateDisplayItems = {
                 value: 0
             },
             {
-                id: "collapsedTiles",
-                label: "Collapsed Tiles",
+                id: "currentCell",
+                label: "Current Cell",
                 value: 0
             },
             {
-                id: "superpositionTiles",
-                label: "Superposition Tiles",
+                id: "currentNeighbour",
+                label: "Current Neighbour",
                 value: 0
             },
             {
-                id: "setTiles",
-                label: "Set Tiles",
+                id: "neighbourCells",
+                label: "Neighbour Cells",
                 value: 0
             },
             {

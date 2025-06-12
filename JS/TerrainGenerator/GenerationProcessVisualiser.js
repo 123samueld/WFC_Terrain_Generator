@@ -1,4 +1,4 @@
-import { MATH, TERRAIN_GENERATOR, INITIALISE, COLLAPSE_RULES, TERRAIN_TILE } from '../FilePathRouter.js';
+import { MATH, TERRAIN_GENERATOR, INITIALISE, WFC_RULES, TERRAIN_TILE } from '../FilePathRouter.js';
 import { options } from '../Options.js';
 
 class GenerationProcessVisualiser {
@@ -105,6 +105,8 @@ class GenerationProcessVisualiser {
 
         // Draw corner points only for current cell
         this.drawCornerPoints(ctx, screenX, screenY);
+
+        // Log when cell is highlighted
     }
 
     highlightNeighbourCells(ctx, camera) {
@@ -234,17 +236,19 @@ class GenerationProcessVisualiser {
 
         // Check if we're done
         if (TERRAIN_GENERATOR.superPositionTileSetEmpty()) {
+            console.log("VISUALISATION: Generation complete - no more cells to process");
             this.isGenerating = false;
             return false;
         }
 
-        // If we don't have a current cell, find the next one (Step 1, 4, 7, etc.)
+        // If we don't have a current cell, find the next one
         if (!this.currentCell) {
             this.currentStepType = this.StepType.FINDING_CELL;
             
             // Find the cell with lowest entropy
             let cellIndex = TERRAIN_GENERATOR.findLowestEntropyCell();
             if (cellIndex === null) {
+                console.log("VISUALISATION: No valid cell found to process");
                 this.isGenerating = false;
                 return false;
             }
@@ -269,12 +273,6 @@ class GenerationProcessVisualiser {
                     this.neighbourCells.add({ x: nx, y: ny });
                 }
             });
-
-            // Analyze socket configuration for visualization
-            const socketConfig = COLLAPSE_RULES.analyseCellSockets(cellIndex, TERRAIN_TILE.terrainTiles, TERRAIN_GENERATOR.grid, TERRAIN_GENERATOR.gridSize);
-            if (socketConfig) {
-                console.log("Socket configuration:", socketConfig);
-            }
 
             // Update step state
             this.stepState = {
@@ -304,7 +302,7 @@ class GenerationProcessVisualiser {
             return true;
         }
 
-        // If we have a current cell, process its neighbors one by one (Step 2, 3, 5, 6, etc.)
+        // If we have a current cell, process its neighbors one by one
         if (this.currentNeighbor) {
             this.currentStepType = this.StepType.PROCESSING_NEIGHBOR;
             
@@ -329,7 +327,15 @@ class GenerationProcessVisualiser {
             } else {
                 // All neighbors processed, process the complete step
                 const cellIndex = this.currentCell.y * 36 + this.currentCell.x;
-                TERRAIN_GENERATOR.processStep(cellIndex);
+                
+                // Call WFC's generateStep with the current cell index
+                const success = TERRAIN_GENERATOR.generateStep(cellIndex);
+                
+                if (!success) {
+                    console.log("GENERATION: Failed to generate step");
+                    this.isGenerating = false;
+                    return false;
+                }
                 
                 // Clear everything for next step
                 this.currentCell = null;
@@ -337,6 +343,7 @@ class GenerationProcessVisualiser {
                 this.neighbourCells.clear();
                 this.neighborIndices = [];
                 this.currentStepType = this.StepType.FINDING_CELL;
+                console.log("VISUALISATION: Step complete, clearing state for next step");
                 
                 // Update step state for finding next cell
                 this.stepState = {

@@ -100,6 +100,15 @@ export class TerrainTile {
         this.pipeSockets.west = west;
     }
 
+    // Getter for road socket configuration
+    getRoadSockets() {
+        console.log("Road sockets:", this.roadSockets);
+        return {
+            terrainType: this.name,
+            sockets: this.roadSockets
+        };
+    }
+
     // Utility management
     setSupplyDemand(power = 0, oil = 0, ore = 0, people = 0) {
         this.utilities.supply_demand[UtilityType.POWER] = power;
