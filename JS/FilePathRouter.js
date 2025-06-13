@@ -26,6 +26,7 @@ export * as SIMULATION from './Simulation.js';
 export * as TERRAIN_TILE from './TerrainTile.js';
 export * as WFC_INITIALIZATION from './TerrainGenerator/WFC_Initialization.js';
 export { wfc as TERRAIN_GENERATOR } from './TerrainGenerator/WFC.js';
+export { GENERATION_STATE } from './TerrainGenerator/GenerationState.js';
 export * as WFC_RULES from './TerrainGenerator/WFCRules.js';  
 export * as GENERATION_PROCESS_VISUALISER from './TerrainGenerator/GenerationProcessVisualiser.js';
 export * as TERRAIN_STATE_DISPLAY from './TerrainGenerator/TerrainStateDisplay.js';

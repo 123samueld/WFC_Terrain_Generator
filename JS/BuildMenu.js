@@ -4,7 +4,10 @@ import { menuItems } from './MenuItems.js';
 import { inputState } from './Input.js';
 import { getGameStateBuffers } from './Initialise.js';
 import { wfc } from './TerrainGenerator/WFC.js';
-import { GENERATION_PROCESS_VISUALISER } from './FilePathRouter.js';
+import { 
+    GENERATION_PROCESS_VISUALISER, 
+    GENERATION_STATE 
+} from './FilePathRouter.js';
 import { options } from './Options.js';
 import { generationProcessVisualiser } from './TerrainGenerator/GenerationProcessVisualiser.js';
 
@@ -176,6 +179,7 @@ class BuildMenu {
             if (menuName === 'Generate Options') {
                 switch (selectedItem.action) {
                     case 'generate':
+                        console.log("GENERATION: generateWFC() called from menu button");
                         wfc.generateWFC();
                         break;
                     case 'weights':
@@ -199,6 +203,11 @@ class BuildMenu {
                         generationProcessVisualiser.pause();
                         break;
                     case 'step_forward':
+                        // If this is the first step, run initialization
+                        if (GENERATION_STATE.currentStep === 0) {
+                            generationProcessVisualiser.firstStep();
+                            GENERATION_STATE.isGenerating = true;
+                        }
                         generationProcessVisualiser.stepForward();
                         break;
                     case 'play_speed':
