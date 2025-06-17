@@ -23,6 +23,7 @@ export function initialize(wfcInstance) {
 }
 
 export function initializeCells(wfcInstance, read, roadTileTypes) {
+    // First pass: Set up initial state
     for (let y = 0; y < wfcInstance.gridSize; y++) {
         for (let x = 0; x < wfcInstance.gridSize; x++) {
             const index = y * wfcInstance.gridSize + x;
@@ -43,6 +44,19 @@ export function initializeCells(wfcInstance, read, roadTileTypes) {
                 GENERATION_STATE.superpositionTiles.set(index, new Set(roadTileTypes));
                 wfcInstance.entropy[index] = roadTileTypes.length;
             }
+        }
+    }
+
+    // Second pass: Check neighbors and move tiles to setTiles if appropriate
+    for (const index of GENERATION_STATE.collapsedTiles) {
+        const neighbors = wfcInstance.getNeighbourCells(index);
+        const allNeighborsCollapsed = neighbors.every(neighborIndex =>
+            GENERATION_STATE.collapsedTiles.has(neighborIndex) || GENERATION_STATE.setTiles.has(neighborIndex)
+        );
+
+        if (allNeighborsCollapsed) {
+            GENERATION_STATE.collapsedTiles.delete(index);
+            GENERATION_STATE.setTiles.add(index);
         }
     }
 }

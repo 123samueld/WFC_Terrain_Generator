@@ -186,6 +186,8 @@
         
 
         generateWFC() {
+            console.log('generateWFC() called');
+            
             // Get access to game state buffers
             const { read, write } = INITIALISE.getGameStateBuffers();
             this.gameStateRead = read;
@@ -193,11 +195,23 @@
             
             // Initialize the grid
             this.initialize();
+            
+            // Check initial state
+            console.log('Initial state check:');
+            console.log('superPositionTileSetEmpty():', this.superPositionTileSetEmpty());
+            console.log('superpositionTiles size:', GENERATION_STATE.superpositionTiles.size);
                         
             // Main WFC loop
             let iterationCount = 0;
             const MAX_ITERATIONS = 150;
             while (!this.superPositionTileSetEmpty() && iterationCount < MAX_ITERATIONS) {
+                // Log set sizes at the start of each iteration
+                console.log('=== WFC Iteration', iterationCount, '===');
+                console.log('Superposition Tiles:', GENERATION_STATE.superpositionTiles.size);
+                console.log('Collapsed Tiles:', GENERATION_STATE.collapsedTiles.size);
+                console.log('Set Tiles:', GENERATION_STATE.setTiles.size);
+                console.log('========================');
+                
                 // Save state before each iteration
                 this.saveState();
                 
@@ -328,6 +342,12 @@
             
             // Update the grid with the selected tile
             this.grid[cell] = selectedTile;
+            
+            // Update the game state with the selected tile
+            const x = cell % this.gridSize;
+            const y = Math.floor(cell / this.gridSize);
+            const { write } = INITIALISE.getGameStateBuffers();
+            write.setTile(x, y, selectedTile);
             
             // Remove from superposition since we've made a choice
             GENERATION_STATE.superpositionTiles.delete(cell);

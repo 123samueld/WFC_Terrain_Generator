@@ -140,7 +140,8 @@ export async function loadTerrainTiles() {
         terrainTiles[TileType.POWER_PLANT].tileHeightSpillOver = 65;
         terrainTiles[TileType.POWER_PLANT].miniMapTileColour =  'rgba(136, 152, 160, 0.8)';
         terrainTiles[TileType.POWER_PLANT].setSupplyDemand(100, 0, 0, -10); // Produces power, requires people
-        
+        terrainTiles[TileType.POWER_PLANT].setRoadSockets(false, true, false, false);
+
         // Factorum
         const factorumIsometric = await loadSprite(isometricBuildingSpritesAddressPrefix + '02_Factorum.png');
         const factorumCartesian = await loadSprite(isometricBuildingSpritesAddressPrefix + '02_Factorum.png');
@@ -148,6 +149,7 @@ export async function loadTerrainTiles() {
         terrainTiles[TileType.FACTORUM].tileHeightSpillOver = 131;
         terrainTiles[TileType.FACTORUM].miniMapTileColour =  'rgba(136, 152, 160, 0.8)';
         terrainTiles[TileType.FACTORUM].setSupplyDemand(-20, 0, 50, -20); // Requires power and people, produces steel
+        terrainTiles[TileType.FACTORUM].setRoadSockets(false, true, true, false);
 
         // Chem Plant
         const chemicalPlantIsometric = await loadSprite(isometricBuildingSpritesAddressPrefix + '03_Chem_Plant.png');
@@ -165,7 +167,8 @@ export async function loadTerrainTiles() {
         terrainTiles[TileType.TRAIN_STATION].tileHeightSpillOver = 14;
         terrainTiles[TileType.TRAIN_STATION].miniMapTileColour =  'rgba(136, 152, 160, 0.8)';
         terrainTiles[TileType.TRAIN_STATION].setSupplyDemand(-10, 0, 0, -5); // Requires power and people, produces people
-        
+        terrainTiles[TileType.TRAIN_STATION].setRoadSockets(true, false, true, false);
+
         // Promethium Refinery
         const promethiumRefineryIsometric = await loadSprite(isometricBuildingSpritesAddressPrefix + '05_Promethium_Refinery.png');
         const promethiumRefineryCartesian = await loadSprite(isometricBuildingSpritesAddressPrefix + '05_Promethium_Refinery.png');
@@ -173,6 +176,7 @@ export async function loadTerrainTiles() {
         terrainTiles[TileType.PROMETHIUM_REFINERY].tileHeightSpillOver = 53;
         terrainTiles[TileType.PROMETHIUM_REFINERY].miniMapTileColour =  'rgba(136, 152, 160, 0.8)';
         terrainTiles[TileType.PROMETHIUM_REFINERY].setSupplyDemand(-40, -30, 0, -25); // Requires power, oil, and people, produces promethium
+        terrainTiles[TileType.PROMETHIUM_REFINERY].setRoadSockets(false, false, true, false);
 
         // Hab Block
         const habBlockIsometric = await loadSprite(isometricBuildingSpritesAddressPrefix + '06_Hab_Block.png');
@@ -181,6 +185,7 @@ export async function loadTerrainTiles() {
         terrainTiles[TileType.HAB_BLOCK].tileHeightSpillOver = 123;
         terrainTiles[TileType.HAB_BLOCK].miniMapTileColour =  'rgba(136, 152, 160, 0.8)';
         terrainTiles[TileType.HAB_BLOCK].setSupplyDemand(-5, 0, 0, 50); // Requires power, produces people
+        terrainTiles[TileType.HAB_BLOCK].setRoadSockets(true, true, true, true);
 
         /* Roads */
         const isometricRoadSpritesAddressPrefix = 'Assets/Terrain_Tile_Sprites/Isometric/02_Roads/';

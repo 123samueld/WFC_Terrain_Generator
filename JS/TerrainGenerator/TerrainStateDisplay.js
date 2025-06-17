@@ -41,7 +41,7 @@ class TerrainStateDisplay {
         const stepState = GENERATION_PROCESS_VISUALISER.generationProcessVisualiser.stepState;
         
         // Clear existing content
-        for (let i = 0; i < 12; i++) {
+        for (let i = 0; i < 16; i++) {
             const cell = document.getElementById(`neighbor${i}`);
             if (cell) {
                 cell.innerHTML = '';
@@ -49,25 +49,57 @@ class TerrainStateDisplay {
             }
         }
 
+        // Map of road types to their icon paths
+        const roadIcons = {
+            [TERRAIN_TILE.TileType.CROSS]: './Assets/Nested_Menu_Icons/01_Main_Menu_Icons/01_Build_Options_Menu_Icons/02_Road_Menu_Icons/Generator_Display_Road_Icons/cross.png',
+            [TERRAIN_TILE.TileType.STRAIGHT_LATITUDE]: './Assets/Nested_Menu_Icons/01_Main_Menu_Icons/01_Build_Options_Menu_Icons/02_Road_Menu_Icons/Generator_Display_Road_Icons/straight_latitude.png',
+            [TERRAIN_TILE.TileType.STRAIGHT_LONGITUDE]: './Assets/Nested_Menu_Icons/01_Main_Menu_Icons/01_Build_Options_Menu_Icons/02_Road_Menu_Icons/Generator_Display_Road_Icons/straight_longitude.png',
+            [TERRAIN_TILE.TileType.T_JUNCTION_TOP]: './Assets/Nested_Menu_Icons/01_Main_Menu_Icons/01_Build_Options_Menu_Icons/02_Road_Menu_Icons/Generator_Display_Road_Icons/t_junction_top.png',
+            [TERRAIN_TILE.TileType.T_JUNCTION_RIGHT]: './Assets/Nested_Menu_Icons/01_Main_Menu_Icons/01_Build_Options_Menu_Icons/02_Road_Menu_Icons/Generator_Display_Road_Icons/t_junction_right.png',
+            [TERRAIN_TILE.TileType.T_JUNCTION_BOTTOM]: './Assets/Nested_Menu_Icons/01_Main_Menu_Icons/01_Build_Options_Menu_Icons/02_Road_Menu_Icons/Generator_Display_Road_Icons/t_junction_bottom.png',
+            [TERRAIN_TILE.TileType.T_JUNCTION_LEFT]: './Assets/Nested_Menu_Icons/01_Main_Menu_Icons/01_Build_Options_Menu_Icons/02_Road_Menu_Icons/Generator_Display_Road_Icons/t_junction_left.png',
+            [TERRAIN_TILE.TileType.L_CURVE_TOP_LEFT]: './Assets/Nested_Menu_Icons/01_Main_Menu_Icons/01_Build_Options_Menu_Icons/02_Road_Menu_Icons/Generator_Display_Road_Icons/l_curve_top_left.png',
+            [TERRAIN_TILE.TileType.L_CURVE_TOP_RIGHT]: './Assets/Nested_Menu_Icons/01_Main_Menu_Icons/01_Build_Options_Menu_Icons/02_Road_Menu_Icons/Generator_Display_Road_Icons/l_curve_top_right.png',
+            [TERRAIN_TILE.TileType.L_CURVE_BOTTOM_LEFT]: './Assets/Nested_Menu_Icons/01_Main_Menu_Icons/01_Build_Options_Menu_Icons/02_Road_Menu_Icons/Generator_Display_Road_Icons/l_curve_bottom_left.png',
+            [TERRAIN_TILE.TileType.L_CURVE_BOTTOM_RIGHT]: './Assets/Nested_Menu_Icons/01_Main_Menu_Icons/01_Build_Options_Menu_Icons/02_Road_Menu_Icons/Generator_Display_Road_Icons/l_curve_bottom_right.png',
+            [TERRAIN_TILE.TileType.DIAGONAL_TOP_LEFT]: './Assets/Nested_Menu_Icons/01_Main_Menu_Icons/01_Build_Options_Menu_Icons/02_Road_Menu_Icons/Generator_Display_Road_Icons/diagonal_top_left.png',
+            [TERRAIN_TILE.TileType.DIAGONAL_TOP_RIGHT]: './Assets/Nested_Menu_Icons/01_Main_Menu_Icons/01_Build_Options_Menu_Icons/02_Road_Menu_Icons/Generator_Display_Road_Icons/diagonal_top_right.png',
+            [TERRAIN_TILE.TileType.DIAGONAL_BOTTOM_LEFT]: './Assets/Nested_Menu_Icons/01_Main_Menu_Icons/01_Build_Options_Menu_Icons/02_Road_Menu_Icons/Generator_Display_Road_Icons/diagonal_bottom_left.png',
+            [TERRAIN_TILE.TileType.DIAGONAL_BOTTOM_RIGHT]: './Assets/Nested_Menu_Icons/01_Main_Menu_Icons/01_Build_Options_Menu_Icons/02_Road_Menu_Icons/Generator_Display_Road_Icons/diagonal_bottom_right.png'
+        };
+
+        // Display all road types as placeholders
+        const allRoadTypes = Object.keys(roadIcons);
+        allRoadTypes.forEach((roadType, index) => {
+            if (index < 16) { // Only use first 16 cells
+                const cell = document.getElementById(`neighbor${index}`);
+                if (cell) {
+                    const img = document.createElement('img');
+                    img.src = roadIcons[roadType];
+                    img.style.width = '80%';
+                    img.style.height = '80%';
+                    img.style.objectFit = 'contain';
+                    
+                    // Add error handling for image loading
+                    img.onerror = () => {
+                        console.error(`Failed to load road icon: ${roadIcons[roadType]}`);
+                        cell.innerHTML = `Road ${roadType}`;
+                        cell.style.backgroundColor = '#ffcccc';
+                    };
+                    
+                    img.onload = () => {
+                        console.log(`Successfully loaded road icon: ${roadIcons[roadType]}`);
+                    };
+                    
+                    cell.appendChild(img);
+                }
+            }
+        });
+
         // If we have potential neighbor road types, display them
         if (stepState.potentialNeighborRoadTypes && stepState.potentialNeighborRoadTypes.length > 0) {
             console.log('Updating Potential Neighbors grid with road types:', stepState.potentialNeighborRoadTypes);
             
-            // Map of road types to their icon paths
-            const roadIcons = {
-                [TERRAIN_TILE.TileType.CROSS]: './Assets/Nested_Menu_Icons/01_Main_Menu_Icons/01_Build_Options_Menu_Icons/02_Road_Menu_Icons/01_Cross.png',
-                [TERRAIN_TILE.TileType.STRAIGHT_LATITUDE]: './Assets/Nested_Menu_Icons/01_Main_Menu_Icons/01_Build_Options_Menu_Icons/02_Road_Menu_Icons/02_Straight.png',
-                [TERRAIN_TILE.TileType.STRAIGHT_LONGITUDE]: './Assets/Nested_Menu_Icons/01_Main_Menu_Icons/01_Build_Options_Menu_Icons/02_Road_Menu_Icons/02_Straight.png',
-                [TERRAIN_TILE.TileType.T_JUNCTION_TOP]: './Assets/Nested_Menu_Icons/01_Main_Menu_Icons/01_Build_Options_Menu_Icons/02_Road_Menu_Icons/03_T.png',
-                [TERRAIN_TILE.TileType.T_JUNCTION_RIGHT]: './Assets/Nested_Menu_Icons/01_Main_Menu_Icons/01_Build_Options_Menu_Icons/02_Road_Menu_Icons/03_T.png',
-                [TERRAIN_TILE.TileType.T_JUNCTION_BOTTOM]: './Assets/Nested_Menu_Icons/01_Main_Menu_Icons/01_Build_Options_Menu_Icons/02_Road_Menu_Icons/03_T.png',
-                [TERRAIN_TILE.TileType.T_JUNCTION_LEFT]: './Assets/Nested_Menu_Icons/01_Main_Menu_Icons/01_Build_Options_Menu_Icons/02_Road_Menu_Icons/03_T.png',
-                [TERRAIN_TILE.TileType.L_CURVE_TOP_LEFT]: './Assets/Nested_Menu_Icons/01_Main_Menu_Icons/01_Build_Options_Menu_Icons/02_Road_Menu_Icons/04_L.png',
-                [TERRAIN_TILE.TileType.L_CURVE_TOP_RIGHT]: './Assets/Nested_Menu_Icons/01_Main_Menu_Icons/01_Build_Options_Menu_Icons/02_Road_Menu_Icons/04_L.png',
-                [TERRAIN_TILE.TileType.L_CURVE_BOTTOM_LEFT]: './Assets/Nested_Menu_Icons/01_Main_Menu_Icons/01_Build_Options_Menu_Icons/02_Road_Menu_Icons/04_L.png',
-                [TERRAIN_TILE.TileType.L_CURVE_BOTTOM_RIGHT]: './Assets/Nested_Menu_Icons/01_Main_Menu_Icons/01_Build_Options_Menu_Icons/02_Road_Menu_Icons/04_L.png'
-            };
-
             // Add road icons for each neighbor's possible road types
             stepState.potentialNeighborRoadTypes.forEach((roadTypes, index) => {
                 const cell = document.getElementById(`neighbor${index}`);
@@ -137,7 +169,7 @@ class TerrainStateDisplay {
                     this.updatePotentialNeighborsGrid(wfc);
                 } else {
                     // Clear the grid if no neighbor is highlighted
-                    for (let i = 0; i < 12; i++) {
+                    for (let i = 0; i < 16; i++) {
                         const cell = document.getElementById(`neighbor${i}`);
                         if (cell) {
                             cell.innerHTML = '';
