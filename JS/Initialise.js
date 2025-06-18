@@ -229,28 +229,24 @@ export async function loadTerrainTiles() {
         // L Curve Top Right (NE)
         const lCurveTopRightIsometric = await loadSprite(isometricRoadSpritesAddressPrefix + 'L_Curves/04_NE.png');
         const lCurveTopRightCartesian = await loadSprite(cartesianRoadSpritesAddressPrefix + 'L_Curves/04_NE.png');
-        //terrainTiles[TileType.L_CURVE_TOP_RIGHT] = createTerrainTile(TileType.L_CURVE_TOP_RIGHT, lCurveTopLeftIsometric, lCurveTopLeftCartesian);
         terrainTiles[TileType.L_CURVE_TOP_RIGHT] = createTerrainTile(TileType.L_CURVE_TOP_RIGHT, lCurveTopRightIsometric, lCurveTopRightCartesian);
         terrainTiles[TileType.L_CURVE_TOP_RIGHT].setRoadSockets(true, true, false, false); // NE
 
         // L Curve Bottom Right (ES)
         const lCurveBottomRightIsometric = await loadSprite(isometricRoadSpritesAddressPrefix + 'L_Curves/01_ES.png');
         const lCurveBottomRightCartesian = await loadSprite(cartesianRoadSpritesAddressPrefix + 'L_Curves/01_ES.png');
-        //terrainTiles[TileType.L_CURVE_BOTTOM_RIGHT] = createTerrainTile(TileType.L_CURVE_BOTTOM_RIGHT, lCurveTopRightIsometric, lCurveTopRightCartesian);
         terrainTiles[TileType.L_CURVE_BOTTOM_RIGHT] = createTerrainTile(TileType.L_CURVE_BOTTOM_RIGHT, lCurveBottomRightIsometric, lCurveBottomRightCartesian);
         terrainTiles[TileType.L_CURVE_BOTTOM_RIGHT].setRoadSockets(false, true, true, false); // ES
 
         // L Curve Top Left (WN)
         const lCurveTopLeftIsometric = await loadSprite(isometricRoadSpritesAddressPrefix + 'L_Curves/03_WN.png');
         const lCurveTopLeftCartesian = await loadSprite(cartesianRoadSpritesAddressPrefix + 'L_Curves/03_WN.png');
-        //terrainTiles[TileType.L_CURVE_TOP_LEFT] = createTerrainTile(TileType.L_CURVE_TOP_LEFT, lCurveBottomLeftIsometric, lCurveBottomLeftCartesian);
         terrainTiles[TileType.L_CURVE_TOP_LEFT] = createTerrainTile(TileType.L_CURVE_TOP_LEFT, lCurveTopLeftIsometric, lCurveTopLeftCartesian);
         terrainTiles[TileType.L_CURVE_TOP_LEFT].setRoadSockets(true, false, false, true); // WN
 
         // L Curve Bottom Left (SW)
         const lCurveBottomLeftIsometric = await loadSprite(isometricRoadSpritesAddressPrefix + 'L_Curves/02_SW.png');
         const lCurveBottomLeftCartesian = await loadSprite(cartesianRoadSpritesAddressPrefix + 'L_Curves/02_SW.png');
-        //terrainTiles[TileType.L_CURVE_BOTTOM_LEFT] = createTerrainTile(TileType.L_CURVE_BOTTOM_LEFT, lCurveBottomRightIsometric, lCurveBottomRightCartesian);
         terrainTiles[TileType.L_CURVE_BOTTOM_LEFT] = createTerrainTile(TileType.L_CURVE_BOTTOM_LEFT, lCurveBottomLeftIsometric, lCurveBottomLeftCartesian);
         terrainTiles[TileType.L_CURVE_BOTTOM_LEFT].setRoadSockets(false, false, true, true); // SW
 
@@ -258,25 +254,21 @@ export async function loadTerrainTiles() {
 
         // Diagonal Top Right (NE)
         const diagonalTopRighttIsometric = await loadSprite(isometricRoadSpritesAddressPrefix + 'Diagonals/04_NE.png');
-        //terrainTiles[TileType.DIAGONAL_TOP_LEFT] = createTerrainTile(TileType.DIAGONAL_TOP_LEFT, diagonalTopLeftIsometric, diagonalCartesian);
         terrainTiles[TileType.DIAGONAL_TOP_RIGHT] = createTerrainTile(TileType.DIAGONAL_TOP_RIGHT, diagonalTopRighttIsometric, diagonalCartesian);
         terrainTiles[TileType.DIAGONAL_TOP_RIGHT].setRoadSockets(true, true, false, false); // NE Top Right
 
         // Diagonal Bottom Right (ES)
         const diagonalBottomRightIsometric = await loadSprite(isometricRoadSpritesAddressPrefix + 'Diagonals/01_ES.png');
-        //terrainTiles[TileType.DIAGONAL_TOP_RIGHT] = createTerrainTile(TileType.DIAGONAL_TOP_RIGHT, diagonalTopRightIsometric, diagonalCartesian);
         terrainTiles[TileType.DIAGONAL_BOTTOM_RIGHT] = createTerrainTile(TileType.DIAGONAL_BOTTOM_RIGHT, diagonalBottomRightIsometric, diagonalCartesian); 
         terrainTiles[TileType.DIAGONAL_BOTTOM_RIGHT].setRoadSockets(false, true, true, false); // ES Bottom Right
 
         // Diagonal Bottom Left (SW)
         const diagonalBottomLeftIsometric = await loadSprite(isometricRoadSpritesAddressPrefix + 'Diagonals/02_SW.png');
-        //terrainTiles[TileType.DIAGONAL_BOTTOM_RIGHT] = createTerrainTile(TileType.DIAGONAL_BOTTOM_RIGHT, diagonalBottomRightIsometric, diagonalCartesian);
         terrainTiles[TileType.DIAGONAL_BOTTOM_LEFT] = createTerrainTile(TileType.DIAGONAL_BOTTOM_LEFT, diagonalBottomLeftIsometric, diagonalCartesian);
         terrainTiles[TileType.DIAGONAL_BOTTOM_LEFT].setRoadSockets(false, false, true, true); // SW Bottom Left
 
         // Diagonal Top Left (WN)
         const diagonalTopLeftIsometric = await loadSprite(isometricRoadSpritesAddressPrefix + 'Diagonals/03_WN.png');
-        //terrainTiles[TileType.DIAGONAL_BOTTOM_LEFT] = createTerrainTile(TileType.DIAGONAL_BOTTOM_LEFT, diagonalBottomLeftIsometric, diagonalCartesian);
         terrainTiles[TileType.DIAGONAL_TOP_LEFT] = createTerrainTile(TileType.DIAGONAL_TOP_LEFT, diagonalTopLeftIsometric, diagonalCartesian);
         terrainTiles[TileType.DIAGONAL_TOP_LEFT].setRoadSockets(true, false, false, true); // WN Top Left
 
