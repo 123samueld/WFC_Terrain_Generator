@@ -316,7 +316,7 @@ canvas {
     width: 100%; /* Ensure the span takes the full width of the container */
 }
 
-#playSpeedSelect {
+#modalPlaySpeedSelect {
     width: 100%;
     padding: 12px;
     margin: 10px 0;
@@ -337,7 +337,7 @@ canvas {
     padding-right: 35px;
 }
 
-#playSpeedSelect option {
+#modalPlaySpeedSelect option {
     background-color: #1a1a1a;
     color: #fff;
     padding: 12px;

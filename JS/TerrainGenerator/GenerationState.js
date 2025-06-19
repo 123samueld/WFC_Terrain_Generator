@@ -31,7 +31,8 @@ class GenerationState {
 
         // Playback state
         this.nextStep = false;
-        this.playSpeed = 500;
+        this.playSpeed = 200; // Base speed in milliseconds
+        this.playSpeedDivider = 1; // Default to middle speed (1-5)
         this.isPlaying = false;
         this.playInterval = null;
 

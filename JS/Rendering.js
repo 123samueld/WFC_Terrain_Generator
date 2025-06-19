@@ -89,8 +89,8 @@ function calculateVisibleTiles(gameStateBufferRead) {
 
     const visibleTiles = [];
 
-    // 12 columns and rows = 6 tiles in each direction from center
-    const RANGE = 6;
+    // 14 columns and rows = 7 tiles in each direction from center (extended by 1)
+    const RANGE = 7;
 
     for (let dy = -RANGE; dy <= RANGE; dy++) {
         for (let dx = -RANGE; dx <= RANGE; dx++) {

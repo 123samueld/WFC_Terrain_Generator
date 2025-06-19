@@ -305,11 +305,10 @@
             if (y > 0) neighbors.push(cell - this.gridSize);       // Top
             if (y < this.gridSize - 1) neighbors.push(cell + this.gridSize); // Bottom
 
-            // Filter to only include neighbors that are still in superposition
+            // Return ALL neighbors - don't filter out collapsed or set tiles
+            // The constraint propagation will handle which neighbors need processing
             const validNeighbors = neighbors.filter(neighborIndex => 
-                GENERATION_STATE.superpositionTiles.has(neighborIndex) && 
-                !GENERATION_STATE.collapsedTiles.has(neighborIndex) &&
-                !GENERATION_STATE.setTiles.has(neighborIndex)
+                neighborIndex >= 0 && neighborIndex < this.gridSize * this.gridSize
             );
 
             // Update the neighbourCells Set with the new valid neighbors

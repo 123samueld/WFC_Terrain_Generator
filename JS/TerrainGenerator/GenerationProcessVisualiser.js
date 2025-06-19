@@ -201,10 +201,6 @@ class GenerationProcessVisualiser {
                 const superpositionTiles = GENERATION_STATE.superpositionTiles.get(neighborIndex);
                 if (superpositionTiles) {
                     GENERATION_STATE.currentNeighborTerrainTypes = new Set(superpositionTiles);
-                    console.log("Current Cell: ", GENERATION_STATE.currentCell);
-                    console.log("Current Neighbor: ", GENERATION_STATE.currentNeighbor);
-                    console.log("Neighbor Index: ", neighborIndex);
-                    console.log("GENERATION_STATE.currentNeighborTerrainTypes", GENERATION_STATE.currentNeighborTerrainTypes);
                 }
                 
                 // STATE UPDATE: Update step state for neighbor processing
@@ -230,7 +226,6 @@ class GenerationProcessVisualiser {
 
         // Check if we're done
         if (TERRAIN_GENERATOR.superPositionTileSetEmpty()) {
-            console.log("VISUALISATION: Generation complete - no more cells to process");
             GENERATION_STATE.isGenerating = false;
             return false;
         }
@@ -242,7 +237,6 @@ class GenerationProcessVisualiser {
             // Find the cell with lowest entropy
             let cellIndex = TERRAIN_GENERATOR.findLowestEntropyCell();
             if (cellIndex === null) {
-                console.log("VISUALISATION: No valid cell found to process");
                 GENERATION_STATE.isGenerating = false;
                 return false;
             }
@@ -376,12 +370,16 @@ class GenerationProcessVisualiser {
         GENERATION_STATE.isPlaying = true;
         GENERATION_STATE.shouldDrawHighlights = true;
         
+        const initialDelay = GENERATION_STATE.playSpeed / GENERATION_STATE.playSpeedDivider;
+
         // Start the play interval
         GENERATION_STATE.playInterval = setInterval(() => {
+            const currentDelay = GENERATION_STATE.playSpeed / GENERATION_STATE.playSpeedDivider;
+
             if (!this.generateStepVisualisation()) {
-                GENERATION_STATE.pause();
+                this.pause();
             }
-        }, GENERATION_STATE.playSpeed);
+        }, GENERATION_STATE.playSpeed / GENERATION_STATE.playSpeedDivider);
     }
 
     pause() {
@@ -393,7 +391,6 @@ class GenerationProcessVisualiser {
     }
 
     stepForward() {
-        console.log("stepForward() called");
         if (GENERATION_STATE.isPlaying) return false;
         
         GENERATION_STATE.shouldDrawHighlights = true;
@@ -430,21 +427,27 @@ class GenerationProcessVisualiser {
         }
     }
 
-    setPlaySpeed(speed) {
-        GENERATION_STATE.playSpeed = speed;
+    setPlaySpeed(divider) {
+        // Update the playSpeedDivider in GenerationState
+        GENERATION_STATE.playSpeedDivider = divider;
+        
+        // Check if currently playing and restart if needed
         if (GENERATION_STATE.isPlaying) {
             this.pause();
             this.play();
-        }
+        } 
     }
 
     reset() {
+  
         GENERATION_STATE.isGenerating = false;
         GENERATION_STATE.currentStep = 0;
         GENERATION_STATE.shouldDrawHighlights = false;
+        GENERATION_STATE.playSpeedDivider = 1; // Reset to default divider
         this.clearHighlights();
         this.pause();
         GENERATION_STATE.generationStepCount = 0;  // Reset the generation step counter
+        
     }
 }
 

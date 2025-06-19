@@ -108,7 +108,6 @@ class BuildMenu {
             menuHeader.innerText = this.activeMenu;
         }
     }
-    
 
     generateDynamicMenu(activeMenu) {
         const menuData = this.menuItems[activeMenu];
@@ -179,7 +178,6 @@ class BuildMenu {
             if (menuName === 'Generate Options') {
                 switch (selectedItem.action) {
                     case 'generate':
-                        console.log("GENERATION: generateWFC() called from menu button");
                         wfc.generateWFC();
                         break;
                     case 'weights':
@@ -197,6 +195,11 @@ class BuildMenu {
                         generationProcessVisualiser.stepBack();
                         break;
                     case 'play':
+                        // If this is the first step, run initialization
+                        if (GENERATION_STATE.currentStep === 0) {
+                            generationProcessVisualiser.firstStep();
+                            GENERATION_STATE.isGenerating = true;
+                        }
                         generationProcessVisualiser.play();
                         break;
                     case 'pause':
@@ -213,11 +216,11 @@ class BuildMenu {
                     case 'play_speed':
                         const modal = document.getElementById('playSpeedModal');
                         const closeBtn = modal.querySelector('.modal-close');
-                        const select = document.getElementById('playSpeedSelect');
+                        const select = document.getElementById('modalPlaySpeedSelect');
                         const setSpeedBtn = document.getElementById('setSpeedBtn');
                         
-                        // Set initial value
-                        select.value = options.playSpeed;
+                        // Set initial value to current divider
+                        select.value = GENERATION_STATE.playSpeedDivider;
                         
                         // Add change event listener for select
                         select.onchange = (e) => {
@@ -227,9 +230,10 @@ class BuildMenu {
                         
                         // Add click event listener for Set Speed button
                         setSpeedBtn.onclick = () => {
-                            options.playSpeed = parseInt(select.value);
-                            generationProcessVisualiser.setPlaySpeed(options.playSpeed * 100); // Convert to milliseconds
-                            console.log(`Play speed set to ${options.playSpeed}`);
+                            const dividerValue = parseInt(select.value);
+                            // Update the playSpeedDivider in GenerationState
+                            GENERATION_STATE.playSpeedDivider = dividerValue;
+                            generationProcessVisualiser.setPlaySpeed(dividerValue);
                             modal.style.display = 'none';
                             // Remove escape key listener when modal closes
                             document.removeEventListener('keydown', handleEscape);
