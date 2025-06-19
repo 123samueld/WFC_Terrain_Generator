@@ -1,36 +1,15 @@
-import { MATH, TERRAIN_GENERATOR, INITIALISE, WFC_RULES, TERRAIN_TILE } from '../FilePathRouter.js';
+import { 
+    MATH, 
+    TERRAIN_GENERATOR, 
+    INITIALISE, 
+    WFC_RULES, 
+    TERRAIN_TILE,
+    GENERATION_STATE
+} from '../FilePathRouter.js';
 import { options } from '../Options.js';
 
 class GenerationProcessVisualiser {
     constructor() {
-        this.currentCell = null;
-        this.neighbourCells = new Set();
-        this.currentNeighbor = null;  // Track which neighbor we're currently processing
-        this.highlightedCells = new Set();
-        this.nextStep = false;
-        this.playSpeed = 500;
-        this.isPlaying = false;
-        this.currentStep = 0;
-        this.totalSteps = 0;
-        this.shouldDrawHighlights = false;
-        this.playInterval = null;
-        this.isGenerating = false;
-        this.neighborIndices = [];  // Store raw neighbor indices
-        this.generationStepCount = 0;  // Track number of generation steps
-        
-        // Add state tracking
-        this.StepType = {
-            FINDING_CELL: 'finding_cell',
-            PROCESSING_NEIGHBOR: 'processing_neighbor'
-        };
-        this.currentStepType = this.StepType.FINDING_CELL;
-        this.stepState = {
-            type: this.StepType.FINDING_CELL,
-            currentCell: null,
-            currentNeighbor: null,
-            stepNumber: 0
-        };
-
         // Add pulsing effect properties
         this.pulseStartTime = Date.now();
         this.pulseSpeed = 6; // Speed of the pulse
@@ -41,16 +20,16 @@ class GenerationProcessVisualiser {
     }
 
     setCurrentCell(x, y) {
-        this.currentCell = { x, y };
+        GENERATION_STATE.currentCell = { x, y };
     }
 
     setNeighbourCells(cells) {
-        this.neighbourCells = cells;
+        GENERATION_STATE.neighbourCells = cells;
     }
 
     clearHighlights() {
-        this.currentCell = null;
-        this.neighbourCells = new Set();
+        GENERATION_STATE.currentCell = null;
+        GENERATION_STATE.neighbourCells = new Set();
     }
 
     // Calculate current pulse opacity
@@ -82,9 +61,9 @@ class GenerationProcessVisualiser {
     }
 
     highlightCurrentIterationCell(ctx, camera) {
-        if (!this.shouldDrawHighlights || !this.currentCell) return;
+        if (!GENERATION_STATE.shouldDrawHighlights || !GENERATION_STATE.currentCell) return;
 
-        const { x, y } = this.currentCell;
+        const { x, y } = GENERATION_STATE.currentCell;
         const drawX = x + 1;  // Add +1 offset only for drawing
         const isoCoords = MATH.cartesianToIsometric(drawX, y);
         const screenX = ctx.canvas.width / 2 + isoCoords.x - camera.x;
@@ -110,16 +89,16 @@ class GenerationProcessVisualiser {
     }
 
     highlightNeighbourCells(ctx, camera) {
-        if (!this.shouldDrawHighlights || !this.neighbourCells.size) return;
+        if (!GENERATION_STATE.shouldDrawHighlights || !GENERATION_STATE.neighbourCells.size) return;
 
-        this.neighbourCells.forEach(cell => {
+        GENERATION_STATE.neighbourCells.forEach(cell => {
             const drawX = cell.x + 1;  // Add +1 offset only for drawing
             const isoCoords = MATH.cartesianToIsometric(drawX, cell.y);
             const screenX = ctx.canvas.width / 2 + isoCoords.x - camera.x;
             const screenY = ctx.canvas.height / 2 + isoCoords.y - camera.y;
 
             // If this is the current neighbor being processed, use pulsing yellow
-            if (this.currentNeighbor && this.currentNeighbor.x === cell.x && this.currentNeighbor.y === cell.y) {
+            if (GENERATION_STATE.currentNeighbor && GENERATION_STATE.currentNeighbor.x === cell.x && GENERATION_STATE.currentNeighbor.y === cell.y) {
                 const opacity = this.getPulseOpacity();
                 const width = this.getPulseWidth();
                 ctx.strokeStyle = `rgba(255, 255, 0, ${opacity})`;  // Pulsing yellow for current neighbor
@@ -138,14 +117,14 @@ class GenerationProcessVisualiser {
             ctx.stroke();
 
             // Draw corner points only for current neighbor
-            if (this.currentNeighbor && this.currentNeighbor.x === cell.x && this.currentNeighbor.y === cell.y) {
+            if (GENERATION_STATE.currentNeighbor && GENERATION_STATE.currentNeighbor.x === cell.x && GENERATION_STATE.currentNeighbor.y === cell.y) {
                 this.drawCornerPoints(ctx, screenX, screenY);
             }
         });
     }
 
     draw(ctx, camera) {
-        if (!this.shouldDrawHighlights) return;
+        if (!GENERATION_STATE.shouldDrawHighlights) return;
         
         this.highlightNeighbourCells(ctx, camera);
         this.highlightCurrentIterationCell(ctx, camera);
@@ -172,57 +151,68 @@ class GenerationProcessVisualiser {
 
     // First step - initialization
     firstStep() {
+        // TERRAIN GENERATION: Initialize the WFC algorithm
         TERRAIN_GENERATOR.initialize();
-        this.isGenerating = true;
-        this.shouldDrawHighlights = true;
-        this.currentStep = 1;
-        this.generationStepCount = 1;
         
-        // Get the cell index and convert to x,y coordinates
+        // STATE UPDATE: Set initial generation state
+        GENERATION_STATE.isGenerating = true;
+        GENERATION_STATE.shouldDrawHighlights = true;
+        GENERATION_STATE.currentStep = 1;
+        GENERATION_STATE.generationStepCount = 1;
+        
+        // TERRAIN GENERATION: Find the first cell to process
         const cellIndex = TERRAIN_GENERATOR.findLowestEntropyCell();
         if (cellIndex !== null) {
             const x = cellIndex % 36;
             const y = Math.floor(cellIndex / 36) % 36;
-            this.currentCell = { x, y };
             
-            // Center camera on the initial cell
+            // VISUALIZATION: Set up current cell for display
+            GENERATION_STATE.currentCell = { x, y };
             this.centerCameraOnCell(x, y);
             
-            // Initialize step state
-            this.stepState = {
-                type: this.StepType.FINDING_CELL,
+            // STATE UPDATE: Initialize step tracking state
+            GENERATION_STATE.stepState = {
+                type: GENERATION_STATE.StepType.FINDING_CELL,
                 currentCell: { x, y },
                 currentNeighbor: null,
                 stepNumber: 1
             };
             
-            // Get and store neighbors for processing
-            this.neighborIndices = TERRAIN_GENERATOR.getNeighbourCells(cellIndex);
+            // TERRAIN GENERATION: Get neighboring cells that need processing
+            GENERATION_STATE.neighborIndices = TERRAIN_GENERATOR.getNeighbourCells(cellIndex);
             
-            // Convert neighbor indices to coordinates and store them
-            this.neighbourCells = new Set();
-            this.neighborIndices.forEach(index => {
+            // VISUALIZATION: Convert neighbor indices to display coordinates
+            GENERATION_STATE.neighbourCells = new Set();
+            GENERATION_STATE.neighborIndices.forEach(index => {
                 if (index !== null) {
                     const nx = index % 36;
                     const ny = Math.floor(index / 36) % 36;
-                    this.neighbourCells.add({ x: nx, y: ny });
+                    GENERATION_STATE.neighbourCells.add({ x: nx, y: ny });
                 }
             });
             
-            // Start with the first neighbor
-            if (this.neighbourCells.size > 0) {
-                this.currentNeighbor = Array.from(this.neighbourCells)[0];
-                this.currentStepType = this.StepType.PROCESSING_NEIGHBOR;
+            // STATE UPDATE: Set up first neighbor for processing
+            if (GENERATION_STATE.neighbourCells.size > 0) {
+                GENERATION_STATE.currentNeighbor = Array.from(GENERATION_STATE.neighbourCells)[0];
+                GENERATION_STATE.currentStepType = GENERATION_STATE.StepType.PROCESSING_NEIGHBOR;
                 
-                // Update step state for neighbor processing
-                this.stepState = {
-                    type: this.StepType.PROCESSING_NEIGHBOR,
+                // Get superposition tiles for current neighbor
+                const neighborIndex = GENERATION_STATE.currentNeighbor.x + (GENERATION_STATE.currentNeighbor.y * 36);
+                const superpositionTiles = GENERATION_STATE.superpositionTiles.get(neighborIndex);
+                if (superpositionTiles) {
+                    GENERATION_STATE.currentNeighborTerrainTypes = new Set(superpositionTiles);
+                }
+                
+                // STATE UPDATE: Update step state for neighbor processing
+                GENERATION_STATE.stepState = {
+                    type: GENERATION_STATE.StepType.PROCESSING_NEIGHBOR,
                     currentCell: { x, y },
-                    currentNeighbor: this.currentNeighbor,
+                    currentNeighbor: GENERATION_STATE.currentNeighbor,
                     stepNumber: 1
                 };
             } else {
-                this.currentNeighbor = null;
+                GENERATION_STATE.currentNeighbor = null;
+                GENERATION_STATE.currentNeighborTerrainTypes.clear();
             }
         }
         
@@ -231,130 +221,142 @@ class GenerationProcessVisualiser {
 
     // Step-by-step generation for visualization
     generateStepVisualisation() {
-        this.generationStepCount++;
-        this.stepState.stepNumber = this.generationStepCount;
+        GENERATION_STATE.generationStepCount++;
+        GENERATION_STATE.stepState.stepNumber = GENERATION_STATE.generationStepCount;
 
         // Check if we're done
         if (TERRAIN_GENERATOR.superPositionTileSetEmpty()) {
-            console.log("VISUALISATION: Generation complete - no more cells to process");
-            this.isGenerating = false;
+            GENERATION_STATE.isGenerating = false;
             return false;
         }
 
         // If we don't have a current cell, find the next one
-        if (!this.currentCell) {
-            this.currentStepType = this.StepType.FINDING_CELL;
+        if (!GENERATION_STATE.currentCell) {
+            GENERATION_STATE.currentStepType = GENERATION_STATE.StepType.FINDING_CELL;
             
             // Find the cell with lowest entropy
             let cellIndex = TERRAIN_GENERATOR.findLowestEntropyCell();
             if (cellIndex === null) {
-                console.log("VISUALISATION: No valid cell found to process");
-                this.isGenerating = false;
+                GENERATION_STATE.isGenerating = false;
                 return false;
             }
 
             // Convert index to x,y coordinates
             const x = cellIndex % 36;
             const y = Math.floor(cellIndex / 36) % 36;
-            this.currentCell = { x, y };
+            GENERATION_STATE.currentCell = { x, y };
             
             // Center camera on the new cell
             this.centerCameraOnCell(x, y);
             
             // Get and store neighbors for processing
-            this.neighborIndices = TERRAIN_GENERATOR.getNeighbourCells(cellIndex);
+            GENERATION_STATE.neighborIndices = TERRAIN_GENERATOR.getNeighbourCells(cellIndex);
             
             // Convert neighbor indices to coordinates and store them
-            this.neighbourCells = new Set();
-            this.neighborIndices.forEach(index => {
+            GENERATION_STATE.neighbourCells = new Set();
+            GENERATION_STATE.neighborIndices.forEach(index => {
                 if (index !== null) {
                     const nx = index % 36;
                     const ny = Math.floor(index / 36) % 36;
-                    this.neighbourCells.add({ x: nx, y: ny });
+                    GENERATION_STATE.neighbourCells.add({ x: nx, y: ny });
                 }
             });
 
             // Update step state
-            this.stepState = {
-                type: this.StepType.FINDING_CELL,
+            GENERATION_STATE.stepState = {
+                type: GENERATION_STATE.StepType.FINDING_CELL,
                 currentCell: { x, y },
                 currentNeighbor: null,
                 stepNumber: this.generationStepCount
             };
             
             // Start with the first neighbor
-            if (this.neighbourCells.size > 0) {
-                this.currentNeighbor = Array.from(this.neighbourCells)[0];
-                this.currentStepType = this.StepType.PROCESSING_NEIGHBOR;
+            if (GENERATION_STATE.neighbourCells.size > 0) {
+                GENERATION_STATE.currentNeighbor = Array.from(GENERATION_STATE.neighbourCells)[0];
+                GENERATION_STATE.currentStepType = GENERATION_STATE.StepType.PROCESSING_NEIGHBOR;
                 
-                // Update step state for neighbor processing
-                this.stepState = {
-                    type: this.StepType.PROCESSING_NEIGHBOR,
+                // Get superposition tiles for current neighbor
+                const neighborIndex = GENERATION_STATE.currentNeighbor.x + (GENERATION_STATE.currentNeighbor.y * 36);
+                const superpositionTiles = GENERATION_STATE.superpositionTiles.get(neighborIndex);
+                if (superpositionTiles) {
+                    GENERATION_STATE.currentNeighborTerrainTypes = new Set(superpositionTiles);
+                }
+                
+                // STATE UPDATE: Update step state for neighbor processing
+                GENERATION_STATE.stepState = {
+                    type: GENERATION_STATE.StepType.PROCESSING_NEIGHBOR,
                     currentCell: { x, y },
-                    currentNeighbor: this.currentNeighbor,
-                    stepNumber: this.generationStepCount
+                    currentNeighbor: GENERATION_STATE.currentNeighbor,
+                    stepNumber: GENERATION_STATE.generationStepCount
                 };
             } else {
-                this.currentNeighbor = null;
+                GENERATION_STATE.currentNeighbor = null;
+                GENERATION_STATE.currentNeighborTerrainTypes.clear();
             }
 
-            this.currentStep++;
+            GENERATION_STATE.currentStep++;
             return true;
         }
 
         // If we have a current cell, process its neighbors one by one
-        if (this.currentNeighbor) {
-            this.currentStepType = this.StepType.PROCESSING_NEIGHBOR;
+        if (GENERATION_STATE.currentNeighbor) {
+            GENERATION_STATE.currentStepType = GENERATION_STATE.StepType.PROCESSING_NEIGHBOR;
             
             // Process current neighbor
-            const neighborIndex = this.currentNeighbor.y * 36 + this.currentNeighbor.x;
+            const neighborIndex = GENERATION_STATE.currentNeighbor.x + (GENERATION_STATE.currentNeighbor.y * 36);
             
             // Move to next neighbor
-            const neighbors = Array.from(this.neighbourCells);
+            const neighbors = Array.from(GENERATION_STATE.neighbourCells);
             const currentIndex = neighbors.findIndex(n => 
-                n.x === this.currentNeighbor.x && n.y === this.currentNeighbor.y);
+                n.x === GENERATION_STATE.currentNeighbor.x && n.y === GENERATION_STATE.currentNeighbor.y);
             
             if (currentIndex < neighbors.length - 1) {
-                this.currentNeighbor = neighbors[currentIndex + 1];
+                GENERATION_STATE.currentNeighbor = neighbors[currentIndex + 1];
+                
+                // Get superposition tiles for current neighbor
+                const neighborIndex = GENERATION_STATE.currentNeighbor.x + (GENERATION_STATE.currentNeighbor.y * 36);
+                const superpositionTiles = GENERATION_STATE.superpositionTiles.get(neighborIndex);
+                if (superpositionTiles) {
+                    GENERATION_STATE.currentNeighborTerrainTypes = new Set(superpositionTiles);
+                }
                 
                 // Update step state for next neighbor
-                this.stepState = {
-                    type: this.StepType.PROCESSING_NEIGHBOR,
-                    currentCell: this.currentCell,
-                    currentNeighbor: this.currentNeighbor,
-                    stepNumber: this.generationStepCount
+                GENERATION_STATE.stepState = {
+                    type: GENERATION_STATE.StepType.PROCESSING_NEIGHBOR,
+                    currentCell: GENERATION_STATE.currentCell,
+                    currentNeighbor: GENERATION_STATE.currentNeighbor,
+                    stepNumber: GENERATION_STATE.generationStepCount
                 };
             } else {
                 // All neighbors processed, process the complete step
-                const cellIndex = this.currentCell.y * 36 + this.currentCell.x;
+                const cellIndex = GENERATION_STATE.currentCell.y * 36 + GENERATION_STATE.currentCell.x;
                 
                 // Call WFC's generateStep with the current cell index
                 const success = TERRAIN_GENERATOR.generateStep(cellIndex);
                 
                 if (!success) {
-                    console.log("GENERATION: Failed to generate step");
-                    this.isGenerating = false;
+                    GENERATION_STATE.isGenerating = false;
                     return false;
                 }
                 
                 // Clear everything for next step
-                this.currentCell = null;
-                this.currentNeighbor = null;
-                this.neighbourCells.clear();
-                this.neighborIndices = [];
-                this.currentStepType = this.StepType.FINDING_CELL;
-                console.log("VISUALISATION: Step complete, clearing state for next step");
+                GENERATION_STATE.currentCell = null;
+                GENERATION_STATE.currentNeighbor = null;
+                GENERATION_STATE.currentNeighborTerrainTypes.clear();
+                GENERATION_STATE.neighbourCells.clear();
+                GENERATION_STATE.neighborIndices = [];
+                GENERATION_STATE.currentStepType = GENERATION_STATE.StepType.FINDING_CELL;
                 
                 // Update step state for finding next cell
-                this.stepState = {
-                    type: this.StepType.FINDING_CELL,
+                GENERATION_STATE.stepState = {
+                    type: GENERATION_STATE.StepType.FINDING_CELL,
                     currentCell: null,
                     currentNeighbor: null,
-                    stepNumber: this.generationStepCount
+                    stepNumber: GENERATION_STATE.generationStepCount
                 };
             }
             
-            this.currentStep++;
+            GENERATION_STATE.currentStep++;
             return true;
         }
 
@@ -363,83 +365,89 @@ class GenerationProcessVisualiser {
 
     // Control methods
     play() {
-        if (this.isPlaying) return;
+        if (GENERATION_STATE.isPlaying) return;
         
-        this.isPlaying = true;
-        this.shouldDrawHighlights = true;
+        GENERATION_STATE.isPlaying = true;
+        GENERATION_STATE.shouldDrawHighlights = true;
         
+        const initialDelay = GENERATION_STATE.playSpeed / GENERATION_STATE.playSpeedDivider;
+
         // Start the play interval
-        this.playInterval = setInterval(() => {
+        GENERATION_STATE.playInterval = setInterval(() => {
+            const currentDelay = GENERATION_STATE.playSpeed / GENERATION_STATE.playSpeedDivider;
+
             if (!this.generateStepVisualisation()) {
                 this.pause();
             }
-        }, this.playSpeed);
+        }, GENERATION_STATE.playSpeed / GENERATION_STATE.playSpeedDivider);
     }
 
     pause() {
-        this.isPlaying = false;
-        if (this.playInterval) {
-            clearInterval(this.playInterval);
-            this.playInterval = null;
+        GENERATION_STATE.isPlaying = false;
+        if (GENERATION_STATE.playInterval) {
+            clearInterval(GENERATION_STATE.playInterval);
+            GENERATION_STATE.playInterval = null;
         }
     }
 
     stepForward() {
-        if (this.isPlaying) return false;
+        if (GENERATION_STATE.isPlaying) return false;
         
-        this.shouldDrawHighlights = true;
-    
-        // If this is the first step, run initialization
-        if (this.currentStep === 0) {
-            return this.firstStep();
-        }
+        GENERATION_STATE.shouldDrawHighlights = true;
         
         return this.generateStepVisualisation();
     }
 
     stepBack() {
-        if (this.isPlaying) return;
+        if (GENERATION_STATE.isPlaying) return;
         
         // Try to step back in WFC state
         if (TERRAIN_GENERATOR.stepBack()) {
             // Update visualization state
-            this.generationStepCount--;
+            GENERATION_STATE.generationStepCount--;
             
             // Clear current state
-            this.currentCell = null;
-            this.currentNeighbor = null;
-            this.neighbourCells.clear();
-            this.neighborIndices = [];
+            GENERATION_STATE.currentCell = null;
+            GENERATION_STATE.currentNeighbor = null;
+            GENERATION_STATE.currentNeighborTerrainTypes.clear();
+            GENERATION_STATE.neighbourCells.clear();
+            GENERATION_STATE.neighborIndices = [];
             
             // Update step state
-            this.stepState = {
-                type: this.StepType.FINDING_CELL,
+            GENERATION_STATE.stepState = {
+                type: GENERATION_STATE.StepType.FINDING_CELL,
                 currentCell: null,
                 currentNeighbor: null,
-                stepNumber: this.generationStepCount
+                stepNumber: GENERATION_STATE.generationStepCount
             };
             
             // Keep visualization active
-            this.shouldDrawHighlights = true;
-            this.isGenerating = true;
+            GENERATION_STATE.shouldDrawHighlights = true;
+            GENERATION_STATE.isGenerating = true;
         }
     }
 
-    setPlaySpeed(speed) {
-        this.playSpeed = speed;
-        if (this.isPlaying) {
+    setPlaySpeed(divider) {
+        // Update the playSpeedDivider in GenerationState
+        GENERATION_STATE.playSpeedDivider = divider;
+        
+        // Check if currently playing and restart if needed
+        if (GENERATION_STATE.isPlaying) {
             this.pause();
             this.play();
-        }
+        } 
     }
 
     reset() {
-        this.isGenerating = false;
-        this.currentStep = 0;
-        this.shouldDrawHighlights = false;
+  
+        GENERATION_STATE.isGenerating = false;
+        GENERATION_STATE.currentStep = 0;
+        GENERATION_STATE.shouldDrawHighlights = false;
+        GENERATION_STATE.playSpeedDivider = 1; // Reset to default divider
         this.clearHighlights();
         this.pause();
-        this.generationStepCount = 0;  // Reset the generation step counter
+        GENERATION_STATE.generationStepCount = 0;  // Reset the generation step counter
+        
     }
 }
 

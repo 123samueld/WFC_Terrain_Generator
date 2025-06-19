@@ -4,7 +4,10 @@ import { menuItems } from './MenuItems.js';
 import { inputState } from './Input.js';
 import { getGameStateBuffers } from './Initialise.js';
 import { wfc } from './TerrainGenerator/WFC.js';
-import { GENERATION_PROCESS_VISUALISER } from './FilePathRouter.js';
+import { 
+    GENERATION_PROCESS_VISUALISER, 
+    GENERATION_STATE 
+} from './FilePathRouter.js';
 import { options } from './Options.js';
 import { generationProcessVisualiser } from './TerrainGenerator/GenerationProcessVisualiser.js';
 
@@ -105,7 +108,6 @@ class BuildMenu {
             menuHeader.innerText = this.activeMenu;
         }
     }
-    
 
     generateDynamicMenu(activeMenu) {
         const menuData = this.menuItems[activeMenu];
@@ -193,22 +195,32 @@ class BuildMenu {
                         generationProcessVisualiser.stepBack();
                         break;
                     case 'play':
+                        // If this is the first step, run initialization
+                        if (GENERATION_STATE.currentStep === 0) {
+                            generationProcessVisualiser.firstStep();
+                            GENERATION_STATE.isGenerating = true;
+                        }
                         generationProcessVisualiser.play();
                         break;
                     case 'pause':
                         generationProcessVisualiser.pause();
                         break;
                     case 'step_forward':
+                        // If this is the first step, run initialization
+                        if (GENERATION_STATE.currentStep === 0) {
+                            generationProcessVisualiser.firstStep();
+                            GENERATION_STATE.isGenerating = true;
+                        }
                         generationProcessVisualiser.stepForward();
                         break;
                     case 'play_speed':
                         const modal = document.getElementById('playSpeedModal');
                         const closeBtn = modal.querySelector('.modal-close');
-                        const select = document.getElementById('playSpeedSelect');
+                        const select = document.getElementById('modalPlaySpeedSelect');
                         const setSpeedBtn = document.getElementById('setSpeedBtn');
                         
-                        // Set initial value
-                        select.value = options.playSpeed;
+                        // Set initial value to current divider
+                        select.value = GENERATION_STATE.playSpeedDivider;
                         
                         // Add change event listener for select
                         select.onchange = (e) => {
@@ -218,9 +230,10 @@ class BuildMenu {
                         
                         // Add click event listener for Set Speed button
                         setSpeedBtn.onclick = () => {
-                            options.playSpeed = parseInt(select.value);
-                            generationProcessVisualiser.setPlaySpeed(options.playSpeed * 100); // Convert to milliseconds
-                            console.log(`Play speed set to ${options.playSpeed}`);
+                            const dividerValue = parseInt(select.value);
+                            // Update the playSpeedDivider in GenerationState
+                            GENERATION_STATE.playSpeedDivider = dividerValue;
+                            generationProcessVisualiser.setPlaySpeed(dividerValue);
                             modal.style.display = 'none';
                             // Remove escape key listener when modal closes
                             document.removeEventListener('keydown', handleEscape);

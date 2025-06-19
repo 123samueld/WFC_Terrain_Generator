@@ -36,9 +36,9 @@ export const terrainStateDisplayItems = {
         potentialNeighbors: {
             title: "Potential Neighbors",
             grid: {
-                rows: 3,
+                rows: 4,
                 cols: 4,
-                cells: Array(12).fill(null).map((_, index) => ({
+                cells: Array(16).fill(null).map((_, index) => ({
                     id: `neighbor${index}`,
                     value: null
                 }))
