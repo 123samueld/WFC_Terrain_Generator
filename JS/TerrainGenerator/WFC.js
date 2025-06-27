@@ -186,8 +186,16 @@
         
 
         generateWFC() {
-            console.log('generateWFC() called');
+            // Set generation state to true before starting
+            GENERATION_STATE.isGenerating = true;
             
+            // Add a small delay to allow popup to render
+            setTimeout(() => {
+                this.performGeneration();
+            }, 200); // 200ms delay
+        }
+        
+        performGeneration() {
             // Get access to game state buffers
             const { read, write } = INITIALISE.getGameStateBuffers();
             this.gameStateRead = read;
@@ -196,32 +204,25 @@
             // Initialize the grid
             this.initialize();
             
-            // Check initial state
-            console.log('Initial state check:');
-            console.log('superPositionTileSetEmpty():', this.superPositionTileSetEmpty());
-            console.log('superpositionTiles size:', GENERATION_STATE.superpositionTiles.size);
-                        
             // Main WFC loop
-            let iterationCount = 0;
-            const MAX_ITERATIONS = 150;
-            while (!this.superPositionTileSetEmpty() && iterationCount < MAX_ITERATIONS) {
-                // Log set sizes at the start of each iteration
-                console.log('=== WFC Iteration', iterationCount, '===');
-                console.log('Superposition Tiles:', GENERATION_STATE.superpositionTiles.size);
-                console.log('Collapsed Tiles:', GENERATION_STATE.collapsedTiles.size);
-                console.log('Set Tiles:', GENERATION_STATE.setTiles.size);
-                console.log('========================');
-                
+            while (!this.superPositionTileSetEmpty()) {
                 // Save state before each iteration
                 this.saveState();
                 
                 let cell = this.findLowestEntropyCell();
                 
+                // Check if we found a valid cell to collapse
+                if (cell === null) {
+                    break;
+                }
+                
                 this.collapseCell(cell);
                 this.propagateConstraints(cell);
                 GENERATION_STATE.generationStep++;
-                iterationCount++;
             }
+            
+            // Set generation state to false when complete
+            GENERATION_STATE.isGenerating = false;
             
             return this.grid; // fully collapsed with valid constraints
         }
@@ -448,6 +449,24 @@
             // Clear state history
             this.stateHistory = [];
             this.currentHistoryIndex = -1;
+        }
+
+        undo() {
+            // Reset WFC state
+            this.reset();
+            
+            // Clear game state buffers
+            const { read, write } = INITIALISE.getGameStateBuffers();
+            
+            // Clear all tiles in the game state
+            for (let x = 0; x < this.gridSize; x++) {
+                for (let y = 0; y < this.gridSize; y++) {
+                    write.setTile(x, y, null);
+                    read.setTile(x, y, null);
+                }
+            }
+            
+            console.log('WFC state and map cleared');
         }
 
         // Reset visualization state

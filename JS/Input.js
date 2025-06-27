@@ -161,6 +161,37 @@ export function handleMouseWheel(e) {
     // TODO: Implement zoom functionality
 }
 
+// Helper function to get tile type from menu item
+function getTileTypeFromMenuItem(selectedMenuItem) {
+    if (!selectedMenuItem) return null;
+    
+    // Check if it's a building (has tileType property)
+    if (selectedMenuItem.tileType) {
+        return selectedMenuItem.tileType;
+    }
+    // Check if it's a road (use text to find tile type)
+    else if (selectedMenuItem.text) {
+        // If there's a currentVariant (from cycling), use that
+        if (selectedMenuItem.currentVariant) {
+            return selectedMenuItem.currentVariant;
+        } else {
+            // Otherwise use the default mapping
+            const roadTextToTileType = {
+                'Cross': 'cross',
+                'Straight': 'straight_latitude', // Default to latitude for now
+                'T': 't_junction_top', // Default to top for now
+                'L': 'l_curve_top_left', // Default to top-left for now
+                'Diagonal': 'diagonal_top_left', // Default to top-left for now
+                'Forest': 'Flora_Forest'
+            };
+            
+            return roadTextToTileType[selectedMenuItem.text];
+        }
+    }
+    
+    return null;
+}
+
 // Event handler for mouse click
 export function handleMouseClick(e) {
     if (!inputState.mouse.isOverCanvas) return;
@@ -177,7 +208,7 @@ export function handleMouseClick(e) {
     if (e.button === 0 || e.which === 1) {
         // Handle tile placement
         if (inputState.mouse.hoveredTile && buildMenu.selectedMenuItem) {
-            const tileType = buildMenu.selectedMenuItem.tileType;
+            const tileType = getTileTypeFromMenuItem(buildMenu.selectedMenuItem);
             
             if (tileType && terrainTiles[tileType]) {
                 getGameStateBuffers().write.setTile(

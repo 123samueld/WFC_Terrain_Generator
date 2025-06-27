@@ -7,7 +7,8 @@ const MENU_ICON_PATHS = {
     BUILDINGS: PATHS.ASSETS.MENU_ICONS.BUILDINGS,
     ROAD: PATHS.ASSETS.MENU_ICONS.ROADS,
     TRAIN: './Assets/Nested_Menu_Icons/04_Train_Menu_Icons/',
-    TEMPLATE: PATHS.ASSETS.MENU_ICONS.TEMPLATE
+    TEMPLATE: PATHS.ASSETS.MENU_ICONS.TEMPLATE,
+    FLORA: PATHS.ASSETS.MENU_ICONS.FLORA
 };
 
 export const menuItems = {
@@ -121,7 +122,8 @@ export const menuItems = {
                 id: 6,
                 image: PATHS.ASSETS.MENU_ICONS.BUILD_OPTIONS + '07_Flora.png',
                 text: 'Flora',
-                menu: 'Build Options'
+                menu: 'Build Options',
+                nextMenu: 'Flora'
             },
             {
                 id: 7,
@@ -274,6 +276,66 @@ export const menuItems = {
                 image: PATHS.ASSETS.MENU_ICONS.MAIN + '08_Back.png',
                 text: 'Back',
                 menu: 'Buildings'
+            },
+            {
+                id: 9,
+                placeholder: true
+            },
+            {
+                id: 10,
+                placeholder: true
+            },
+            {
+                id: 11,
+                placeholder: true
+            }
+        ]
+    },
+
+    Flora: {
+        isLeafMenu: true,
+        items: [
+            {
+                id: 0,
+                image: PATHS.ASSETS.MENU_ICONS.FLORA + '01_Forest.png',
+                text: 'Forest',
+                menu: 'Flora'
+            },
+            {
+                id: 1,
+                image: PATHS.ASSETS.MENU_ICONS.FLORA + '02_Tree.png',
+                text: 'Tree',
+                menu: 'Flora'
+            },
+            {
+                id: 2,
+                placeholder: true
+            },
+            {
+                id: 3,
+                placeholder: true
+            },
+            {
+                id: 4,
+                placeholder: true
+            },
+            {
+                id: 5,
+                placeholder: true
+            },
+            {
+                id: 6,
+                placeholder: true
+            },
+            {
+                id: 7,
+                placeholder: true
+            },
+            {
+                id: 8,
+                image: PATHS.ASSETS.MENU_ICONS.MAIN + '08_Back.png',
+                text: 'Back',
+                menu: 'Flora'
             },
             {
                 id: 9,

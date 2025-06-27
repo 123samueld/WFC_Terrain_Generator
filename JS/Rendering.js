@@ -29,6 +29,46 @@ function drawTileHighlight(ctx, x, y, color, lineWidth = 3) {
     ctx.stroke();
 }
 
+// Helper function to get terrain tile from menu item
+function getTerrainTileFromMenuItem(selectedMenuItem) {
+    if (!selectedMenuItem) return null;
+    
+    const terrainTiles = getTerrainTiles();
+    let terrainTile = null;
+    
+    // Check if it's a building (has tileType property)
+    if (selectedMenuItem.tileType) {
+        terrainTile = terrainTiles[selectedMenuItem.tileType];
+    }
+    // Check if it's a road (use text to find tile type)
+    else if (selectedMenuItem.text) {
+        let tileType;
+        
+        // If there's a currentVariant (from cycling), use that
+        if (selectedMenuItem.currentVariant) {
+            tileType = selectedMenuItem.currentVariant;
+        } else {
+            // Otherwise use the default mapping
+            const roadTextToTileType = {
+                'Cross': 'cross',
+                'Straight': 'straight_latitude', // Default to latitude for now
+                'T': 't_junction_top', // Default to top for now
+                'L': 'l_curve_top_left', // Default to top-left for now
+                'Diagonal': 'diagonal_top_left', // Default to top-left for now
+                'Forest': 'Flora_Forest'
+            };
+            
+            tileType = roadTextToTileType[selectedMenuItem.text];
+        }
+        
+        if (tileType) {
+            terrainTile = terrainTiles[tileType];
+        }
+    }
+    
+    return terrainTile;
+}
+
 // Draw selected and hovered tile highlights including if a menu item is selected
 function drawTileHighlights(ctx, gameStateBufferRead) {
     // Draw hovered tile highlight
@@ -46,9 +86,9 @@ function drawTileHighlights(ctx, gameStateBufferRead) {
         
         // If a menu item is selected, draw its sprite instead of the highlight
         const selectedMenuItem = buildMenu.getSelectedMenuItem();
-        if (selectedMenuItem && selectedMenuItem.tileType) {
-            const terrainTiles = getTerrainTiles();
-            const terrainTile = terrainTiles[selectedMenuItem.tileType];
+        if (selectedMenuItem) {
+            const terrainTile = getTerrainTileFromMenuItem(selectedMenuItem);
+            
             if (terrainTile) {
                 // Calculate sprite position using the actual grid position
                 const spriteIsoCoords = cartesianToIsometric(spriteX, y);
