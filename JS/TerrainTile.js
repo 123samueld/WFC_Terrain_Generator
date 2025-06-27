@@ -165,7 +165,11 @@ export const TileType = {
     CHEMICAL_PLANT: 'Chemical_Plant',
     TRAIN_STATION: 'Train_Station',
     PROMETHIUM_REFINERY: 'Promethium_Refinery',
-    HAB_BLOCK: 'Hab_Block'
+    HAB_BLOCK: 'Hab_Block',
+
+    // Flora
+    FLORA_FOREST: 'Flora_Forest',
+    FLORA_TREE: 'Flora_Tree'
 };
 
 // Factory function to create terrain tiles
