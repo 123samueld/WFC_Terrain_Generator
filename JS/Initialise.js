@@ -316,6 +316,16 @@ export async function loadTerrainTiles() {
         const isometricPipeSpritesAddressPrefix = 'Assets/Terrain_Tile_Sprites/Isometric/05_Pipes/';
         const cartesianPipeSpritesAddressPrefix = 'Assets/Terrain_Tile_Sprites/Cartesian/05_Pipes/';
 
+        /* Flora */
+        const isometricFloraSpritesAddressPrefix = 'Assets/Terrain_Tile_Sprites/Isometric/07_Flora/';
+
+        // Forest
+        const forestIsometric = await loadSprite(isometricFloraSpritesAddressPrefix + '01_Forest.png');
+        const forestCartesian = await loadSprite(PATHS.ASSETS.MENU_ICONS.FLORA + '01_Forest.png');
+        terrainTiles[TileType.FLORA_FOREST] = createTerrainTile(TileType.FLORA_FOREST, forestIsometric, forestCartesian);
+        terrainTiles[TileType.FLORA_FOREST].miniMapTileColour = 'rgba(52, 191, 47, 0.42)';
+        terrainTiles[TileType.FLORA_FOREST].tileHeightSpillOver = 32;
+    
     } catch (error) {
         console.error('Error loading terrain tiles:', error);
     }

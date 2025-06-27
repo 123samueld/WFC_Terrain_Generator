@@ -23,7 +23,8 @@ class BuildMenu {
             "Roads", 
             "Train Tracks", 
             "Power Lines", 
-            "Pipes"
+            "Pipes",
+            "Flora"
         ];
         this.isVisualisationMenu = false;  // Add flag for visualisation menu state
 
@@ -46,9 +47,19 @@ class BuildMenu {
             x: this.actionX,
             c: this.actionC,
             v: this.actionV,
-            b: this.actionB
+            b: this.actionB,
+            shift: this.rotateSelectedDirection
         };
         this.selectedMenuItem = null;
+        
+        // Road cycling state
+        this.roadVariants = {
+            'Straight': ['straight_latitude', 'straight_longitude'],
+            'T': ['t_junction_top', 't_junction_right', 't_junction_bottom', 't_junction_left'],
+            'L': ['l_curve_top_left', 'l_curve_top_right', 'l_curve_bottom_left', 'l_curve_bottom_right'],
+            'Diagonal': ['diagonal_top_left', 'diagonal_top_right', 'diagonal_bottom_left', 'diagonal_bottom_right']
+        };
+        this.currentRoadVariantIndex = 0;
     }
 
     preloadMenuIcons() {
@@ -146,6 +157,16 @@ class BuildMenu {
                 button.classList.remove('placeholder');
                 span.innerText = item.text || '';
                 button.style.backgroundImage = item.image ? `url('${item.image}')` : '';
+                
+                // Make unused menu items 50% transparent
+                const unusedItems = ['Train\nTracks', 'Power\nLines', 'Pipes', 'Fauna', 'Population\nOptions', 'Adjust\nWeights', 'Tree'];
+                if (unusedItems.includes(item.text)) {
+                    button.style.opacity = '0.5';
+                    span.style.opacity = '0.5';
+                } else {
+                    button.style.opacity = '1.0';
+                    span.style.opacity = '1.0';
+                }
             }
         }
     }
@@ -184,7 +205,9 @@ class BuildMenu {
                         // TODO: Implement weight adjustment
                         break;
                     case 'undo':
-                        // TODO: Implement undo functionality
+                        // Show confirmation popup instead of directly undoing
+                        GENERATION_STATE.deleteMap = true;
+                        this.showDeleteMapConfirmation();
                         break;
                 }
             }
@@ -316,6 +339,25 @@ class BuildMenu {
     actionV() { this.handleMenuAction(this.activeMenu, 11); }
     actionB() { this.toggleMenu(); }
 
+    rotateSelectedDirection() {
+        // Only cycle if a road item is selected
+        if (!this.selectedMenuItem || !this.selectedMenuItem.text) return;
+        
+        const roadText = this.selectedMenuItem.text;
+        const variants = this.roadVariants[roadText];
+        
+        if (variants) {
+            // Cycle to next variant
+            this.currentRoadVariantIndex = (this.currentRoadVariantIndex + 1) % variants.length;
+            
+            // Update the selectedMenuItem to reflect the new variant
+            // We'll store the current variant in a custom property
+            this.selectedMenuItem.currentVariant = variants[this.currentRoadVariantIndex];
+            
+            console.log(`Cycled ${roadText} to variant: ${this.selectedMenuItem.currentVariant}`);
+        }
+    }
+
     back() {    
         // Remove the current (active) menu from the chain
         this.menuChain.pop();
@@ -358,6 +400,42 @@ class BuildMenu {
                 this.dynamicMenu(); // Update the header based on the active menu
             });
         }
+    }
+
+    showDeleteMapConfirmation() {
+        const confirmBtn = document.getElementById('confirmDelete');
+        const cancelBtn = document.getElementById('cancelDelete');
+        
+        // Set state to show popup
+        GENERATION_STATE.deleteMap = true;
+        
+        // Confirm button handler
+        confirmBtn.onclick = () => {
+            wfc.undo();
+            GENERATION_STATE.deleteMap = false;
+        };
+        
+        // Cancel button handler
+        cancelBtn.onclick = () => {
+            GENERATION_STATE.deleteMap = false;
+        };
+        
+        // Click outside to close
+        window.onclick = (event) => {
+            const deleteMapPopup = document.getElementById('deleteMapPopup');
+            if (event.target === deleteMapPopup) {
+                GENERATION_STATE.deleteMap = false;
+            }
+        };
+        
+        // Escape key to close
+        const handleEscape = (event) => {
+            if (event.key === 'Escape') {
+                GENERATION_STATE.deleteMap = false;
+                document.removeEventListener('keydown', handleEscape);
+            }
+        };
+        document.addEventListener('keydown', handleEscape);
     }
 }
 

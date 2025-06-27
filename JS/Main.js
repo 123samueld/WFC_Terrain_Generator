@@ -4,8 +4,35 @@ import { renderingLoop } from './Rendering.js';
 import { simulationLoop } from './Simulation.js';
 import { getInput, updateCameraPosition, initEventListeners } from './Input.js';
 import { buildMenu } from './BuildMenu.js';
+import { GENERATION_STATE } from './TerrainGenerator/GenerationState.js';
 
 let nextFrame = false; // Rendering sets this true when ready for a new frame
+
+// Function to monitor generation state and show/hide popup
+function updateGenerationPopup() {
+    const generationPopup = document.getElementById('generationPopup');
+    
+    if (generationPopup) {
+        if (GENERATION_STATE.isGenerating) {
+            generationPopup.style.display = 'flex';
+        } else {
+            generationPopup.style.display = 'none';
+        }
+    }
+}
+
+// Function to monitor delete map state and show/hide popup
+function updateDeleteMapPopup() {
+    const deleteMapPopup = document.getElementById('deleteMapPopup');
+    
+    if (deleteMapPopup) {
+        if (GENERATION_STATE.deleteMap) {
+            deleteMapPopup.style.display = 'flex';
+        } else {
+            deleteMapPopup.style.display = 'none';
+        }
+    }
+}
 
 document.addEventListener('DOMContentLoaded', async () => {
   initCanvas();
@@ -14,6 +41,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   initGameState();
   await loadTerrainTiles(); // Load terrain tiles before starting the game loop
   initEventListeners();
+  
+  // Set up interval to monitor generation state
+  setInterval(updateGenerationPopup, 100); // Check every 100ms
+  setInterval(updateDeleteMapPopup, 100); // Check every 100ms
+  
   requestAnimationFrame(gameLoop);
 });
 

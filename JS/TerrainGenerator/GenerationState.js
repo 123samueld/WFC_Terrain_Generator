@@ -15,6 +15,7 @@ class GenerationState {
         this.currentStep = 0;
         this.totalSteps = 0;
         this.generationStepCount = 0;  // Track number of generation steps
+        this.deleteMap = false;  // Track if map deletion is requested
 
         //WFC State Tracking
         this.superpositionTiles = new Map();  // Set of possible tile types
