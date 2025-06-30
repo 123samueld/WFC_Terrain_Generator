@@ -29,6 +29,10 @@ export function getTerrainTiles() {
     return terrainTiles;
 }
 
+export function getOverlaySprites() {
+    return window.overlaySprites || {};
+}
+
 export function getSprites() {
     return sprites;
 }
@@ -325,7 +329,176 @@ export async function loadTerrainTiles() {
         terrainTiles[TileType.FLORA_FOREST] = createTerrainTile(TileType.FLORA_FOREST, forestIsometric, forestCartesian);
         terrainTiles[TileType.FLORA_FOREST].miniMapTileColour = 'rgba(52, 191, 47, 0.42)';
         terrainTiles[TileType.FLORA_FOREST].tileHeightSpillOver = 32;
-    
+
+        /* Water/Lake */
+        const isometricWaterSpritesAddressPrefix = 'Assets/Terrain_Tile_Sprites/Isometric/03_Landscape/01_Water/';
+
+        // Lake Middle
+        const lakeMiddleIsometric = await loadSprite(isometricWaterSpritesAddressPrefix + '01_Lake/01_Middle.png');
+        const lakeMiddleCartesian = await loadSprite(PATHS.ASSETS.MENU_ICONS.LANDSCAPE + '01_Water/01_Lake/01_Middle.png');
+        terrainTiles[TileType.LAKE_MIDDLE] = createTerrainTile(TileType.LAKE_MIDDLE, lakeMiddleIsometric, lakeMiddleCartesian);
+        terrainTiles[TileType.LAKE_MIDDLE].miniMapTileColour = 'rgba(0, 123, 255, 0.6)';
+        terrainTiles[TileType.LAKE_MIDDLE].tileHeightSpillOver = 0;
+
+        // Lake Bank tiles
+        const lakeBankIsometricSpritesAddressPrefix = isometricWaterSpritesAddressPrefix + '01_Lake/';
+
+        // Lake Bank North
+        const lakeBankNIsometric = await loadSprite(lakeBankIsometricSpritesAddressPrefix + '02_N.png');
+        const lakeBankNCartesian = await loadSprite(PATHS.ASSETS.MENU_ICONS.LANDSCAPE + '01_Water/01_Lake/02_N.png');
+        terrainTiles[TileType.LAKE_BANK_N] = createTerrainTile(TileType.LAKE_BANK_N, lakeBankNIsometric, lakeBankNCartesian);
+        terrainTiles[TileType.LAKE_BANK_N].miniMapTileColour = 'rgba(0, 123, 255, 0.6)';
+        terrainTiles[TileType.LAKE_BANK_N].tileHeightSpillOver = 0;
+
+        // Lake Bank North-East
+        const lakeBankNEIsometric = await loadSprite(lakeBankIsometricSpritesAddressPrefix + '03_NE.png');
+        const lakeBankNECartesian = await loadSprite(PATHS.ASSETS.MENU_ICONS.LANDSCAPE + '01_Water/01_Lake/03_NE.png');
+        terrainTiles[TileType.LAKE_BANK_NE] = createTerrainTile(TileType.LAKE_BANK_NE, lakeBankNEIsometric, lakeBankNECartesian);
+        terrainTiles[TileType.LAKE_BANK_NE].miniMapTileColour = 'rgba(0, 123, 255, 0.6)';
+        terrainTiles[TileType.LAKE_BANK_NE].tileHeightSpillOver = 0;
+
+        // Lake Bank East
+        const lakeBankEIsometric = await loadSprite(lakeBankIsometricSpritesAddressPrefix + '04_E.png');
+        const lakeBankECartesian = await loadSprite(PATHS.ASSETS.MENU_ICONS.LANDSCAPE + '01_Water/01_Lake/04_E.png');
+        terrainTiles[TileType.LAKE_BANK_E] = createTerrainTile(TileType.LAKE_BANK_E, lakeBankEIsometric, lakeBankECartesian);
+        terrainTiles[TileType.LAKE_BANK_E].miniMapTileColour = 'rgba(0, 123, 255, 0.6)';
+        terrainTiles[TileType.LAKE_BANK_E].tileHeightSpillOver = 0;
+
+        // Lake Bank South-East
+        const lakeBankSEIsometric = await loadSprite(lakeBankIsometricSpritesAddressPrefix + '05_SE.png');
+        const lakeBankSECartesian = await loadSprite(PATHS.ASSETS.MENU_ICONS.LANDSCAPE + '01_Water/01_Lake/05_SE.png');
+        terrainTiles[TileType.LAKE_BANK_SE] = createTerrainTile(TileType.LAKE_BANK_SE, lakeBankSEIsometric, lakeBankSECartesian);
+        terrainTiles[TileType.LAKE_BANK_SE].miniMapTileColour = 'rgba(0, 123, 255, 0.6)';
+        terrainTiles[TileType.LAKE_BANK_SE].tileHeightSpillOver = 0;
+
+        // Lake Bank South
+        const lakeBankSIsometric = await loadSprite(lakeBankIsometricSpritesAddressPrefix + '06_S.png');
+        const lakeBankSCartesian = await loadSprite(PATHS.ASSETS.MENU_ICONS.LANDSCAPE + '01_Water/01_Lake/06_S.png');
+        terrainTiles[TileType.LAKE_BANK_S] = createTerrainTile(TileType.LAKE_BANK_S, lakeBankSIsometric, lakeBankSCartesian);
+        terrainTiles[TileType.LAKE_BANK_S].miniMapTileColour = 'rgba(0, 123, 255, 0.6)';
+        terrainTiles[TileType.LAKE_BANK_S].tileHeightSpillOver = 0;
+
+        // Lake Bank South-West
+        const lakeBankSWIsometric = await loadSprite(lakeBankIsometricSpritesAddressPrefix + '07_SW.png');
+        const lakeBankSWCartesian = await loadSprite(PATHS.ASSETS.MENU_ICONS.LANDSCAPE + '01_Water/01_Lake/07_SW.png');
+        terrainTiles[TileType.LAKE_BANK_SW] = createTerrainTile(TileType.LAKE_BANK_SW, lakeBankSWIsometric, lakeBankSWCartesian);
+        terrainTiles[TileType.LAKE_BANK_SW].miniMapTileColour = 'rgba(0, 123, 255, 0.6)';
+        terrainTiles[TileType.LAKE_BANK_SW].tileHeightSpillOver = 0;
+
+        // Lake Bank West
+        const lakeBankWIsometric = await loadSprite(lakeBankIsometricSpritesAddressPrefix + '08_W.png');
+        const lakeBankWCartesian = await loadSprite(PATHS.ASSETS.MENU_ICONS.LANDSCAPE + '01_Water/01_Lake/08_W.png');
+        terrainTiles[TileType.LAKE_BANK_W] = createTerrainTile(TileType.LAKE_BANK_W, lakeBankWIsometric, lakeBankWCartesian);
+        terrainTiles[TileType.LAKE_BANK_W].miniMapTileColour = 'rgba(0, 123, 255, 0.6)';
+        terrainTiles[TileType.LAKE_BANK_W].tileHeightSpillOver = 0;
+
+        // Lake Bank North-West
+        const lakeBankNWIsometric = await loadSprite(lakeBankIsometricSpritesAddressPrefix + '09_NW.png');
+        const lakeBankNWCartesian = await loadSprite(PATHS.ASSETS.MENU_ICONS.LANDSCAPE + '01_Water/01_Lake/09_NW.png');
+        terrainTiles[TileType.LAKE_BANK_NW] = createTerrainTile(TileType.LAKE_BANK_NW, lakeBankNWIsometric, lakeBankNWCartesian);
+        terrainTiles[TileType.LAKE_BANK_NW].miniMapTileColour = 'rgba(0, 123, 255, 0.6)';
+        terrainTiles[TileType.LAKE_BANK_NW].tileHeightSpillOver = 0;
+
+        // River tiles
+        const riverIsometricSpritesAddressPrefix = isometricWaterSpritesAddressPrefix + '02_River/';
+        const riverCartesianSpritesAddressPrefix = PATHS.ASSETS.MENU_ICONS.LANDSCAPE + '01_Water/02_River/';
+
+        // River West-East
+        const riverWEIsometric = await loadSprite(riverIsometricSpritesAddressPrefix + '01_WE.png');
+        const riverWECartesian = await loadSprite(riverCartesianSpritesAddressPrefix + '01_WE.png');
+        terrainTiles[TileType.RIVER_WE] = createTerrainTile(TileType.RIVER_WE, riverWEIsometric, riverWECartesian);
+        terrainTiles[TileType.RIVER_WE].miniMapTileColour = 'rgba(0, 123, 255, 0.6)';
+        terrainTiles[TileType.RIVER_WE].tileHeightSpillOver = 0;
+
+        // River East-West
+        const riverEWIsometric = await loadSprite(riverIsometricSpritesAddressPrefix + '02_EW.png');
+        const riverEWCartesian = await loadSprite(riverCartesianSpritesAddressPrefix + '02_EW.png');
+        terrainTiles[TileType.RIVER_EW] = createTerrainTile(TileType.RIVER_EW, riverEWIsometric, riverEWCartesian);
+        terrainTiles[TileType.RIVER_EW].miniMapTileColour = 'rgba(0, 123, 255, 0.6)';
+        terrainTiles[TileType.RIVER_EW].tileHeightSpillOver = 0;
+
+        // River North-South
+        const riverNSIsometric = await loadSprite(riverIsometricSpritesAddressPrefix + '03_NS.png');
+        const riverNSCartesian = await loadSprite(riverCartesianSpritesAddressPrefix + '03_NS.png');
+        terrainTiles[TileType.RIVER_NS] = createTerrainTile(TileType.RIVER_NS, riverNSIsometric, riverNSCartesian);
+        terrainTiles[TileType.RIVER_NS].miniMapTileColour = 'rgba(0, 123, 255, 0.6)';
+        terrainTiles[TileType.RIVER_NS].tileHeightSpillOver = 0;
+
+        // River South-North
+        const riverSNIsometric = await loadSprite(riverIsometricSpritesAddressPrefix + '04_SN.png');
+        const riverSNCartesian = await loadSprite(riverCartesianSpritesAddressPrefix + '04_SN.png');
+        terrainTiles[TileType.RIVER_SN] = createTerrainTile(TileType.RIVER_SN, riverSNIsometric, riverSNCartesian);
+        terrainTiles[TileType.RIVER_SN].miniMapTileColour = 'rgba(0, 123, 255, 0.6)';
+        terrainTiles[TileType.RIVER_SN].tileHeightSpillOver = 0;
+
+        // River South-East
+        const riverSEIsometric = await loadSprite(riverIsometricSpritesAddressPrefix + '05_SE.png');
+        const riverSECartesian = await loadSprite(riverCartesianSpritesAddressPrefix + '05_SE.png');
+        terrainTiles[TileType.RIVER_SE] = createTerrainTile(TileType.RIVER_SE, riverSEIsometric, riverSECartesian);
+        terrainTiles[TileType.RIVER_SE].miniMapTileColour = 'rgba(0, 123, 255, 0.6)';
+        terrainTiles[TileType.RIVER_SE].tileHeightSpillOver = 0;
+
+        // River East-South
+        const riverESIsometric = await loadSprite(riverIsometricSpritesAddressPrefix + '06_ES.png');
+        const riverESCartesian = await loadSprite(riverCartesianSpritesAddressPrefix + '06_ES.png');
+        terrainTiles[TileType.RIVER_ES] = createTerrainTile(TileType.RIVER_ES, riverESIsometric, riverESCartesian);
+        terrainTiles[TileType.RIVER_ES].miniMapTileColour = 'rgba(0, 123, 255, 0.6)';
+        terrainTiles[TileType.RIVER_ES].tileHeightSpillOver = 0;
+
+        // River South-West
+        const riverSWIsometric = await loadSprite(riverIsometricSpritesAddressPrefix + '07_SW.png');
+        const riverSWCartesian = await loadSprite(riverCartesianSpritesAddressPrefix + '07_SW.png');
+        terrainTiles[TileType.RIVER_SW] = createTerrainTile(TileType.RIVER_SW, riverSWIsometric, riverSWCartesian);
+        terrainTiles[TileType.RIVER_SW].miniMapTileColour = 'rgba(0, 123, 255, 0.6)';
+        terrainTiles[TileType.RIVER_SW].tileHeightSpillOver = 0;
+
+        // River West-South
+        const riverWSIsometric = await loadSprite(riverIsometricSpritesAddressPrefix + '08_WS.png');
+        const riverWSCartesian = await loadSprite(riverCartesianSpritesAddressPrefix + '08_WS.png');
+        terrainTiles[TileType.RIVER_WS] = createTerrainTile(TileType.RIVER_WS, riverWSIsometric, riverWSCartesian);
+        terrainTiles[TileType.RIVER_WS].miniMapTileColour = 'rgba(0, 123, 255, 0.6)';
+        terrainTiles[TileType.RIVER_WS].tileHeightSpillOver = 0;
+
+        // River North-West
+        const riverNWIsometric = await loadSprite(riverIsometricSpritesAddressPrefix + '09_NW.png');
+        const riverNWCartesian = await loadSprite(riverCartesianSpritesAddressPrefix + '09_NW.png');
+        terrainTiles[TileType.RIVER_NW] = createTerrainTile(TileType.RIVER_NW, riverNWIsometric, riverNWCartesian);
+        terrainTiles[TileType.RIVER_NW].miniMapTileColour = 'rgba(0, 123, 255, 0.6)';
+        terrainTiles[TileType.RIVER_NW].tileHeightSpillOver = 0;
+
+        // River West-North
+        const riverWNIsometric = await loadSprite(riverIsometricSpritesAddressPrefix + '10_WN.png');
+        const riverWNCartesian = await loadSprite(riverCartesianSpritesAddressPrefix + '10_WN.png');
+        terrainTiles[TileType.RIVER_WN] = createTerrainTile(TileType.RIVER_WN, riverWNIsometric, riverWNCartesian);
+        terrainTiles[TileType.RIVER_WN].miniMapTileColour = 'rgba(0, 123, 255, 0.6)';
+        terrainTiles[TileType.RIVER_WN].tileHeightSpillOver = 0;
+
+        // River North-East
+        const riverNEIsometric = await loadSprite(riverIsometricSpritesAddressPrefix + '11_NE.png');
+        const riverNECartesian = await loadSprite(riverCartesianSpritesAddressPrefix + '11_NE.png');
+        terrainTiles[TileType.RIVER_NE] = createTerrainTile(TileType.RIVER_NE, riverNEIsometric, riverNECartesian);
+        terrainTiles[TileType.RIVER_NE].miniMapTileColour = 'rgba(0, 123, 255, 0.6)';
+        terrainTiles[TileType.RIVER_NE].tileHeightSpillOver = 0;
+
+        // River East-North
+        const riverENIsometric = await loadSprite(riverIsometricSpritesAddressPrefix + '12_EN.png');
+        const riverENCartesian = await loadSprite(riverCartesianSpritesAddressPrefix + '12_EN.png');
+        terrainTiles[TileType.RIVER_EN] = createTerrainTile(TileType.RIVER_EN, riverENIsometric, riverENCartesian);
+        terrainTiles[TileType.RIVER_EN].miniMapTileColour = 'rgba(0, 123, 255, 0.6)';
+        terrainTiles[TileType.RIVER_EN].tileHeightSpillOver = 0;
+
+        // River Arrow sprites (for overlay use)
+        const riverClockwiseArrowIsometric = await loadSprite(riverIsometricSpritesAddressPrefix + '17_clockwise.png');
+        const riverAntiClockwiseArrowIsometric = await loadSprite(riverIsometricSpritesAddressPrefix + '18_anti-clockwise.png');
+        
+        
+        // Store arrow sprites as overlay icons
+        if (!window.overlaySprites) {
+            window.overlaySprites = {};
+        }
+        window.overlaySprites.riverClockwiseArrow = riverClockwiseArrowIsometric;
+        window.overlaySprites.riverAntiClockwiseArrow = riverAntiClockwiseArrowIsometric;
+        
     } catch (error) {
         console.error('Error loading terrain tiles:', error);
     }

@@ -8,7 +8,8 @@ const MENU_ICON_PATHS = {
     ROAD: PATHS.ASSETS.MENU_ICONS.ROADS,
     TRAIN: './Assets/Nested_Menu_Icons/04_Train_Menu_Icons/',
     TEMPLATE: PATHS.ASSETS.MENU_ICONS.TEMPLATE,
-    FLORA: PATHS.ASSETS.MENU_ICONS.FLORA
+    FLORA: PATHS.ASSETS.MENU_ICONS.FLORA,
+    LANDSCAPE: PATHS.ASSETS.MENU_ICONS.LANDSCAPE
 };
 
 export const menuItems = {
@@ -127,7 +128,10 @@ export const menuItems = {
             },
             {
                 id: 7,
-                placeholder: true
+                image: PATHS.ASSETS.MENU_ICONS.BUILD_OPTIONS + '08_Landscape.png',
+                text: 'Landscape',
+                menu: 'Build Options',
+                nextMenu: 'Landscape'
             },
             {
                 id: 8,
@@ -336,6 +340,251 @@ export const menuItems = {
                 image: PATHS.ASSETS.MENU_ICONS.MAIN + '08_Back.png',
                 text: 'Back',
                 menu: 'Flora'
+            },
+            {
+                id: 9,
+                placeholder: true
+            },
+            {
+                id: 10,
+                placeholder: true
+            },
+            {
+                id: 11,
+                placeholder: true
+            }
+        ]
+    },
+
+    Landscape: {
+        isLeafMenu: false,
+        items: [
+            {
+                id: 0,
+                image: PATHS.ASSETS.MENU_ICONS.LANDSCAPE + '01_Water.png',
+                text: 'Water',
+                menu: 'Landscape',
+                nextMenu: 'Water'
+            },
+            {
+                id: 1,
+                placeholder: true
+            },
+            {
+                id: 2,
+                placeholder: true
+            },
+            {
+                id: 3,
+                placeholder: true
+            },
+            {
+                id: 4,
+                placeholder: true
+            },
+            {
+                id: 5,
+                placeholder: true
+            },
+            {
+                id: 6,
+                placeholder: true
+            },
+            {
+                id: 7,
+                placeholder: true
+            },
+            {
+                id: 8,
+                image: PATHS.ASSETS.MENU_ICONS.MAIN + '08_Back.png',
+                text: 'Back',
+                menu: 'Landscape'
+            },
+            {
+                id: 9,
+                placeholder: true
+            },
+            {
+                id: 10,
+                placeholder: true
+            },
+            {
+                id: 11,
+                placeholder: true
+            }
+        ]
+    },
+
+    Water: {
+        isLeafMenu: false,
+        items: [
+            {
+                id: 0,
+                image: PATHS.ASSETS.MENU_ICONS.LANDSCAPE + '01_Water/01_Lake.png',
+                text: 'Lake',
+                menu: 'Water',
+                nextMenu: 'Lake'
+            },
+            {
+                id: 1,
+                image: PATHS.ASSETS.MENU_ICONS.LANDSCAPE + '01_Water/02_River.png',
+                text: 'River',
+                menu: 'Water',
+                nextMenu: 'River'
+            },
+            {
+                id: 2,
+                placeholder: true
+            },
+            {
+                id: 3,
+                placeholder: true
+            },
+            {
+                id: 4,
+                placeholder: true
+            },
+            {
+                id: 5,
+                placeholder: true
+            },
+            {
+                id: 6,
+                placeholder: true
+            },
+            {
+                id: 7,
+                placeholder: true
+            },
+            {
+                id: 8,
+                image: PATHS.ASSETS.MENU_ICONS.MAIN + '08_Back.png',
+                text: 'Back',
+                menu: 'Water'
+            },
+            {
+                id: 9,
+                placeholder: true
+            },
+            {
+                id: 10,
+                placeholder: true
+            },
+            {
+                id: 11,
+                placeholder: true
+            }
+        ]
+    },
+
+    Lake: {
+        isLeafMenu: true,
+        items: [
+            {
+                id: 0,
+                image: PATHS.ASSETS.MENU_ICONS.LANDSCAPE + '01_Water/01_Lake/01_Middle.png',
+                text: 'Middle',
+                menu: 'Lake',
+                tileType: 'Lake_Middle'
+            },
+            {
+                id: 1,
+                image: PATHS.ASSETS.MENU_ICONS.LANDSCAPE + '01_Water/01_Lake/02_N.png',
+                text: 'Bank',
+                menu: 'Lake',
+                tileType: 'Lake_Bank_N'
+            },
+            {
+                id: 2,
+                placeholder: true
+            },
+            {
+                id: 3,
+                placeholder: true
+            },
+            {
+                id: 4,
+                placeholder: true
+            },
+            {
+                id: 5,
+                placeholder: true
+            },
+            {
+                id: 6,
+                placeholder: true
+            },
+            {
+                id: 7,
+                placeholder: true
+            },
+            {
+                id: 8,
+                image: PATHS.ASSETS.MENU_ICONS.MAIN + '08_Back.png',
+                text: 'Back',
+                menu: 'Lake'
+            },
+            {
+                id: 9,
+                placeholder: true
+            },
+            {
+                id: 10,
+                placeholder: true
+            },
+            {
+                id: 11,
+                placeholder: true
+            }
+        ]
+    },
+
+    River: {
+        isLeafMenu: true,
+        items: [
+            {
+                id: 0,
+                image: PATHS.ASSETS.MENU_ICONS.LANDSCAPE + '01_Water/02_River/01_WE.png',
+                text: 'Clockwise\nRivers',
+                menu: 'River',
+                tileType: 'River_NS' // Default to first clockwise river
+            },
+            {
+                id: 1,
+                image: PATHS.ASSETS.MENU_ICONS.LANDSCAPE + '01_Water/02_River/02_EW.png',
+                text: 'Anti-Clockwise\nRivers',
+                menu: 'River',
+                tileType: 'River_NW' // Default to first anti-clockwise river
+            },
+            {
+                id: 2,
+                placeholder: true
+            },
+            {
+                id: 3,
+                placeholder: true
+            },
+            {
+                id: 4,
+                placeholder: true
+            },
+            {
+                id: 5,
+                placeholder: true
+            },
+            {
+                id: 6,
+                placeholder: true
+            },
+            {
+                id: 7,
+                placeholder: true
+            },
+            {
+                id: 8,
+                image: PATHS.ASSETS.MENU_ICONS.MAIN + '08_Back.png',
+                text: 'Back',
+                menu: 'River'
             },
             {
                 id: 9,

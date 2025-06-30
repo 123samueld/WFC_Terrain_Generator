@@ -1,5 +1,5 @@
 //Rendering.js
-import { getCanvasContext, getTerrainTiles, miniMapCanvasRef, mapOrigin } from './Initialise.js';
+import { getCanvasContext, getTerrainTiles, miniMapCanvasRef, mapOrigin, getOverlaySprites } from './Initialise.js';
 import { cartesianToIsometric, 
     isometricToCartesian, 
     ISOMETRIC_TILE_WIDTH, 
@@ -10,7 +10,7 @@ import { cartesianToIsometric,
 import { drawGridOverlay } from './ProfilingTools.js';
 import { inputState } from './Input.js';
 import { buildMenu } from './BuildMenu.js';
-import { TERRAIN_GENERATOR, GENERATION_PROCESS_VISUALISER, TERRAIN_STATE_DISPLAY } from './FilePathRouter.js';
+import { TERRAIN_GENERATOR, GENERATION_PROCESS_VISUALISER, TERRAIN_STATE_DISPLAY, GENERATION_STATE } from './FilePathRouter.js';
 import { options } from './Options.js';
 
 // Add toggle at the top level
@@ -36,30 +36,31 @@ function getTerrainTileFromMenuItem(selectedMenuItem) {
     const terrainTiles = getTerrainTiles();
     let terrainTile = null;
     
+    // If there's a currentVariant (from cycling), use that first
+    if (selectedMenuItem.currentVariant) {
+        terrainTile = terrainTiles[selectedMenuItem.currentVariant];
+    }
     // Check if it's a building (has tileType property)
-    if (selectedMenuItem.tileType) {
+    else if (selectedMenuItem.tileType) {
         terrainTile = terrainTiles[selectedMenuItem.tileType];
     }
     // Check if it's a road (use text to find tile type)
     else if (selectedMenuItem.text) {
         let tileType;
         
-        // If there's a currentVariant (from cycling), use that
-        if (selectedMenuItem.currentVariant) {
-            tileType = selectedMenuItem.currentVariant;
-        } else {
-            // Otherwise use the default mapping
-            const roadTextToTileType = {
-                'Cross': 'cross',
-                'Straight': 'straight_latitude', // Default to latitude for now
-                'T': 't_junction_top', // Default to top for now
-                'L': 'l_curve_top_left', // Default to top-left for now
-                'Diagonal': 'diagonal_top_left', // Default to top-left for now
-                'Forest': 'Flora_Forest'
-            };
-            
-            tileType = roadTextToTileType[selectedMenuItem.text];
-        }
+        // Otherwise use the default mapping
+        const roadTextToTileType = {
+            'Cross': 'cross',
+            'Straight': 'straight_latitude', // Default to latitude for now
+            'T': 't_junction_top', // Default to top for now
+            'L': 'l_curve_top_left', // Default to top-left for now
+            'Diagonal': 'diagonal_top_left', // Default to top-left for now
+            'Forest': 'Flora_Forest',
+            'Lake_Middle': 'Lake_Middle',
+            'Bank': 'Lake_Bank_N'
+        };
+        
+        tileType = roadTextToTileType[selectedMenuItem.text];
         
         if (tileType) {
             terrainTile = terrainTiles[tileType];
@@ -99,6 +100,9 @@ function drawTileHighlights(ctx, gameStateBufferRead) {
                 ctx.globalAlpha = 0.5;
                 terrainTile.draw(ctx, spriteScreenX, spriteScreenY, 'isometric');
                 ctx.globalAlpha = 1.0;
+                
+                // Draw arrow overlay if it's a river tile
+                drawRiverArrowOverlay(ctx, selectedMenuItem, spriteScreenX, spriteScreenY);
             }
         } else {
             // Draw hover effect with thinner line if no menu item is selected
@@ -107,11 +111,91 @@ function drawTileHighlights(ctx, gameStateBufferRead) {
     }
 }
 
+// Draw river arrow overlay in the top right of the tile
+function drawRiverArrowOverlay(ctx, selectedMenuItem, spriteScreenX, spriteScreenY) {
+    // Check if the selected item is a river type
+    if (!selectedMenuItem.text || (!selectedMenuItem.text.includes('Clockwise') && !selectedMenuItem.text.includes('Anti-Clockwise'))) {
+        return;
+    }
+    
+    const overlaySprites = getOverlaySprites();
+    let arrowSprite = null;
+        
+    // Determine which arrow to use based on the selected river type
+    if (selectedMenuItem.text.includes('Anti-Clockwise')) {
+        arrowSprite = overlaySprites.riverAntiClockwiseArrow;
+    } else if (selectedMenuItem.text.includes('Clockwise')) {
+        arrowSprite = overlaySprites.riverClockwiseArrow;
+    }
+    
+    if (arrowSprite) {
+        // Calculate position for top right corner of the tile
+        // Isometric tile dimensions: width = 100, height = 50
+        const arrowSize = 35; // Size of the arrow sprite
+        const arrowX = spriteScreenX + 165; // Right side of tile minus arrow width
+        const arrowY = spriteScreenY; // Top of tile minus arrow height
+        
+        // Draw the arrow with full opacity
+        ctx.globalAlpha = 1.0;
+        ctx.drawImage(arrowSprite, arrowX, arrowY, arrowSize, arrowSize);
+    } else {
+        console.log('No arrow sprite found');
+    }
+}
+
+// Render generation status - redraw the progress elements each frame
+function renderGenerationStatus() {
+    const generationProgress = document.getElementById('generationProgress');
+    
+    if (!generationProgress) return;
+    
+    // Only update if generation is active
+    if (GENERATION_STATE.shouldShowGenerationPopup && GENERATION_STATE.isGenerating) {
+        // Clear and recreate the progress elements
+        generationProgress.innerHTML = '';
+        
+        // Create progress bar
+        const progressBar = document.createElement('div');
+        progressBar.id = 'generationProgressBar';
+        progressBar.className = 'progress-bar';
+        
+        // Create progress fill
+        const progressFill = document.createElement('div');
+        progressFill.id = 'generationProgressFill';
+        progressFill.className = 'progress-fill';
+        
+        // Calculate progress percentage based on actual WFC progress
+        const totalTiles = 1296; // Total grid size
+        const tilesCompleted = GENERATION_STATE.tilesCompleted;
+        const percentage = Math.min(Math.round((tilesCompleted / totalTiles) * 100), 100);
+        
+        // Set progress fill width
+        progressFill.style.width = percentage + '%';
+        
+        // Create sparks element at the head of the progress bar
+        const sparksElement = document.createElement('div');
+        sparksElement.id = 'progressSparks';
+        sparksElement.className = 'progress-sparks';
+        sparksElement.style.left = percentage + '%';
+        
+        // Create progress text
+        const progressText = document.createElement('div');
+        progressText.id = 'generationProgressText';
+        progressText.textContent = `${percentage}% (${tilesCompleted}/${totalTiles})`;
+        
+        // Assemble the elements
+        progressBar.appendChild(progressFill);
+        progressBar.appendChild(sparksElement);
+        generationProgress.appendChild(progressBar);
+        generationProgress.appendChild(progressText);
+    }
+}
+
 // Draw WFC generation visualization
 function drawWFCVisualization(ctx, gameStateBufferRead) {
     if (!options.visualiseTerrainGenerationProcess) return;
     GENERATION_PROCESS_VISUALISER.generationProcessVisualiser.draw(ctx, gameStateBufferRead.camera);
-    TERRAIN_STATE_DISPLAY.terrainStateDisplay.update();
+    TERRAIN_STATE_DISPLAY.terrainStateDisplay.openOrCloseTerrainDisplay();
 }
 
 // Occlusion culling based on 6 tiles in each direction from center
@@ -253,6 +337,9 @@ export function renderingLoop(gameStateBufferRead) {
 
     // Highlight selected or hovered tiles
     drawTileHighlights(ctx, gameStateBufferRead);
+
+    // Render generation status (progress bar and text)
+    renderGenerationStatus();
 
     if (toggleDraw) { drawMiniMap(gameStateBufferRead); } 
 

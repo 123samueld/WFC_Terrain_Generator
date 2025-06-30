@@ -188,6 +188,35 @@ canvas {
   transform: scale(1.05);
 }
 
+#optionsButton {
+  position: absolute;
+  bottom: 20px;
+  right: 50px;
+  padding: 10px 20px;
+  width: 120px;
+  font-size: 20px;
+  color: white;
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 4px solid;
+  border-image: linear-gradient(
+    135deg,
+    #ccc,
+    #999,
+    #eee,
+    #666,
+    #ccc
+  ) 1;
+  cursor: pointer;
+  z-index: 5;
+  transition: all 0.3s ease;
+  font-family: 'LatinCondensed', sans-serif;
+}
+
+#optionsButton:hover {
+  transform: scale(1.05);
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
 #buildMenu {
     position: absolute;
     bottom: 100px;
@@ -654,9 +683,56 @@ canvas {
 
 .generation-popup-content h3 {
     color: #fff;
-    margin: 0;
+    margin: 0 0 20px 0;
     font-size: 24px;
     letter-spacing: 2px;
+}
+
+#generationProgress {
+    margin-top: 20px;
+    text-align: center;
+}
+
+#generationProgressBar {
+    width: 300px;
+    height: 20px;
+    background-color: #444;
+    border: 2px solid #666;
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 0 auto 10px auto;
+    position: relative;
+}
+
+#generationProgressFill {
+    height: 100%;
+    background-image: url('./Assets/generationBar.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: left center;
+    width: 0%;
+    transition: width 0.3s ease;
+}
+
+.progress-sparks {
+    position: absolute;
+    top: -37.5px;
+    width: 100px;
+    height: 100px;
+    background-image: url('./Assets/sparks.gif');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    pointer-events: none;
+    z-index: 10;
+    transform: translateX(-50%);
+}
+
+#generationProgressText {
+    color: #fff;
+    font-size: 18px;
+    font-weight: bold;
+    margin-top: 10px;
 }
 
 /* Delete Map Popup Styles */

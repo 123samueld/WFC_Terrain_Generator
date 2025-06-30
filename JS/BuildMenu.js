@@ -6,7 +6,8 @@ import { getGameStateBuffers } from './Initialise.js';
 import { wfc } from './TerrainGenerator/WFC.js';
 import { 
     GENERATION_PROCESS_VISUALISER, 
-    GENERATION_STATE 
+    GENERATION_STATE,
+    TERRAIN_STATE_DISPLAY
 } from './FilePathRouter.js';
 import { options } from './Options.js';
 import { generationProcessVisualiser } from './TerrainGenerator/GenerationProcessVisualiser.js';
@@ -24,7 +25,11 @@ class BuildMenu {
             "Train Tracks", 
             "Power Lines", 
             "Pipes",
-            "Flora"
+            "Flora",
+            "Landscape",
+            "Water",
+            "Lake",
+            "River"
         ];
         this.isVisualisationMenu = false;  // Add flag for visualisation menu state
 
@@ -56,8 +61,11 @@ class BuildMenu {
         this.roadVariants = {
             'Straight': ['straight_latitude', 'straight_longitude'],
             'T': ['t_junction_top', 't_junction_right', 't_junction_bottom', 't_junction_left'],
-            'L': ['l_curve_top_left', 'l_curve_top_right', 'l_curve_bottom_left', 'l_curve_bottom_right'],
-            'Diagonal': ['diagonal_top_left', 'diagonal_top_right', 'diagonal_bottom_left', 'diagonal_bottom_right']
+            'L': ['l_curve_top_right', 'l_curve_bottom_right', 'l_curve_bottom_left', 'l_curve_top_left'],
+            'Diagonal': ['diagonal_top_right', 'diagonal_bottom_right', 'diagonal_bottom_left', 'diagonal_top_left'],
+            'Bank': ['Lake_Bank_N', 'Lake_Bank_NE', 'Lake_Bank_E', 'Lake_Bank_SE', 'Lake_Bank_S', 'Lake_Bank_SW', 'Lake_Bank_W', 'Lake_Bank_NW'],
+            'Clockwise\nRivers': ['River_NS', 'River_NE', 'River_EW', 'River_ES', 'River_SW', 'River_WN'],
+            'Anti-Clockwise\nRivers': ['River_NW', 'River_WE', 'River_WS', 'River_SN', 'River_SE', 'River_EN']
         };
         this.currentRoadVariantIndex = 0;
     }
@@ -199,6 +207,7 @@ class BuildMenu {
             if (menuName === 'Generate Options') {
                 switch (selectedItem.action) {
                     case 'generate':
+                        GENERATION_STATE.shouldShowGenerationPopup = true; // Set flag to show popup
                         wfc.generateWFC();
                         break;
                     case 'weights':
@@ -216,6 +225,7 @@ class BuildMenu {
                 switch (selectedItem.action) {
                     case 'step_back':
                         generationProcessVisualiser.stepBack();
+                        TERRAIN_STATE_DISPLAY.terrainStateDisplay.update();
                         break;
                     case 'play':
                         // If this is the first step, run initialization
@@ -224,9 +234,11 @@ class BuildMenu {
                             GENERATION_STATE.isGenerating = true;
                         }
                         generationProcessVisualiser.play();
+                        TERRAIN_STATE_DISPLAY.terrainStateDisplay.update();
                         break;
                     case 'pause':
                         generationProcessVisualiser.pause();
+                        TERRAIN_STATE_DISPLAY.terrainStateDisplay.update();
                         break;
                     case 'step_forward':
                         // If this is the first step, run initialization
@@ -235,6 +247,7 @@ class BuildMenu {
                             GENERATION_STATE.isGenerating = true;
                         }
                         generationProcessVisualiser.stepForward();
+                        TERRAIN_STATE_DISPLAY.terrainStateDisplay.update();
                         break;
                     case 'play_speed':
                         const modal = document.getElementById('playSpeedModal');
@@ -301,6 +314,15 @@ class BuildMenu {
         // Handle leaf menu item (tile placement)
         if (menuData.isLeafMenu) {
             this.selectedMenuItem = selectedItem;
+            
+            // Reset variant index when selecting a new item
+            this.currentRoadVariantIndex = 0;
+            
+            // Clear any previous variant
+            if (this.selectedMenuItem.currentVariant) {
+                delete this.selectedMenuItem.currentVariant;
+            }
+            
             return;
         }
     
@@ -314,6 +336,7 @@ class BuildMenu {
         if (nextMenuName === 'Visualise Generation Process') {
             options.visualiseTerrainGenerationProcess = true;
             this.isVisualisationMenu = true;
+            TERRAIN_STATE_DISPLAY.terrainStateDisplay.update();
         }
     
         // Navigate to the selected menu
@@ -354,7 +377,6 @@ class BuildMenu {
             // We'll store the current variant in a custom property
             this.selectedMenuItem.currentVariant = variants[this.currentRoadVariantIndex];
             
-            console.log(`Cycled ${roadText} to variant: ${this.selectedMenuItem.currentVariant}`);
         }
     }
 
@@ -400,6 +422,14 @@ class BuildMenu {
                 this.dynamicMenu(); // Update the header based on the active menu
             });
         }
+
+        // Initialize Options button
+        const optionsButton = document.getElementById('optionsButton');
+        if (optionsButton) {
+            optionsButton.addEventListener('click', () => {
+                this.showOptionsModal();
+            });
+        }
     }
 
     showDeleteMapConfirmation() {
@@ -436,6 +466,42 @@ class BuildMenu {
             }
         };
         document.addEventListener('keydown', handleEscape);
+    }
+
+    showOptionsModal() {
+        const modal = document.getElementById('optionsModal');
+        const closeBtn = modal.querySelector('.modal-close');
+        
+        // Function to handle escape key
+        const handleEscape = (event) => {
+            if (event.key === 'Escape') {
+                modal.style.display = 'none';
+                // Remove the event listener when modal closes
+                document.removeEventListener('keydown', handleEscape);
+            }
+        };
+        
+        // Add escape key listener when modal opens
+        document.addEventListener('keydown', handleEscape);
+        
+        // Show modal
+        modal.style.display = 'block';
+        
+        // Close button handler
+        closeBtn.onclick = () => {
+            modal.style.display = 'none';
+            // Remove escape key listener when modal closes
+            document.removeEventListener('keydown', handleEscape);
+        };
+        
+        // Click outside to close
+        window.onclick = (event) => {
+            if (event.target === modal) {
+                modal.style.display = 'none';
+                // Remove escape key listener when modal closes
+                document.removeEventListener('keydown', handleEscape);
+            }
+        };
     }
 }
 

@@ -65,6 +65,7 @@ export const PATHS = {
         PIPES: './Assets/Nested_Menu_Icons/01_Main_Menu_Icons/01_Build_Options_Menu_Icons/05_Pipes_Menu_Icons/',
         FAUNA: './Assets/Nested_Menu_Icons/01_Main_Menu_Icons/01_Build_Options_Menu_Icons/06_Fauna_Menu_Icons/',
         FLORA: './Assets/Nested_Menu_Icons/01_Main_Menu_Icons/01_Build_Options_Menu_Icons/07_Flora_Menu_Icons/',
+        LANDSCAPE: './Assets/Nested_Menu_Icons/01_Main_Menu_Icons/01_Build_Options_Menu_Icons/08_Landscape_Menu_Icons/',
       },
       TERRAIN: {
         ROOT: './Assets/Terrain_Tile_Sprites/',

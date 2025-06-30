@@ -5,7 +5,8 @@
         TERRAIN_TILE, 
         WFC_RULES, 
         GENERATION_PROCESS_VISUALISER,
-        GENERATION_STATE
+        GENERATION_STATE,
+        JS
     } from '../FilePathRouter.js';
 
     class WFC {
@@ -195,7 +196,7 @@
             }, 200); // 200ms delay
         }
         
-        performGeneration() {
+        async performGeneration() {
             // Get access to game state buffers
             const { read, write } = INITIALISE.getGameStateBuffers();
             this.gameStateRead = read;
@@ -219,10 +220,17 @@
                 this.collapseCell(cell);
                 this.propagateConstraints(cell);
                 GENERATION_STATE.generationStep++;
+                
+                // Yield control to browser every 10 steps to allow UI updates
+                if (GENERATION_STATE.generationStep % 10 === 0) {
+                    // Use setTimeout to yield control to the browser
+                    await new Promise(resolve => setTimeout(resolve, 0));
+                }
             }
             
             // Set generation state to false when complete
             GENERATION_STATE.isGenerating = false;
+            GENERATION_STATE.shouldShowGenerationPopup = false; // Reset popup flag when generation is complete
             
             return this.grid; // fully collapsed with valid constraints
         }
@@ -354,6 +362,7 @@
             
             // Add to collapsedTiles
             GENERATION_STATE.collapsedTiles.add(cell);
+            GENERATION_STATE.tilesCompleted++;
         }
 
         // Get's current cells neighbours.
@@ -443,8 +452,10 @@
             GENERATION_STATE.superpositionTiles.clear();
             GENERATION_STATE.neighbourCells.clear();
             GENERATION_STATE.currentStep = 0;
+            GENERATION_STATE.tilesCompleted = 0; // Reset tiles completed counter
             GENERATION_STATE.lastUpdatedCell = null;
             GENERATION_STATE.isGenerating = false;
+            GENERATION_STATE.shouldShowGenerationPopup = false; // Reset popup flag
             
             // Clear state history
             this.stateHistory = [];
@@ -474,6 +485,7 @@
             GENERATION_STATE.isGenerating = false;
             GENERATION_STATE.currentStep = 0;
             GENERATION_STATE.lastUpdatedCell = null;
+            GENERATION_STATE.shouldShowGenerationPopup = false; // Reset popup flag
             GENERATION_PROCESS_VISUALISER.clearHighlights();
             
             // Clear state history
