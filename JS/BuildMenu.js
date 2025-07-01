@@ -7,7 +7,8 @@ import { wfc } from './TerrainGenerator/WFC.js';
 import { 
     GENERATION_PROCESS_VISUALISER, 
     GENERATION_STATE,
-    TERRAIN_STATE_DISPLAY
+    TERRAIN_STATE_DISPLAY,
+    RENDERING
 } from './FilePathRouter.js';
 import { options } from './Options.js';
 import { generationProcessVisualiser } from './TerrainGenerator/GenerationProcessVisualiser.js';
@@ -56,6 +57,7 @@ class BuildMenu {
             shift: this.rotateSelectedDirection
         };
         this.selectedMenuItem = null;
+        this.destroyMode = false; // Destroy mode flag
         
         // Road cycling state
         this.roadVariants = {
@@ -94,6 +96,10 @@ class BuildMenu {
         return this.selectedMenuItem;
     }
 
+    getDestroyMode() {
+        return this.destroyMode;
+    }
+
     // Method to toggle the build menu
     toggleMenu() {
         const menuContent = document.getElementById('menuContent');
@@ -108,9 +114,21 @@ class BuildMenu {
             menuContent.style.height = '1px';
             topLine.style.transform = 'translateY(0)';
     
+            // If we're leaving the Visualise Generation Process menu, close the terrain display
+            if (this.activeMenu === 'Visualise Generation Process') {
+                options.visualiseTerrainGenerationProcess = false;
+                this.isVisualisationMenu = false;
+                TERRAIN_STATE_DISPLAY.terrainStateDisplay.openOrCloseTerrainDisplay();
+                console.log("Visualisation disabled via menu close");
+            }
+    
             // Reset state
             this.activeMenu = 'Main';
             this.menuChain = [];
+            
+            // Reset destroy mode and cursor when closing menu
+            this.destroyMode = false;
+            document.body.style.cursor = 'default';
         } else {
             // Opening the menu
             menuContent.style.opacity = '1';
@@ -167,7 +185,16 @@ class BuildMenu {
                 button.style.backgroundImage = item.image ? `url('${item.image}')` : '';
                 
                 // Make unused menu items 50% transparent
-                const unusedItems = ['Train\nTracks', 'Power\nLines', 'Pipes', 'Fauna', 'Population\nOptions', 'Adjust\nWeights', 'Tree'];
+                const unusedItems = [
+                    'Train\nTracks', 
+                    'Power\nLines', 
+                    'Pipes', 
+                    'Fauna', 
+                    'Population\nOptions', 
+                    'Adjust\nWeights', 
+                    'Tree',
+                    'Save\nOptions'
+                ];
                 if (unusedItems.includes(item.text)) {
                     button.style.opacity = '0.5';
                     span.style.opacity = '0.5';
@@ -308,12 +335,42 @@ class BuildMenu {
                         break;
                 }
             }
+            // Handle Save Options menu actions
+            else if (menuName === 'Save Options') {
+                switch (selectedItem.action) {
+                    case 'save':
+                        // TODO: Implement save functionality
+                        console.log('Save action triggered');
+                        break;
+                    case 'load':
+                        // TODO: Implement load functionality
+                        console.log('Load action triggered');
+                        break;
+                    case 'export_map':
+                        // TODO: Implement export map functionality
+                        console.log('Export map action triggered');
+                        break;
+                }
+            }
             return;
         }
 
         // Handle leaf menu item (tile placement)
         if (menuData.isLeafMenu) {
+            // Check if this is a destroy action
+            if (selectedItem.text === 'Destroy') {
+                this.destroyMode = true;
+                this.selectedMenuItem = selectedItem;
+                // Change cursor to destroy icon
+                RENDERING.setDestroyCursor();
+                return;
+            }
+            
+            // Reset destroy mode when selecting a non-destroy item
+            this.destroyMode = false;
             this.selectedMenuItem = selectedItem;
+            // Reset cursor to default
+            document.body.style.cursor = 'default';
             
             // Reset variant index when selecting a new item
             this.currentRoadVariantIndex = 0;
@@ -323,6 +380,15 @@ class BuildMenu {
                 delete this.selectedMenuItem.currentVariant;
             }
             
+            return;
+        }
+        
+        // Handle Destroy buttons in non-leaf menus (Build Options, Landscape, Water)
+        if (selectedItem.text === 'Destroy') {
+            this.destroyMode = true;
+            this.selectedMenuItem = selectedItem;
+            // Change cursor to destroy icon
+            RENDERING.setDestroyCursor();
             return;
         }
     
@@ -393,12 +459,17 @@ class BuildMenu {
         if (this.activeMenu === 'Visualise Generation Process') {
             options.visualiseTerrainGenerationProcess = false;
             this.isVisualisationMenu = false;
+            TERRAIN_STATE_DISPLAY.terrainStateDisplay.openOrCloseTerrainDisplay();
             console.log("Visualisation disabled");
         }
     
         // Update activeMenu and regenerate the menu
         this.activeMenu = previousMenu;
         this.generateDynamicMenu(previousMenu);
+        
+        // Reset destroy mode and cursor when navigating back
+        this.destroyMode = false;
+        document.body.style.cursor = 'default';
     }
     
     
@@ -472,10 +543,103 @@ class BuildMenu {
         const modal = document.getElementById('optionsModal');
         const closeBtn = modal.querySelector('.modal-close');
         
+        // Disable map scrolling when modal opens
+        options.disableMapScrolling = true;
+        
         // Function to handle escape key
         const handleEscape = (event) => {
             if (event.key === 'Escape') {
                 modal.style.display = 'none';
+                // Re-enable map scrolling when modal closes
+                options.disableMapScrolling = false;
+                // Remove the event listener when modal closes
+                document.removeEventListener('keydown', handleEscape);
+            }
+        };
+        
+        // Add escape key listener when modal opens
+        document.addEventListener('keydown', handleEscape);
+        
+        // Show modal
+        modal.style.display = 'block';
+        
+        // Add event listeners for options buttons
+        const volumeButton = document.getElementById('volumeButton');
+        const displayGridButton = document.getElementById('displayGridButton');
+        const hotkeysButton = document.getElementById('hotkeysButton');
+        const aboutButton = document.getElementById('aboutButton');
+        
+        // Volume button handler - removed since button is inactive
+        // volumeButton.onclick = () => {
+        //     console.log('Volume button clicked, current volume:', options.volume);
+        //     // TODO: Implement volume control functionality
+        //     alert(`Current volume: ${options.volume}`);
+        // };
+        
+        // Display Grid button handler - removed since button is inactive
+        // displayGridButton.onclick = () => {
+        //     console.log('Display Grid button clicked, current displayGrid:', options.displayGrid);
+        //     // TODO: Implement grid toggle functionality
+        //     alert(`Display Grid is currently: ${options.displayGrid ? 'ON' : 'OFF'}`);
+        // };
+        
+        // Hotkeys button handler
+        hotkeysButton.onclick = () => {
+            // Hide options modal
+            modal.style.display = 'none';
+            // Remove escape key listener when modal closes
+            document.removeEventListener('keydown', handleEscape);
+            document.removeEventListener('click', handleOutsideClick);
+            
+            // Show hotkeys modal
+            this.showHotkeysModal();
+        };
+        
+        // About button handler
+        aboutButton.onclick = () => {
+            // Hide options modal
+            modal.style.display = 'none';
+            // Remove escape key listener when modal closes
+            document.removeEventListener('keydown', handleEscape);
+            document.removeEventListener('click', handleOutsideClick);
+            
+            // Show about modal
+            this.showAboutModal();
+        };
+        
+        // Close button handler
+        closeBtn.onclick = () => {
+            modal.style.display = 'none';
+            // Re-enable map scrolling when modal closes
+            options.disableMapScrolling = false;
+            // Remove escape key listener when modal closes
+            document.removeEventListener('keydown', handleEscape);
+        };
+        
+        // Click outside to close
+        const handleOutsideClick = (event) => {
+            if (event.target === modal) {
+                modal.style.display = 'none';
+                // Re-enable map scrolling when modal closes
+                options.disableMapScrolling = false;
+                // Remove escape key listener when modal closes
+                document.removeEventListener('keydown', handleEscape);
+                document.removeEventListener('click', handleOutsideClick);
+            }
+        };
+        document.addEventListener('click', handleOutsideClick);
+    }
+
+    showHotkeysModal() {
+        const modal = document.getElementById('hotkeysModal');
+        const closeBtn = modal.querySelector('.modal-close');
+        
+        // Function to handle escape key
+        const handleEscape = (event) => {
+            if (event.key === 'Escape') {
+                modal.style.display = 'none';
+                // Re-enable map scrolling when modal closes
+                options.disableMapScrolling = false;
                 // Remove the event listener when modal closes
                 document.removeEventListener('keydown', handleEscape);
             }
@@ -490,18 +654,68 @@ class BuildMenu {
         // Close button handler
         closeBtn.onclick = () => {
             modal.style.display = 'none';
+            // Re-enable map scrolling when modal closes
+            options.disableMapScrolling = false;
             // Remove escape key listener when modal closes
             document.removeEventListener('keydown', handleEscape);
         };
         
         // Click outside to close
-        window.onclick = (event) => {
+        const handleOutsideClick = (event) => {
             if (event.target === modal) {
                 modal.style.display = 'none';
+                // Re-enable map scrolling when modal closes
+                options.disableMapScrolling = false;
                 // Remove escape key listener when modal closes
+                document.removeEventListener('keydown', handleEscape);
+                document.removeEventListener('click', handleOutsideClick);
+            }
+        };
+        document.addEventListener('click', handleOutsideClick);
+    }
+
+    showAboutModal() {
+        const modal = document.getElementById('aboutModal');
+        const closeBtn = modal.querySelector('.modal-close');
+        
+        // Function to handle escape key
+        const handleEscape = (event) => {
+            if (event.key === 'Escape') {
+                modal.style.display = 'none';
+                // Re-enable map scrolling when modal closes
+                options.disableMapScrolling = false;
+                // Remove the event listener when modal closes
                 document.removeEventListener('keydown', handleEscape);
             }
         };
+        
+        // Add escape key listener when modal opens
+        document.addEventListener('keydown', handleEscape);
+        
+        // Show modal
+        modal.style.display = 'block';
+        
+        // Close button handler
+        closeBtn.onclick = () => {
+            modal.style.display = 'none';
+            // Re-enable map scrolling when modal closes
+            options.disableMapScrolling = false;
+            // Remove escape key listener when modal closes
+            document.removeEventListener('keydown', handleEscape);
+        };
+        
+        // Click outside to close
+        const handleOutsideClick = (event) => {
+            if (event.target === modal) {
+                modal.style.display = 'none';
+                // Re-enable map scrolling when modal closes
+                options.disableMapScrolling = false;
+                // Remove escape key listener when modal closes
+                document.removeEventListener('keydown', handleEscape);
+                document.removeEventListener('click', handleOutsideClick);
+            }
+        };
+        document.addEventListener('click', handleOutsideClick);
     }
 }
 

@@ -86,6 +86,9 @@ function updateEdgeScrolling(mouseX, mouseY) {
     inputState.offset.x = 0;
     inputState.offset.y = 0;
 
+    // Disable scrolling if modals are open
+    if (options.disableMapScrolling) return;
+
     // Only calculate scroll if mouse is over canvas
     if (!inputState.mouse.isOverCanvas) return;
 

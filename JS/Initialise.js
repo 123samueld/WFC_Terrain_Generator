@@ -491,6 +491,9 @@ export async function loadTerrainTiles() {
         const riverClockwiseArrowIsometric = await loadSprite(riverIsometricSpritesAddressPrefix + '17_clockwise.png');
         const riverAntiClockwiseArrowIsometric = await loadSprite(riverIsometricSpritesAddressPrefix + '18_anti-clockwise.png');
         
+        // Destroy cursor sprite
+        const destroyCursorIsometric = await loadSprite('Assets/Terrain_Tile_Sprites/Isometric/Destroy.png');
+        
         
         // Store arrow sprites as overlay icons
         if (!window.overlaySprites) {
@@ -498,6 +501,7 @@ export async function loadTerrainTiles() {
         }
         window.overlaySprites.riverClockwiseArrow = riverClockwiseArrowIsometric;
         window.overlaySprites.riverAntiClockwiseArrow = riverAntiClockwiseArrowIsometric;
+        window.overlaySprites.destroyCursor = destroyCursorIsometric;
         
     } catch (error) {
         console.error('Error loading terrain tiles:', error);

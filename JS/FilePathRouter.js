@@ -57,6 +57,7 @@ export const PATHS = {
         BUILD_OPTIONS: './Assets/Nested_Menu_Icons/01_Main_Menu_Icons/01_Build_Options_Menu_Icons/',
         GENERATE_OPTIONS: './Assets/Nested_Menu_Icons/01_Main_Menu_Icons/02_Generate_Options_Menu_Icons/',
         POPULATION_OPTIONS: './Assets/Nested_Menu_Icons/01_Main_Menu_Icons/03_Population_Options_Menu_Icons/',
+        SAVE_OPTIONS: './Assets/Nested_Menu_Icons/01_Main_Menu_Icons/04_Save_Options_Menu_Icons/',
         VISUALISATION_OPTIONS: './Assets/Nested_Menu_Icons/01_Main_Menu_Icons/02_Generate_Options_Menu_Icons/04_Visualise_Process_Menu_Icons/',
         BUILDINGS: './Assets/Nested_Menu_Icons/01_Main_Menu_Icons/01_Build_Options_Menu_Icons/01_Buildings_Menu_Icons/',
         ROADS: './Assets/Nested_Menu_Icons/01_Main_Menu_Icons/01_Build_Options_Menu_Icons/02_Road_Menu_Icons/',

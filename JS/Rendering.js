@@ -70,8 +70,12 @@ function getTerrainTileFromMenuItem(selectedMenuItem) {
     return terrainTile;
 }
 
+
 // Draw selected and hovered tile highlights including if a menu item is selected
 function drawTileHighlights(ctx, gameStateBufferRead) {
+    // Disable highlights if modals are open
+    if (options.disableMapScrolling) return;
+    
     // Draw hovered tile highlight
     if (inputState.mouse.hoveredTile) {
         // For highlight outline, we need the +1 offset
@@ -88,21 +92,27 @@ function drawTileHighlights(ctx, gameStateBufferRead) {
         // If a menu item is selected, draw its sprite instead of the highlight
         const selectedMenuItem = buildMenu.getSelectedMenuItem();
         if (selectedMenuItem) {
-            const terrainTile = getTerrainTileFromMenuItem(selectedMenuItem);
-            
-            if (terrainTile) {
-                // Calculate sprite position using the actual grid position
-                const spriteIsoCoords = cartesianToIsometric(spriteX, y);
-                const spriteScreenX = ctx.canvas.width / 2 + spriteIsoCoords.x - gameStateBufferRead.camera.x;
-                const spriteScreenY = ctx.canvas.height / 2 + spriteIsoCoords.y - gameStateBufferRead.camera.y;
+            // Check if this is destroy mode
+            if (selectedMenuItem.text === 'Destroy') {
+                // For destroy mode, just draw the hover highlight (no sprite preview)
+                drawTileHighlight(ctx, screenX, screenY, 'rgba(255, 0, 0, 0.6)', 3);
+            } else {
+                const terrainTile = getTerrainTileFromMenuItem(selectedMenuItem);
                 
-                // Draw the sprite with 50% opacity
-                ctx.globalAlpha = 0.5;
-                terrainTile.draw(ctx, spriteScreenX, spriteScreenY, 'isometric');
-                ctx.globalAlpha = 1.0;
-                
-                // Draw arrow overlay if it's a river tile
-                drawRiverArrowOverlay(ctx, selectedMenuItem, spriteScreenX, spriteScreenY);
+                if (terrainTile) {
+                    // Calculate sprite position using the actual grid position
+                    const spriteIsoCoords = cartesianToIsometric(spriteX, y);
+                    const spriteScreenX = ctx.canvas.width / 2 + spriteIsoCoords.x - gameStateBufferRead.camera.x;
+                    const spriteScreenY = ctx.canvas.height / 2 + spriteIsoCoords.y - gameStateBufferRead.camera.y;
+                    
+                    // Draw the sprite with 50% opacity
+                    ctx.globalAlpha = 0.5;
+                    terrainTile.draw(ctx, spriteScreenX, spriteScreenY, 'isometric');
+                    ctx.globalAlpha = 1.0;
+                    
+                    // Draw arrow overlay if it's a river tile
+                    drawRiverArrowOverlay(ctx, selectedMenuItem, spriteScreenX, spriteScreenY);
+                }
             }
         } else {
             // Draw hover effect with thinner line if no menu item is selected
@@ -181,7 +191,7 @@ function renderGenerationStatus() {
         // Create progress text
         const progressText = document.createElement('div');
         progressText.id = 'generationProgressText';
-        progressText.textContent = `${percentage}% (${tilesCompleted}/${totalTiles})`;
+        progressText.textContent = `${percentage}%`;
         
         // Assemble the elements
         progressBar.appendChild(progressFill);
@@ -345,6 +355,17 @@ export function renderingLoop(gameStateBufferRead) {
 
     // Toggle for next frame
     toggleDraw = !toggleDraw;
+}
+
+// Change mouse cursor to destroy image
+export function setDestroyCursor() {
+    console.log('setDestroyCursor() called');
+    document.body.style.cursor = 'url("Assets/Terrain_Tile_Sprites/Isometric/Destroy.png") 16 16, auto';
+}
+
+// Reset mouse cursor to default
+export function resetCursor() {
+    document.body.style.cursor = 'default';
 }
 
 

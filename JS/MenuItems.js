@@ -39,7 +39,10 @@ export const menuItems = {
             },
             {
                 id: 3,
-                placeholder: true
+                image: PATHS.ASSETS.MENU_ICONS.MAIN + '04_Save_Options.png',
+                text: 'Save\nOptions',
+                menu: 'Main',
+                nextMenu: 'Save Options'
             },
             {
                 id: 4,
@@ -217,7 +220,9 @@ export const menuItems = {
             },
             {
                 id: 11,
-                placeholder: true
+                image: PATHS.ASSETS.MENU_ICONS.BUILD_OPTIONS + '11_Destroy.png',
+                text: 'Destroy',
+                menu: 'Roads'
             }
         ]
     },
@@ -291,7 +296,9 @@ export const menuItems = {
             },
             {
                 id: 11,
-                placeholder: true
+                image: PATHS.ASSETS.MENU_ICONS.BUILD_OPTIONS + '11_Destroy.png',
+                text: 'Destroy',
+                menu: 'Buildings'
             }
         ]
     },
@@ -351,7 +358,9 @@ export const menuItems = {
             },
             {
                 id: 11,
-                placeholder: true
+                image: PATHS.ASSETS.MENU_ICONS.BUILD_OPTIONS + '11_Destroy.png',
+                text: 'Destroy',
+                menu: 'Flora'
             }
         ]
     },
@@ -410,7 +419,9 @@ export const menuItems = {
             },
             {
                 id: 11,
-                placeholder: true
+                image: PATHS.ASSETS.MENU_ICONS.BUILD_OPTIONS + '11_Destroy.png',
+                text: 'Destroy',
+                menu: 'Landscape'
             }
         ]
     },
@@ -472,7 +483,9 @@ export const menuItems = {
             },
             {
                 id: 11,
-                placeholder: true
+                image: PATHS.ASSETS.MENU_ICONS.BUILD_OPTIONS + '11_Destroy.png',
+                text: 'Destroy',
+                menu: 'Water'
             }
         ]
     },
@@ -534,7 +547,9 @@ export const menuItems = {
             },
             {
                 id: 11,
-                placeholder: true
+                image: PATHS.ASSETS.MENU_ICONS.BUILD_OPTIONS + '11_Destroy.png',
+                text: 'Destroy',
+                menu: 'Lake'
             }
         ]
     },
@@ -596,7 +611,9 @@ export const menuItems = {
             },
             {
                 id: 11,
-                placeholder: true
+                image: PATHS.ASSETS.MENU_ICONS.BUILD_OPTIONS + '11_Destroy.png',
+                text: 'Destroy',
+                menu: 'River'
             }
         ]
     },
@@ -892,6 +909,71 @@ export const menuItems = {
                 image: PATHS.ASSETS.MENU_ICONS.MAIN + '08_Back.png',
                 text: 'Back',
                 menu: 'Visualise Generation Process'
+            },
+            {
+                id: 9,
+                placeholder: true
+            },
+            {
+                id: 10,
+                placeholder: true
+            },
+            {
+                id: 11,
+                placeholder: true
+            }
+        ]
+    },
+
+    'Save Options': {
+        isLeafMenu: true,
+        items: [
+            {
+                id: 0,
+                image: PATHS.ASSETS.MENU_ICONS.SAVE_OPTIONS + '01_save.png',
+                text: 'Save',
+                menu: 'Save Options',
+                action: 'save'
+            },
+            {
+                id: 1,
+                image: PATHS.ASSETS.MENU_ICONS.SAVE_OPTIONS + '02_load.png',
+                text: 'Load',
+                menu: 'Save Options',
+                action: 'load'
+            },
+            {
+                id: 2,
+                image: PATHS.ASSETS.MENU_ICONS.SAVE_OPTIONS + '03_export_map.png',
+                text: 'Export\nMap',
+                menu: 'Save Options',
+                action: 'export_map'
+            },
+            {
+                id: 3,
+                placeholder: true
+            },
+            {
+                id: 4,
+                placeholder: true
+            },
+            {
+                id: 5,
+                placeholder: true
+            },
+            {
+                id: 6,
+                placeholder: true
+            },
+            {
+                id: 7,
+                placeholder: true
+            },
+            {
+                id: 8,
+                image: PATHS.ASSETS.MENU_ICONS.MAIN + '08_Back.png',
+                text: 'Back',
+                menu: 'Save Options'
             },
             {
                 id: 9,

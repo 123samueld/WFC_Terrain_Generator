@@ -127,7 +127,7 @@
       <div class="metal-line" id="bottomLine"></div>
     </div>
   
-    <button id="neonButton">Map Tools</button>
+    <button id="neonButton">Build Tools</button>
   </div>
 
   <!-- Options Button -->
@@ -138,7 +138,10 @@
     <div class="modal-content">
       <h2>Options</h2>
       <div class="modal-body">
-        <p>Options content will be added here.</p>
+        <button class="options-button inactive" id="volumeButton">Volume</button>
+        <button class="options-button inactive" id="displayGridButton">Display Grid</button>
+        <button class="options-button" id="hotkeysButton">Hotkeys</button>
+        <button class="options-button" id="aboutButton">About</button>
       </div>
       <button class="modal-close">Close</button>
     </div>
@@ -157,6 +160,46 @@
           <option value="16">Speed 5 (16x)</option>
         </select>
         <button id="setSpeedBtn" class="modal-button">Set Speed</button>
+      </div>
+      <button class="modal-close">Close</button>
+    </div>
+  </div>
+
+  <!-- Hotkeys Modal -->
+  <div id="hotkeysModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-body">
+        <img src="./Assets/hotkey_bindings.png" alt="Hotkey Bindings" class="hotkeys-image">
+      </div>
+      <button class="modal-close">Close</button>
+    </div>
+  </div>
+
+  <!-- About Modal -->
+  <div id="aboutModal" class="modal">
+    <div class="modal-content">
+      <h2>About</h2>
+      <div class="modal-body">
+        <div class="about-section">
+          <h3>Ultimate WFC Generator</h3>
+          <p>A Wave Function Collapse terrain generator with advanced visualization tools.</p>
+        </div>
+        <div class="about-section">
+          <h3>Features</h3>
+          <ul class="about-features">
+            <li>Wave Function Collapse algorithm for procedural terrain generation</li>
+            <li>Real-time generation process visualization</li>
+            <li>Multiple terrain tile types (roads, buildings, landscape)</li>
+            <li>Interactive build menu system</li>
+            <li>Camera controls and tile placement</li>
+            <li>Step-by-step generation control</li>
+          </ul>
+        </div>
+        <div class="about-section">
+          <h3>Controls</h3>
+          <p>Use the Build Menu (B key) to access terrain generation tools and options.</p>
+          <p>Navigate menus with Q, W, E, R, A, S, D, F, Z, X, C, V keys.</p>
+        </div>
       </div>
       <button class="modal-close">Close</button>
     </div>
