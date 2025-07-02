@@ -57,7 +57,8 @@ function getTerrainTileFromMenuItem(selectedMenuItem) {
             'Diagonal': 'diagonal_top_left', // Default to top-left for now
             'Forest': 'Flora_Forest',
             'Lake_Middle': 'Lake_Middle',
-            'Bank': 'Lake_Bank_N'
+            'Bank': 'Lake_Bank_N',
+            'Destroy': 'Destroy'
         };
         
         tileType = roadTextToTileType[selectedMenuItem.text];
@@ -92,12 +93,21 @@ function drawTileHighlights(ctx, gameStateBufferRead) {
         // If a menu item is selected, draw its sprite instead of the highlight
         const selectedMenuItem = buildMenu.getSelectedMenuItem();
         if (selectedMenuItem) {
+            const terrainTile = getTerrainTileFromMenuItem(selectedMenuItem);
+            
             // Check if this is destroy mode
             if (selectedMenuItem.text === 'Destroy') {
-                // For destroy mode, just draw the hover highlight (no sprite preview)
+                // For destroy mode user red highlight
                 drawTileHighlight(ctx, screenX, screenY, 'rgba(255, 0, 0, 0.6)', 3);
+
+                // Calculate sprite position using the actual grid position
+                const spriteIsoCoords = cartesianToIsometric(spriteX, y);
+                const spriteScreenX = ctx.canvas.width / 2 + spriteIsoCoords.x - gameStateBufferRead.camera.x;
+                const spriteScreenY = ctx.canvas.height / 2 + spriteIsoCoords.y - gameStateBufferRead.camera.y;
+                
+                terrainTile.draw(ctx, spriteScreenX, spriteScreenY, 'isometric');
+            
             } else {
-                const terrainTile = getTerrainTileFromMenuItem(selectedMenuItem);
                 
                 if (terrainTile) {
                     // Calculate sprite position using the actual grid position
@@ -359,7 +369,6 @@ export function renderingLoop(gameStateBufferRead) {
 
 // Change mouse cursor to destroy image
 export function setDestroyCursor() {
-    console.log('setDestroyCursor() called');
     document.body.style.cursor = 'url("Assets/Terrain_Tile_Sprites/Isometric/Destroy.png") 16 16, auto';
 }
 

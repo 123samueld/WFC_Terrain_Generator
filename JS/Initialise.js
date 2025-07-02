@@ -494,6 +494,11 @@ export async function loadTerrainTiles() {
         // Destroy cursor sprite
         const destroyCursorIsometric = await loadSprite('Assets/Terrain_Tile_Sprites/Isometric/Destroy.png');
         
+        // Destroy terrain tile
+        const destroyIsometric = await loadSprite('Assets/Terrain_Tile_Sprites/Isometric/Destroy.png');
+        const destroyCartesian = await loadSprite('Assets/Terrain_Tile_Sprites/Isometric/Destroy.png');
+        terrainTiles[TileType.DESTROY] = createTerrainTile(TileType.DESTROY, destroyIsometric, destroyCartesian);
+        terrainTiles[TileType.DESTROY].miniMapTileColour = 'rgba(255, 0, 0, 0.6)';
         
         // Store arrow sprites as overlay icons
         if (!window.overlaySprites) {

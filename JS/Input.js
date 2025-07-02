@@ -236,20 +236,32 @@ export function handleMouseClick(e) {
 
     // Left click to select or place
     if (e.button === 0 || e.which === 1) {
-        // Handle tile placement
+        // Handle tile placement or destruction
         if (inputState.mouse.hoveredTile && buildMenu.selectedMenuItem) {
-            const tileType = getTileTypeFromMenuItem(buildMenu.selectedMenuItem);
-            
-            if (tileType && terrainTiles[tileType]) {
+            // Check if destroy mode is active
+            if (buildMenu.destroyMode) {
+                // Clear the tile at the hovered position
                 getGameStateBuffers().write.setTile(
                     inputState.mouse.hoveredTile.x,
                     inputState.mouse.hoveredTile.y,
-                    tileType
+                    null
                 );
-                // Reset selected tile after placement
-                buildMenu.selectedMenuItem = null;
+                // Don't reset selected menu item in destroy mode - keep it active
             } else {
-                console.log("ERROR: Tile type not found in terrainTiles:", tileType);
+                // Normal tile placement
+                const tileType = getTileTypeFromMenuItem(buildMenu.selectedMenuItem);
+                
+                if (tileType && terrainTiles[tileType]) {
+                    getGameStateBuffers().write.setTile(
+                        inputState.mouse.hoveredTile.x,
+                        inputState.mouse.hoveredTile.y,
+                        tileType
+                    );
+                    // Reset selected tile after placement
+                    buildMenu.selectedMenuItem = null;
+                } else {
+                    console.log("ERROR: Tile type not found in terrainTiles:", tileType);
+                }
             }
         }
     }

@@ -200,7 +200,10 @@ export const TileType = {
     RIVER_WS: 'River_WS',
     RIVER_SN: 'River_SN',
     RIVER_SE: 'River_SE',
-    RIVER_EN: 'River_EN'
+    RIVER_EN: 'River_EN',
+
+    // Special
+    DESTROY: 'Destroy'
 };
 
 // Factory function to create terrain tiles
