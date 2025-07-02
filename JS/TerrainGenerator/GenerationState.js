@@ -2,6 +2,7 @@
 
 class GenerationState {
     constructor() {
+        this.count = 0;
         // Cell tracking state
         this.currentCell = null;
         this.neighbourCells = new Set();
@@ -11,8 +12,11 @@ class GenerationState {
 
         // Generation state
         this.isGenerating = false;
+        this.shouldShowGenerationPopup = false; // New flag to control popup display
         this.shouldDrawHighlights = false;
         this.currentStep = 0;
+        this.generationStep = 0; // Track actual generation steps
+        this.tilesCompleted = 0; // Track total tiles collapsed during generation
         this.totalSteps = 0;
         this.generationStepCount = 0;  // Track number of generation steps
         this.deleteMap = false;  // Track if map deletion is requested

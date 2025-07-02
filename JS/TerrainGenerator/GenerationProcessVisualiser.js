@@ -4,7 +4,8 @@ import {
     INITIALISE, 
     WFC_RULES, 
     TERRAIN_TILE,
-    GENERATION_STATE
+    GENERATION_STATE,
+    TERRAIN_STATE_DISPLAY
 } from '../FilePathRouter.js';
 import { options } from '../Options.js';
 
@@ -395,7 +396,12 @@ class GenerationProcessVisualiser {
         
         GENERATION_STATE.shouldDrawHighlights = true;
         
-        return this.generateStepVisualisation();
+        const result = this.generateStepVisualisation();
+        
+        // Update the terrain state display after each step
+        TERRAIN_STATE_DISPLAY.terrainStateDisplay.update();
+        
+        return result;
     }
 
     stepBack() {

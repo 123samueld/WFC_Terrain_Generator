@@ -57,6 +57,7 @@ export const PATHS = {
         BUILD_OPTIONS: './Assets/Nested_Menu_Icons/01_Main_Menu_Icons/01_Build_Options_Menu_Icons/',
         GENERATE_OPTIONS: './Assets/Nested_Menu_Icons/01_Main_Menu_Icons/02_Generate_Options_Menu_Icons/',
         POPULATION_OPTIONS: './Assets/Nested_Menu_Icons/01_Main_Menu_Icons/03_Population_Options_Menu_Icons/',
+        SAVE_OPTIONS: './Assets/Nested_Menu_Icons/01_Main_Menu_Icons/04_Save_Options_Menu_Icons/',
         VISUALISATION_OPTIONS: './Assets/Nested_Menu_Icons/01_Main_Menu_Icons/02_Generate_Options_Menu_Icons/04_Visualise_Process_Menu_Icons/',
         BUILDINGS: './Assets/Nested_Menu_Icons/01_Main_Menu_Icons/01_Build_Options_Menu_Icons/01_Buildings_Menu_Icons/',
         ROADS: './Assets/Nested_Menu_Icons/01_Main_Menu_Icons/01_Build_Options_Menu_Icons/02_Road_Menu_Icons/',
@@ -65,6 +66,7 @@ export const PATHS = {
         PIPES: './Assets/Nested_Menu_Icons/01_Main_Menu_Icons/01_Build_Options_Menu_Icons/05_Pipes_Menu_Icons/',
         FAUNA: './Assets/Nested_Menu_Icons/01_Main_Menu_Icons/01_Build_Options_Menu_Icons/06_Fauna_Menu_Icons/',
         FLORA: './Assets/Nested_Menu_Icons/01_Main_Menu_Icons/01_Build_Options_Menu_Icons/07_Flora_Menu_Icons/',
+        LANDSCAPE: './Assets/Nested_Menu_Icons/01_Main_Menu_Icons/01_Build_Options_Menu_Icons/08_Landscape_Menu_Icons/',
       },
       TERRAIN: {
         ROOT: './Assets/Terrain_Tile_Sprites/',

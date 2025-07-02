@@ -1,6 +1,7 @@
-import { TERRAIN_GENERATOR, INITIALISE } from '../FilePathRouter.js';
+import { TERRAIN_GENERATOR, INITIALISE, TERRAIN_TILE, GENERATION_PROCESS_VISUALISER } from '../FilePathRouter.js';
 import { options } from '../Options.js';
 import { terrainStateDisplayItems } from './TerrainStateDisplayItems.js';
+import { GENERATION_STATE } from './GenerationState.js';
 
 class TerrainStateDisplay {
     constructor() {
@@ -104,7 +105,6 @@ class TerrainStateDisplay {
             stepState.potentialNeighborRoadTypes.forEach((roadTypes, index) => {
                 const cell = document.getElementById(`neighbor${index}`);
                 if (cell && roadTypes.length > 0) {
-                    console.log(`Adding road types for neighbor ${index}:`, roadTypes);
                     
                     // Create a container for multiple road types
                     const container = document.createElement('div');
@@ -145,39 +145,63 @@ class TerrainStateDisplay {
         }
     }
 
-    update() {
+    openOrCloseTerrainDisplay() {
         // Update display state based on visualization flag
         if (options.visualiseTerrainGenerationProcess) {
             this.displayElement.classList.add('active');
         } else {
             this.displayElement.classList.remove('active');
         }
+    }
 
-        // Update values if WFC is active
-        if (options.visualiseTerrainGenerationProcess) {
-            const wfc = TERRAIN_GENERATOR.wfc;
-            if (wfc) {
-                document.getElementById('currentStepValue').textContent = wfc.generationStep;
-                document.getElementById('collapsedTilesValue').textContent = wfc.collapsedTiles.size;
-                document.getElementById('superpositionTilesValue').textContent = wfc.superPositionTileSet.size;
-                document.getElementById('setTilesValue').textContent = wfc.setTiles.size;
-                document.getElementById('historyIndexValue').textContent = wfc.currentHistoryIndex;
-                document.getElementById('historyLengthValue').textContent = wfc.stateHistory.length;
-
-                // Update potential neighbors grid if we have highlighted neighbors
-                if (wfc.neighbourCells && wfc.neighbourCells.size > 0) {
-                    this.updatePotentialNeighborsGrid(wfc);
-                } else {
-                    // Clear the grid if no neighbor is highlighted
-                    for (let i = 0; i < 16; i++) {
-                        const cell = document.getElementById(`neighbor${i}`);
-                        if (cell) {
-                            cell.innerHTML = '';
-                        }
-                    }
-                    this.lastHighlightedNeighbors.clear();
-                }
-            }
+    update() {
+        console.log('update() called');
+        console.log('Generation state from update(), current cell:', GENERATION_STATE.currentCell);
+        
+        // Simple update - just get current cell coordinates and update DOM
+        let x = 0, y = 0;
+        
+        if (GENERATION_STATE.currentCell !== null) {
+            x = GENERATION_STATE.currentCell.x;
+            y = GENERATION_STATE.currentCell.y;
+            console.log('Deconstructed x:', x, 'y:', y);
+        }
+        
+        // Update Current Cell
+        const currentCellElement = document.getElementById('currentCellValue');
+        if (currentCellElement) {
+            currentCellElement.textContent = `(${x}, ${y})`;
+            currentCellElement.style.color = '#000';
+            console.log('Updated Current Cell DOM with:', `(${x}, ${y})`);
+        } else {
+            console.error('currentCellValue element not found');
+        }
+        
+        // Update Current Step
+        const currentStepElement = document.getElementById('currentStepValue');
+        if (currentStepElement) {
+            currentStepElement.textContent = GENERATION_STATE.currentStep;
+            currentStepElement.style.color = '#000';
+            console.log('Updated Current Step DOM with:', GENERATION_STATE.currentStep);
+        } else {
+            console.error('currentStepValue element not found');
+        }
+        
+        // Update Current Neighbour
+        let neighborX = 0, neighborY = 0;
+        if (GENERATION_STATE.currentNeighbor !== null) {
+            neighborX = GENERATION_STATE.currentNeighbor.x;
+            neighborY = GENERATION_STATE.currentNeighbor.y;
+            console.log('Deconstructed neighbor x:', neighborX, 'y:', neighborY);
+        }
+        
+        const currentNeighbourElement = document.getElementById('currentNeighbourValue');
+        if (currentNeighbourElement) {
+            currentNeighbourElement.textContent = `(${neighborX}, ${neighborY})`;
+            currentNeighbourElement.style.color = '#000';
+            console.log('Updated Current Neighbour DOM with:', `(${neighborX}, ${neighborY})`);
+        } else {
+            console.error('currentNeighbourValue element not found');
         }
     }
 }

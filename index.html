@@ -69,7 +69,7 @@
           <button id="btnW" class="menu-button" style="background-image: url('./Assets/Nested_Menu_Icons/01_Main_Menu_Icons/08_Back.png');"></button>
           <span id="WButtonText">Back</span>
         </div>
-        <div class="button-container EContainer" id="EButtonContainer">
+        <div class="button-container EContainer" id="EContainer">
           <button id="btnE" class="menu-button" style="background-image: url('./Assets/Nested_Menu_Icons/01_Main_Menu_Icons/08_Back.png');"></button>
           <span id="EButtonText">Back</span>
         </div>
@@ -77,7 +77,7 @@
           <button id="btnR" class="menu-button" style="background-image: url('./Assets/Nested_Menu_Icons/01_Main_Menu_Icons/08_Back.png');"></button>
           <span id="RButtonText">Back</span>
         </div>
-        <div class="button-container AContainer" id="AButtonContainer">
+        <div class="button-container AContainer" id="AContainer">
           <button id="btnA" class="menu-button" style="background-image: url('./Assets/Nested_Menu_Icons/01_Main_Menu_Icons/08_Back.png');"></button>
           <span id="AButtonText">Back</span>
         </div>
@@ -127,7 +127,24 @@
       <div class="metal-line" id="bottomLine"></div>
     </div>
   
-    <button id="neonButton">Map Tools</button>
+    <button id="neonButton">Build Tools</button>
+  </div>
+
+  <!-- Options Button -->
+  <button id="optionsButton">Options</button>
+
+  <!-- Options Modal -->
+  <div id="optionsModal" class="modal">
+    <div class="modal-content">
+      <h2>Options</h2>
+      <div class="modal-body">
+        <button class="options-button inactive" id="volumeButton">Volume</button>
+        <button class="options-button inactive" id="displayGridButton">Display Grid</button>
+        <button class="options-button" id="hotkeysButton">Hotkeys</button>
+        <button class="options-button" id="aboutButton">About</button>
+      </div>
+      <button class="modal-close">Close</button>
+    </div>
   </div>
 
   <!-- Play Speed Modal -->
@@ -148,10 +165,56 @@
     </div>
   </div>
 
+  <!-- Hotkeys Modal -->
+  <div id="hotkeysModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-body">
+        <img src="./Assets/hotkey_bindings.png" alt="Hotkey Bindings" class="hotkeys-image">
+      </div>
+      <button class="modal-close">Close</button>
+    </div>
+  </div>
+
+  <!-- About Modal -->
+  <div id="aboutModal" class="modal">
+    <div class="modal-content">
+      <h2>About</h2>
+      <div class="modal-body">
+        <div class="about-section">
+          <h3>Ultimate WFC Generator</h3>
+          <p>A Wave Function Collapse terrain generator with advanced visualization tools.</p>
+        </div>
+        <div class="about-section">
+          <h3>Features</h3>
+          <ul class="about-features">
+            <li>Wave Function Collapse algorithm for procedural terrain generation</li>
+            <li>Real-time generation process visualization</li>
+            <li>Multiple terrain tile types (roads, buildings, landscape)</li>
+            <li>Interactive build menu system</li>
+            <li>Camera controls and tile placement</li>
+            <li>Step-by-step generation control</li>
+          </ul>
+        </div>
+        <div class="about-section">
+          <h3>Controls</h3>
+          <p>Use the Build Menu (B key) to access terrain generation tools and options.</p>
+          <p>Navigate menus with Q, W, E, R, A, S, D, F, Z, X, C, V keys.</p>
+        </div>
+      </div>
+      <button class="modal-close">Close</button>
+    </div>
+  </div>
+
   <!-- Generation Popup -->
   <div id="generationPopup" class="generation-popup">
     <div class="generation-popup-content">
       <h3>Generating map...</h3>
+      <div id="generationProgress">
+        <div id="generationProgressBar" class="progress-bar">
+          <div id="generationProgressFill" class="progress-fill"></div>
+        </div>
+        <div id="generationProgressText">0%</div>
+      </div>
     </div>
   </div>
 

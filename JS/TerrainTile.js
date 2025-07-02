@@ -169,7 +169,41 @@ export const TileType = {
 
     // Flora
     FLORA_FOREST: 'Flora_Forest',
-    FLORA_TREE: 'Flora_Tree'
+    FLORA_TREE: 'Flora_Tree',
+
+    // Lake
+    LAKE_MIDDLE: 'Lake_Middle',
+
+    // Lake Banks
+    LAKE_BANK_N: 'Lake_Bank_N',
+    LAKE_BANK_NE: 'Lake_Bank_NE',
+    LAKE_BANK_E: 'Lake_Bank_E',
+    LAKE_BANK_SE: 'Lake_Bank_SE',
+    LAKE_BANK_S: 'Lake_Bank_S',
+    LAKE_BANK_SW: 'Lake_Bank_SW',
+    LAKE_BANK_W: 'Lake_Bank_W',
+    LAKE_BANK_NW: 'Lake_Bank_NW',
+
+
+    /* River */
+    // Clockwise flow
+    RIVER_NS: 'River_NS',
+    RIVER_NE: 'River_NE',
+    RIVER_EW: 'River_EW',
+    RIVER_ES: 'River_ES',
+    RIVER_SW: 'River_SW',
+    RIVER_WN: 'River_WN',
+
+    // Anti-clockwise flow
+    RIVER_NW: 'River_NW',
+    RIVER_WE: 'River_WE',
+    RIVER_WS: 'River_WS',
+    RIVER_SN: 'River_SN',
+    RIVER_SE: 'River_SE',
+    RIVER_EN: 'River_EN',
+
+    // Special
+    DESTROY: 'Destroy'
 };
 
 // Factory function to create terrain tiles

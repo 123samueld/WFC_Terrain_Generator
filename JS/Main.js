@@ -11,12 +11,35 @@ let nextFrame = false; // Rendering sets this true when ready for a new frame
 // Function to monitor generation state and show/hide popup
 function updateGenerationPopup() {
     const generationPopup = document.getElementById('generationPopup');
+    const progressFill = document.getElementById('generationProgressFill');
+    const progressText = document.getElementById('generationProgressText');
     
     if (generationPopup) {
-        if (GENERATION_STATE.isGenerating) {
+        if (GENERATION_STATE.shouldShowGenerationPopup && GENERATION_STATE.isGenerating) {
             generationPopup.style.display = 'flex';
+            
+            // Calculate progress percentage (7606 total steps)
+            const totalSteps = 7606;
+            const currentStep = GENERATION_STATE.currentStep;
+            const percentage = Math.min(Math.round((currentStep / totalSteps) * 100), 100);
+            
+            // Update progress bar and text
+            if (progressFill) {
+                progressFill.style.width = percentage + '%';
+            }
+            if (progressText) {
+                progressText.textContent = `${percentage}% (${currentStep}/${totalSteps})`;
+            }
         } else {
             generationPopup.style.display = 'none';
+            
+            // Reset progress when hidden
+            if (progressFill) {
+                progressFill.style.width = '0%';
+            }
+            if (progressText) {
+                progressText.textContent = '0%';
+            }
         }
     }
 }

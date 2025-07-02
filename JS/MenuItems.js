@@ -8,7 +8,8 @@ const MENU_ICON_PATHS = {
     ROAD: PATHS.ASSETS.MENU_ICONS.ROADS,
     TRAIN: './Assets/Nested_Menu_Icons/04_Train_Menu_Icons/',
     TEMPLATE: PATHS.ASSETS.MENU_ICONS.TEMPLATE,
-    FLORA: PATHS.ASSETS.MENU_ICONS.FLORA
+    FLORA: PATHS.ASSETS.MENU_ICONS.FLORA,
+    LANDSCAPE: PATHS.ASSETS.MENU_ICONS.LANDSCAPE
 };
 
 export const menuItems = {
@@ -38,7 +39,10 @@ export const menuItems = {
             },
             {
                 id: 3,
-                placeholder: true
+                image: PATHS.ASSETS.MENU_ICONS.MAIN + '04_Save_Options.png',
+                text: 'Save\nOptions',
+                menu: 'Main',
+                nextMenu: 'Save Options'
             },
             {
                 id: 4,
@@ -127,7 +131,10 @@ export const menuItems = {
             },
             {
                 id: 7,
-                placeholder: true
+                image: PATHS.ASSETS.MENU_ICONS.BUILD_OPTIONS + '08_Landscape.png',
+                text: 'Landscape',
+                menu: 'Build Options',
+                nextMenu: 'Landscape'
             },
             {
                 id: 8,
@@ -213,7 +220,9 @@ export const menuItems = {
             },
             {
                 id: 11,
-                placeholder: true
+                image: PATHS.ASSETS.MENU_ICONS.BUILD_OPTIONS + '11_Destroy.png',
+                text: 'Destroy',
+                menu: 'Roads'
             }
         ]
     },
@@ -287,7 +296,9 @@ export const menuItems = {
             },
             {
                 id: 11,
-                placeholder: true
+                image: PATHS.ASSETS.MENU_ICONS.BUILD_OPTIONS + '11_Destroy.png',
+                text: 'Destroy',
+                menu: 'Buildings'
             }
         ]
     },
@@ -347,7 +358,262 @@ export const menuItems = {
             },
             {
                 id: 11,
+                image: PATHS.ASSETS.MENU_ICONS.BUILD_OPTIONS + '11_Destroy.png',
+                text: 'Destroy',
+                menu: 'Flora'
+            }
+        ]
+    },
+
+    Landscape: {
+        isLeafMenu: false,
+        items: [
+            {
+                id: 0,
+                image: PATHS.ASSETS.MENU_ICONS.LANDSCAPE + '01_Water.png',
+                text: 'Water',
+                menu: 'Landscape',
+                nextMenu: 'Water'
+            },
+            {
+                id: 1,
                 placeholder: true
+            },
+            {
+                id: 2,
+                placeholder: true
+            },
+            {
+                id: 3,
+                placeholder: true
+            },
+            {
+                id: 4,
+                placeholder: true
+            },
+            {
+                id: 5,
+                placeholder: true
+            },
+            {
+                id: 6,
+                placeholder: true
+            },
+            {
+                id: 7,
+                placeholder: true
+            },
+            {
+                id: 8,
+                image: PATHS.ASSETS.MENU_ICONS.MAIN + '08_Back.png',
+                text: 'Back',
+                menu: 'Landscape'
+            },
+            {
+                id: 9,
+                placeholder: true
+            },
+            {
+                id: 10,
+                placeholder: true
+            },
+            {
+                id: 11,
+                image: PATHS.ASSETS.MENU_ICONS.BUILD_OPTIONS + '11_Destroy.png',
+                text: 'Destroy',
+                menu: 'Landscape'
+            }
+        ]
+    },
+
+    Water: {
+        isLeafMenu: false,
+        items: [
+            {
+                id: 0,
+                image: PATHS.ASSETS.MENU_ICONS.LANDSCAPE + '01_Water/01_Lake.png',
+                text: 'Lake',
+                menu: 'Water',
+                nextMenu: 'Lake'
+            },
+            {
+                id: 1,
+                image: PATHS.ASSETS.MENU_ICONS.LANDSCAPE + '01_Water/02_River.png',
+                text: 'River',
+                menu: 'Water',
+                nextMenu: 'River'
+            },
+            {
+                id: 2,
+                placeholder: true
+            },
+            {
+                id: 3,
+                placeholder: true
+            },
+            {
+                id: 4,
+                placeholder: true
+            },
+            {
+                id: 5,
+                placeholder: true
+            },
+            {
+                id: 6,
+                placeholder: true
+            },
+            {
+                id: 7,
+                placeholder: true
+            },
+            {
+                id: 8,
+                image: PATHS.ASSETS.MENU_ICONS.MAIN + '08_Back.png',
+                text: 'Back',
+                menu: 'Water'
+            },
+            {
+                id: 9,
+                placeholder: true
+            },
+            {
+                id: 10,
+                placeholder: true
+            },
+            {
+                id: 11,
+                image: PATHS.ASSETS.MENU_ICONS.BUILD_OPTIONS + '11_Destroy.png',
+                text: 'Destroy',
+                menu: 'Water'
+            }
+        ]
+    },
+
+    Lake: {
+        isLeafMenu: true,
+        items: [
+            {
+                id: 0,
+                image: PATHS.ASSETS.MENU_ICONS.LANDSCAPE + '01_Water/01_Lake/01_Middle.png',
+                text: 'Middle',
+                menu: 'Lake',
+                tileType: 'Lake_Middle'
+            },
+            {
+                id: 1,
+                image: PATHS.ASSETS.MENU_ICONS.LANDSCAPE + '01_Water/01_Lake/02_N.png',
+                text: 'Bank',
+                menu: 'Lake',
+                tileType: 'Lake_Bank_N'
+            },
+            {
+                id: 2,
+                placeholder: true
+            },
+            {
+                id: 3,
+                placeholder: true
+            },
+            {
+                id: 4,
+                placeholder: true
+            },
+            {
+                id: 5,
+                placeholder: true
+            },
+            {
+                id: 6,
+                placeholder: true
+            },
+            {
+                id: 7,
+                placeholder: true
+            },
+            {
+                id: 8,
+                image: PATHS.ASSETS.MENU_ICONS.MAIN + '08_Back.png',
+                text: 'Back',
+                menu: 'Lake'
+            },
+            {
+                id: 9,
+                placeholder: true
+            },
+            {
+                id: 10,
+                placeholder: true
+            },
+            {
+                id: 11,
+                image: PATHS.ASSETS.MENU_ICONS.BUILD_OPTIONS + '11_Destroy.png',
+                text: 'Destroy',
+                menu: 'Lake'
+            }
+        ]
+    },
+
+    River: {
+        isLeafMenu: true,
+        items: [
+            {
+                id: 0,
+                image: PATHS.ASSETS.MENU_ICONS.LANDSCAPE + '01_Water/02_River/01_WE.png',
+                text: 'Clockwise\nRivers',
+                menu: 'River',
+                tileType: 'River_NS' // Default to first clockwise river
+            },
+            {
+                id: 1,
+                image: PATHS.ASSETS.MENU_ICONS.LANDSCAPE + '01_Water/02_River/02_EW.png',
+                text: 'Anti-Clockwise\nRivers',
+                menu: 'River',
+                tileType: 'River_NW' // Default to first anti-clockwise river
+            },
+            {
+                id: 2,
+                placeholder: true
+            },
+            {
+                id: 3,
+                placeholder: true
+            },
+            {
+                id: 4,
+                placeholder: true
+            },
+            {
+                id: 5,
+                placeholder: true
+            },
+            {
+                id: 6,
+                placeholder: true
+            },
+            {
+                id: 7,
+                placeholder: true
+            },
+            {
+                id: 8,
+                image: PATHS.ASSETS.MENU_ICONS.MAIN + '08_Back.png',
+                text: 'Back',
+                menu: 'River'
+            },
+            {
+                id: 9,
+                placeholder: true
+            },
+            {
+                id: 10,
+                placeholder: true
+            },
+            {
+                id: 11,
+                image: PATHS.ASSETS.MENU_ICONS.BUILD_OPTIONS + '11_Destroy.png',
+                text: 'Destroy',
+                menu: 'River'
             }
         ]
     },
@@ -643,6 +909,71 @@ export const menuItems = {
                 image: PATHS.ASSETS.MENU_ICONS.MAIN + '08_Back.png',
                 text: 'Back',
                 menu: 'Visualise Generation Process'
+            },
+            {
+                id: 9,
+                placeholder: true
+            },
+            {
+                id: 10,
+                placeholder: true
+            },
+            {
+                id: 11,
+                placeholder: true
+            }
+        ]
+    },
+
+    'Save Options': {
+        isLeafMenu: true,
+        items: [
+            {
+                id: 0,
+                image: PATHS.ASSETS.MENU_ICONS.SAVE_OPTIONS + '01_save.png',
+                text: 'Save',
+                menu: 'Save Options',
+                action: 'save'
+            },
+            {
+                id: 1,
+                image: PATHS.ASSETS.MENU_ICONS.SAVE_OPTIONS + '02_load.png',
+                text: 'Load',
+                menu: 'Save Options',
+                action: 'load'
+            },
+            {
+                id: 2,
+                image: PATHS.ASSETS.MENU_ICONS.SAVE_OPTIONS + '03_export_map.png',
+                text: 'Export\nMap',
+                menu: 'Save Options',
+                action: 'export_map'
+            },
+            {
+                id: 3,
+                placeholder: true
+            },
+            {
+                id: 4,
+                placeholder: true
+            },
+            {
+                id: 5,
+                placeholder: true
+            },
+            {
+                id: 6,
+                placeholder: true
+            },
+            {
+                id: 7,
+                placeholder: true
+            },
+            {
+                id: 8,
+                image: PATHS.ASSETS.MENU_ICONS.MAIN + '08_Back.png',
+                text: 'Back',
+                menu: 'Save Options'
             },
             {
                 id: 9,

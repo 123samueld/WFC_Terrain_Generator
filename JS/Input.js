@@ -86,6 +86,9 @@ function updateEdgeScrolling(mouseX, mouseY) {
     inputState.offset.x = 0;
     inputState.offset.y = 0;
 
+    // Disable scrolling if modals are open
+    if (options.disableMapScrolling) return;
+
     // Only calculate scroll if mouse is over canvas
     if (!inputState.mouse.isOverCanvas) return;
 
@@ -154,39 +157,66 @@ function updateHoveredTile(mouseX, mouseY) {
 
 // Event handler for mouse wheel
 export function handleMouseWheel(e) {
-    console.log('Mouse wheel event:', {
-        deltaY: e.deltaY,
-        deltaMode: e.deltaMode
-    });
-    // TODO: Implement zoom functionality
+    // Prevent default scrolling behavior
+    e.preventDefault();
+    
+    // Check if a menu item is selected and if it's a rotatable item
+    if (buildMenu.selectedMenuItem && buildMenu.selectedMenuItem.text) {
+        const roadText = buildMenu.selectedMenuItem.text;
+        const variants = buildMenu.roadVariants[roadText];
+        
+        if (variants) {
+            // Determine rotation direction based on scroll direction
+            if (e.deltaY > 0) {
+                // Scroll down - rotate clockwise (next variant)
+                buildMenu.currentRoadVariantIndex = (buildMenu.currentRoadVariantIndex + 1) % variants.length;
+            } else {
+                // Scroll up - rotate counter-clockwise (previous variant)
+                buildMenu.currentRoadVariantIndex = (buildMenu.currentRoadVariantIndex - 1 + variants.length) % variants.length;
+            }
+            
+            // Update the selectedMenuItem to reflect the new variant
+            buildMenu.selectedMenuItem.currentVariant = variants[buildMenu.currentRoadVariantIndex];
+        }
+    }
 }
 
 // Helper function to get tile type from menu item
 function getTileTypeFromMenuItem(selectedMenuItem) {
     if (!selectedMenuItem) return null;
     
+    // If there's a currentVariant (from cycling), use that first
+    if (selectedMenuItem.currentVariant) {
+        return selectedMenuItem.currentVariant;
+    }
     // Check if it's a building (has tileType property)
-    if (selectedMenuItem.tileType) {
+    else if (selectedMenuItem.tileType) {
         return selectedMenuItem.tileType;
     }
     // Check if it's a road (use text to find tile type)
     else if (selectedMenuItem.text) {
-        // If there's a currentVariant (from cycling), use that
-        if (selectedMenuItem.currentVariant) {
-            return selectedMenuItem.currentVariant;
-        } else {
-            // Otherwise use the default mapping
-            const roadTextToTileType = {
-                'Cross': 'cross',
-                'Straight': 'straight_latitude', // Default to latitude for now
-                'T': 't_junction_top', // Default to top for now
-                'L': 'l_curve_top_left', // Default to top-left for now
-                'Diagonal': 'diagonal_top_left', // Default to top-left for now
-                'Forest': 'Flora_Forest'
-            };
-            
-            return roadTextToTileType[selectedMenuItem.text];
-        }
+        // Otherwise use the default mapping
+        const roadTextToTileType = {
+            'Cross': 'cross',
+            'Straight': 'straight_latitude', // Default to latitude for now
+            'T': 't_junction_top', // Default to top for now
+            'L': 'l_curve_top_left', // Default to top-left for now
+            'Diagonal': 'diagonal_top_left', // Default to top-left for now
+            'Forest': 'Flora_Forest',
+            'Lake_Middle': 'Lake_Middle',
+            'Lake_Bank_North': 'Lake_Bank_N',
+            'Lake_Bank_North-East': 'Lake_Bank_NE',
+            'Lake_Bank_East': 'Lake_Bank_E',
+            'Lake_Bank_South-East': 'Lake_Bank_SE',
+            'Lake_Bank_South': 'Lake_Bank_S',
+            'Lake_Bank_South-West': 'Lake_Bank_SW',
+            'Lake_Bank_West': 'Lake_Bank_W',
+            'Lake_Bank_North-West': 'Lake_Bank_NW',
+            'Clockwise\nRivers': 'River_NS', // Default to first clockwise river
+            'Anti-Clockwise\nRivers': 'River_NW' // Default to first anti-clockwise river
+        };
+        
+        return roadTextToTileType[selectedMenuItem.text];
     }
     
     return null;
@@ -206,20 +236,32 @@ export function handleMouseClick(e) {
 
     // Left click to select or place
     if (e.button === 0 || e.which === 1) {
-        // Handle tile placement
+        // Handle tile placement or destruction
         if (inputState.mouse.hoveredTile && buildMenu.selectedMenuItem) {
-            const tileType = getTileTypeFromMenuItem(buildMenu.selectedMenuItem);
-            
-            if (tileType && terrainTiles[tileType]) {
+            // Check if destroy mode is active
+            if (buildMenu.destroyMode) {
+                // Clear the tile at the hovered position
                 getGameStateBuffers().write.setTile(
                     inputState.mouse.hoveredTile.x,
                     inputState.mouse.hoveredTile.y,
-                    tileType
+                    null
                 );
-                // Reset selected tile after placement
-                buildMenu.selectedMenuItem = null;
+                // Don't reset selected menu item in destroy mode - keep it active
             } else {
-                console.log("ERROR: Tile type not found in terrainTiles:", tileType);
+                // Normal tile placement
+                const tileType = getTileTypeFromMenuItem(buildMenu.selectedMenuItem);
+                
+                if (tileType && terrainTiles[tileType]) {
+                    getGameStateBuffers().write.setTile(
+                        inputState.mouse.hoveredTile.x,
+                        inputState.mouse.hoveredTile.y,
+                        tileType
+                    );
+                    // Reset selected tile after placement
+                    buildMenu.selectedMenuItem = null;
+                } else {
+                    console.log("ERROR: Tile type not found in terrainTiles:", tileType);
+                }
             }
         }
     }
