@@ -119,47 +119,12 @@ function drawTileHighlights(ctx, gameStateBufferRead) {
                     ctx.globalAlpha = 0.5;
                     terrainTile.draw(ctx, spriteScreenX, spriteScreenY, 'isometric');
                     ctx.globalAlpha = 1.0;
-                    
-                    // Draw arrow overlay if it's a river tile
-                    drawRiverArrowOverlay(ctx, selectedMenuItem, spriteScreenX, spriteScreenY);
                 }
             }
         } else {
             // Draw hover effect with thinner line if no menu item is selected
             drawTileHighlight(ctx, screenX, screenY, 'rgba(255, 255, 255, 0.4)', 2);
         }
-    }
-}
-
-// Draw river arrow overlay in the top right of the tile
-function drawRiverArrowOverlay(ctx, selectedMenuItem, spriteScreenX, spriteScreenY) {
-    // Check if the selected item is a river type
-    if (!selectedMenuItem.text || (!selectedMenuItem.text.includes('Clockwise') && !selectedMenuItem.text.includes('Anti-Clockwise'))) {
-        return;
-    }
-    
-    const overlaySprites = getOverlaySprites();
-    let arrowSprite = null;
-        
-    // Determine which arrow to use based on the selected river type
-    if (selectedMenuItem.text.includes('Anti-Clockwise')) {
-        arrowSprite = overlaySprites.riverAntiClockwiseArrow;
-    } else if (selectedMenuItem.text.includes('Clockwise')) {
-        arrowSprite = overlaySprites.riverClockwiseArrow;
-    }
-    
-    if (arrowSprite) {
-        // Calculate position for top right corner of the tile
-        // Isometric tile dimensions: width = 100, height = 50
-        const arrowSize = 35; // Size of the arrow sprite
-        const arrowX = spriteScreenX + 165; // Right side of tile minus arrow width
-        const arrowY = spriteScreenY; // Top of tile minus arrow height
-        
-        // Draw the arrow with full opacity
-        ctx.globalAlpha = 1.0;
-        ctx.drawImage(arrowSprite, arrowX, arrowY, arrowSize, arrowSize);
-    } else {
-        console.log('No arrow sprite found');
     }
 }
 
