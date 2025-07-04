@@ -202,6 +202,12 @@ export const TileType = {
     RIVER_SE: 'River_SE',
     RIVER_EN: 'River_EN',
 
+    // Bridges
+    BRIDGE_RIVER_NS: 'Bridge_River_NS',
+    BRIDGE_RIVER_SN: 'Bridge_River_SN',
+    BRIDGE_RIVER_WE: 'Bridge_River_WE',
+    BRIDGE_RIVER_EW: 'Bridge_River_EW',
+
     // Special
     DESTROY: 'Destroy'
 };
@@ -209,4 +215,236 @@ export const TileType = {
 // Factory function to create terrain tiles
 export function createTerrainTile(type, isometricSprite, cartesianSprite, tileHeightSpillOver, area) {
     return new TerrainTile(type, isometricSprite, cartesianSprite, tileHeightSpillOver, area);
+}
+
+// Function to get river flow direction from river tile name
+export function getRiverFlowDirection(riverTileName) {
+    // River tile sprite dimensions
+    const TILE_WIDTH = 200;
+    const TILE_HEIGHT = 100;
+    const ARROW_SIZE = 60; // Size of arrow sprite
+    
+    // Hard-coded offset values for each side (center of each edge)
+    const sideOffsets = {
+        'north': { x: TILE_WIDTH, y: 0 },
+        'east': { x: TILE_WIDTH + 25, y: TILE_HEIGHT},
+        'south': { x: 50, y: TILE_HEIGHT },
+        'west': { x: 50, y: 0}
+    };
+    
+    const flowDirections = {
+        // Clockwise flow
+        'River_NS': { from: 'north', to: 'south' },
+        'River_NE': { from: 'north', to: 'east' },
+        'River_EW': { from: 'east', to: 'west' },
+        'River_ES': { from: 'east', to: 'south' },
+        'River_SW': { from: 'south', to: 'west' },
+        'River_WN': { from: 'west', to: 'north' },
+        
+        // Anti-clockwise flow
+        'River_NW': { from: 'north', to: 'west' },
+        'River_WE': { from: 'west', to: 'east' },
+        'River_WS': { from: 'west', to: 'south' },
+        'River_SN': { from: 'south', to: 'north' },
+        'River_SE': { from: 'south', to: 'east' },
+        'River_EN': { from: 'east', to: 'north' },
+        
+        // Bridge flow directions
+        'Bridge_River_NS': { from: 'north', to: 'south' },
+        'Bridge_River_SN': { from: 'south', to: 'north' },
+        'Bridge_River_WE': { from: 'west', to: 'east' },
+        'Bridge_River_EW': { from: 'east', to: 'west' }
+    };
+    
+    const direction = flowDirections[riverTileName];
+    if (!direction) {
+        console.warn(`No flow direction found for river tile: ${riverTileName}`);
+        return null;
+    }
+    
+    // Get the XY coordinates for the two sides
+    const fromOffset = sideOffsets[direction.from];
+    const toOffset = sideOffsets[direction.to];
+    
+    // Calculate arrow positions (centered on the coordinates)
+    const coordinates = {
+        from: { 
+            x: fromOffset.x - ARROW_SIZE, 
+            y: fromOffset.y - ARROW_SIZE / 2 
+        },
+        to: { 
+            x: toOffset.x - ARROW_SIZE, 
+            y: toOffset.y - ARROW_SIZE / 2 
+        }
+    };
+    
+    return coordinates;
+}
+
+// Function to get river arrow coordinates from menu item
+export function getRiverArrowCoordinates(selectedMenuItem) {
+    // Check if the selected item is a river or bridge type
+    if (!selectedMenuItem.text || (!selectedMenuItem.text.includes('Clockwise') && !selectedMenuItem.text.includes('Anti-Clockwise') && !selectedMenuItem.text.includes('Bridges'))) {
+        return null;
+    }
+    
+    // Get the current river tile type
+    let riverTileName = null;
+    
+    // If there's a currentVariant (from cycling), use that first
+    if (selectedMenuItem.currentVariant) {
+        riverTileName = selectedMenuItem.currentVariant;
+    } else {
+        // Use default mapping for initial selection
+        const roadTextToTileType = {
+            'Clockwise\nRivers': 'River_NS',
+            'Anti-Clockwise\nRivers': 'River_NW',
+            'Bridges': 'Bridge_River_NS'
+        };
+        riverTileName = roadTextToTileType[selectedMenuItem.text];
+    }
+    
+    if (!riverTileName) {
+        return null;
+    }
+    
+
+    
+    return getRiverFlowDirection(riverTileName);
+}
+
+// Function to get river arrow screen coordinates from menu item and sprite position
+export function getRiverArrowScreenCoordinates(selectedMenuItem, spriteScreenX, spriteScreenY) {
+    const coordinates = getRiverArrowCoordinates(selectedMenuItem);
+    if (!coordinates) {
+        return null;
+    }
+    
+    // Add sprite screen position to the relative coordinates
+    return {
+        from: { 
+            x: spriteScreenX + coordinates.from.x, 
+            y: spriteScreenY + coordinates.from.y 
+        },
+        to: { 
+            x: spriteScreenX + coordinates.to.x, 
+            y: spriteScreenY + coordinates.to.y 
+        }
+    };
+}
+
+// Hardcoded mapping of river tile types to arrow sprites
+export const RIVER_ARROW_MAPPING = {
+    // Clockwise flow rivers
+    'River_NS': {
+        from: 'arrowNS',  // North to South - entry arrow pointing North
+        to: 'arrowNS'     // North to South - exit arrow pointing South
+    },
+    'River_NE': {
+        from: 'arrowNS',  // North to East - entry arrow pointing North
+        to: 'arrowWE'     // North to East - exit arrow pointing East
+    },
+    'River_EW': {
+        from: 'arrowEW',  // East to West - entry arrow pointing East
+        to: 'arrowEW'     // East to West - exit arrow pointing West
+    },
+    'River_ES': {
+        from: 'arrowEW',  // East to South - entry arrow pointing East
+        to: 'arrowNS'     // East to South - exit arrow pointing South
+    },
+    'River_SW': {
+        from: 'arrowSN',  // South to West - entry arrow pointing South
+        to: 'arrowEW'     // South to West - exit arrow pointing West
+    },
+    'River_WN': {
+        from: 'arrowWE',  // West to North - entry arrow pointing West
+        to: 'arrowSN'     // West to North - exit arrow pointing North
+    },
+    
+    // Anti-clockwise flow rivers
+    'River_NW': {
+        from: 'arrowNS',  // North to West - entry arrow pointing North
+        to: 'arrowEW'     // North to West - exit arrow pointing West
+    },
+    'River_WE': {
+        from: 'arrowWE',  // West to East - entry arrow pointing West
+        to: 'arrowWE'     // West to East - exit arrow pointing East
+    },
+    'River_WS': {
+        from: 'arrowWE',  // West to South - entry arrow pointing West
+        to: 'arrowNS'     // West to South - exit arrow pointing South
+    },
+    'River_SN': {
+        from: 'arrowSN',  // South to North - entry arrow pointing South
+        to: 'arrowSN'     // South to North - exit arrow pointing North
+    },
+    'River_SE': {
+        from: 'arrowSN',  // South to East - entry arrow pointing South
+        to: 'arrowWE'     // South to East - exit arrow pointing East
+    },
+    'River_EN': {
+        from: 'arrowEW',  // East to North - entry arrow pointing East
+        to: 'arrowSN'     // East to North - exit arrow pointing North
+    },
+    
+    // Bridge flow directions
+    'Bridge_River_NS': {
+        from: 'arrowNS',  // North to South - entry arrow pointing North
+        to: 'arrowNS'     // North to South - exit arrow pointing South
+    },
+    'Bridge_River_SN': {
+        from: 'arrowSN',  // South to North - entry arrow pointing South
+        to: 'arrowSN'     // South to North - exit arrow pointing North
+    },
+    'Bridge_River_WE': {
+        from: 'arrowWE',  // West to East - entry arrow pointing West
+        to: 'arrowWE'     // West to East - exit arrow pointing East
+    },
+    'Bridge_River_EW': {
+        from: 'arrowEW',  // East to West - entry arrow pointing East
+        to: 'arrowEW'     // East to West - exit arrow pointing West
+    }
+};
+
+// Function to get arrow sprites for a specific river tile
+export function getRiverArrowSprites(riverTileName) {
+    return RIVER_ARROW_MAPPING[riverTileName] || null;
+}
+
+// Function to get river arrow data with sprite information
+export function getRiverArrowData(selectedMenuItem, spriteScreenX, spriteScreenY) {
+    const coordinates = getRiverArrowScreenCoordinates(selectedMenuItem, spriteScreenX, spriteScreenY);
+    if (!coordinates) {
+        return null;
+    }
+    
+    // Get the current river tile type
+    let riverTileName = null;
+    if (selectedMenuItem.currentVariant) {
+        riverTileName = selectedMenuItem.currentVariant;
+    } else {
+        const roadTextToTileType = {
+            'Clockwise\nRivers': 'River_NS',
+            'Anti-Clockwise\nRivers': 'River_NW',
+            'Bridges': 'Bridge_River_NS'
+        };
+        riverTileName = roadTextToTileType[selectedMenuItem.text];
+    }
+    
+    if (!riverTileName) {
+        return null;
+    }
+    
+    // Get the arrow sprites for this river tile
+    const arrowSprites = getRiverArrowSprites(riverTileName);
+    if (!arrowSprites) {
+        return null;
+    }
+    
+
+    
+    return {
+        coordinates: coordinates,
+        arrowSprites: arrowSprites
+    };
 } 

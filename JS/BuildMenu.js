@@ -12,6 +12,7 @@ import {
 } from './FilePathRouter.js';
 import { options } from './Options.js';
 import { generationProcessVisualiser } from './TerrainGenerator/GenerationProcessVisualiser.js';
+import { getRiverFlowDirection } from './TerrainTile.js';
 
 
 class BuildMenu {
@@ -67,7 +68,8 @@ class BuildMenu {
             'Diagonal': ['diagonal_top_right', 'diagonal_bottom_right', 'diagonal_bottom_left', 'diagonal_top_left'],
             'Bank': ['Lake_Bank_N', 'Lake_Bank_NE', 'Lake_Bank_E', 'Lake_Bank_SE', 'Lake_Bank_S', 'Lake_Bank_SW', 'Lake_Bank_W', 'Lake_Bank_NW'],
             'Clockwise\nRivers': ['River_NS', 'River_NE', 'River_EW', 'River_ES', 'River_SW', 'River_WN'],
-            'Anti-Clockwise\nRivers': ['River_NW', 'River_WE', 'River_WS', 'River_SN', 'River_SE', 'River_EN']
+            'Anti-Clockwise\nRivers': ['River_NW', 'River_WE', 'River_WS', 'River_SN', 'River_SE', 'River_EN'],
+            'Bridges': ['Bridge_River_NS', 'Bridge_River_SN', 'Bridge_River_WE', 'Bridge_River_EW']
         };
         this.currentRoadVariantIndex = 0;
     }
@@ -234,8 +236,9 @@ class BuildMenu {
             if (menuName === 'Generate Options') {
                 switch (selectedItem.action) {
                     case 'generate':
-                        GENERATION_STATE.shouldShowGenerationPopup = true; // Set flag to show popup
-                        wfc.generateWFC();
+                        // Show confirmation popup instead of directly generating
+                        GENERATION_STATE.generateMap = true;
+                        this.showGenerateMapConfirmation();
                         break;
                     case 'weights':
                         // TODO: Implement weight adjustment
@@ -380,6 +383,14 @@ class BuildMenu {
                 delete this.selectedMenuItem.currentVariant;
             }
             
+            // Check if this is a river tile and log the flow direction
+            if (selectedItem.text === 'Clockwise\nRivers' || selectedItem.text === 'Anti-Clockwise\nRivers') {
+                const variants = this.roadVariants[selectedItem.text];
+                if (variants && variants.length > 0) {
+                    getRiverFlowDirection(variants[0]); // Log the default variant
+                }
+            }
+            
             return;
         }
         
@@ -443,6 +454,10 @@ class BuildMenu {
             // We'll store the current variant in a custom property
             this.selectedMenuItem.currentVariant = variants[this.currentRoadVariantIndex];
             
+            // Check if this is a river or bridge tile and log the flow direction
+            if (roadText === 'Clockwise\nRivers' || roadText === 'Anti-Clockwise\nRivers' || roadText === 'Bridges') {
+                getRiverFlowDirection(this.selectedMenuItem.currentVariant);
+            }
         }
     }
 
@@ -533,6 +548,48 @@ class BuildMenu {
         const handleEscape = (event) => {
             if (event.key === 'Escape') {
                 GENERATION_STATE.deleteMap = false;
+                document.removeEventListener('keydown', handleEscape);
+            }
+        };
+        document.addEventListener('keydown', handleEscape);
+    }
+
+    showGenerateMapConfirmation() {
+        const confirmBtn = document.getElementById('confirmGenerate');
+        const cancelBtn = document.getElementById('cancelGenerate');
+        
+        // Set state to show popup
+        GENERATION_STATE.generateMap = true;
+        
+        // Confirm button handler
+        confirmBtn.onclick = () => {
+            // Set generation state to true before starting
+            GENERATION_STATE.shouldShowGenerationPopup = true;
+            
+            // Start generation
+            wfc.generateWFC();
+            
+            // Close the modal
+            GENERATION_STATE.generateMap = false;
+        };
+        
+        // Cancel button handler
+        cancelBtn.onclick = () => {
+            GENERATION_STATE.generateMap = false;
+        };
+        
+        // Click outside to close
+        window.onclick = (event) => {
+            const generateMapPopup = document.getElementById('generateMapPopup');
+            if (event.target === generateMapPopup) {
+                GENERATION_STATE.generateMap = false;
+            }
+        };
+        
+        // Escape key to close
+        const handleEscape = (event) => {
+            if (event.key === 'Escape') {
+                GENERATION_STATE.generateMap = false;
                 document.removeEventListener('keydown', handleEscape);
             }
         };

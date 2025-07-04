@@ -5,7 +5,8 @@ import {
     WFC_RULES, 
     TERRAIN_TILE,
     GENERATION_STATE,
-    TERRAIN_STATE_DISPLAY
+    TERRAIN_STATE_DISPLAY,
+    PATHS
 } from '../FilePathRouter.js';
 import { options } from '../Options.js';
 
@@ -171,6 +172,10 @@ class GenerationProcessVisualiser {
             GENERATION_STATE.currentCell = { x, y };
             this.centerCameraOnCell(x, y);
             
+            // Log superposition options for the selected current cell
+            const cellIndexForLogging = x + (y * 36);
+            const superpositionTiles = GENERATION_STATE.superpositionTiles.get(cellIndexForLogging);
+             
             // STATE UPDATE: Initialize step tracking state
             GENERATION_STATE.stepState = {
                 type: GENERATION_STATE.StepType.FINDING_CELL,
@@ -249,6 +254,10 @@ class GenerationProcessVisualiser {
             
             // Center camera on the new cell
             this.centerCameraOnCell(x, y);
+            
+            // Log superposition options for the selected current cell
+            const cellIndexForLogging = x + (y * 36);
+            const superpositionTiles = GENERATION_STATE.superpositionTiles.get(cellIndexForLogging);
             
             // Get and store neighbors for processing
             GENERATION_STATE.neighborIndices = TERRAIN_GENERATOR.getNeighbourCells(cellIndex);
@@ -454,6 +463,83 @@ class GenerationProcessVisualiser {
         this.pause();
         GENERATION_STATE.generationStepCount = 0;  // Reset the generation step counter
         
+    }
+
+    // Function to convert tile type strings to new simplified indices (0-4) and rotation
+    convertTileTypeToNewIndex(tileType) {
+        // Map tile type strings to new simplified indices (0-4) and rotation values
+        const tileTypeToNewIndex = {
+            // Cross roads
+            'cross': { index: 0, rotation: 0 },
+            
+            // Straight roads
+            'straight_longitude': { index: 1, rotation: 0 },  // Base sprite is vertical
+            'straight_latitude': { index: 1, rotation: 90 },  // Rotate 90° to make horizontal
+
+            // T-junctions
+            't_junction_top': { index: 2, rotation: 0 },      // Base sprite is top orientation
+            't_junction_right': { index: 2, rotation: 90 },   // Rotate 90° for right
+            't_junction_bottom': { index: 2, rotation: 180 }, // Rotate 180° for bottom
+            't_junction_left': { index: 2, rotation: 270 },   // Rotate 270° for left
+            
+            // L-curves
+            'l_curve_bottom_right': { index: 3, rotation: 0 }, // Rotate 90° from right-bottom base
+            'l_curve_bottom_left': { index: 3, rotation: 90 }, // Rotate 180° from right-bottom base
+            'l_curve_top_left': { index: 3, rotation: 180 },  // Rotate 270° from right-bottom base
+            'l_curve_top_right': { index: 3, rotation: 270 },   // Base sprite is right-bottom
+            
+            // Diagonals
+            'diagonal_top_left': { index: 4, rotation: 180 },  // Rotate 270° from right-bottom base
+            'diagonal_top_right': { index: 4, rotation: 270 },   // Base sprite is right-bottom
+            'diagonal_bottom_left': { index: 4, rotation: 90 }, // Rotate 180° from right-bottom base
+            'diagonal_bottom_right': { index: 4, rotation: 0 }, // Rotate 90° from right-bottom base
+        };
+        
+        const result = tileTypeToNewIndex[tileType] ?? null;
+        
+        return result;
+    }
+
+    // Function to get cartesian icon path for a superposition tile number
+    getCartesianIconForSuperpositionTile(tileNumber) {
+        // Convert tile type strings to new simplified indices (0-4)
+        const newIndex = this.convertTileTypeToNewIndex(tileNumber);
+        
+        if (newIndex === null) {
+            return null; // Not a road tile
+        }
+        
+        // Simplified road tile mapping (0-4) - WFC only generates roads
+        const tileNumberToIcon = {
+            0: PATHS.ASSETS.MENU_ICONS.ROADS + '01_Cross.png', 
+            1: PATHS.ASSETS.MENU_ICONS.ROADS + '02_Straight.png', 
+            2: PATHS.ASSETS.MENU_ICONS.ROADS + '03_T.png', 
+            3: PATHS.ASSETS.MENU_ICONS.ROADS + '04_L.png', 
+            4: PATHS.ASSETS.MENU_ICONS.ROADS + '05_Diagonal.png', 
+        };
+        
+        return tileNumberToIcon[newIndex.index] || null;
+    }
+
+    // Function to get tile type name for a superposition tile number
+    getTileTypeNameForSuperpositionTile(tileNumber) {
+        // Convert tile type strings to new simplified indices (0-4)
+        const newIndex = this.convertTileTypeToNewIndex(tileNumber);
+        
+        if (newIndex === null) {
+            return `Tile ${tileNumber}`; // Not a road tile
+        }
+        
+        // Match the simplified structure with indices 0-4
+        const tileNumberToName = {
+            0: 'Cross',
+            1: 'Straight', 
+            2: 'T',
+            3: 'L',
+            4: 'Diagonal'
+        };
+        
+        return tileNumberToName[newIndex.index] || `Tile ${tileNumber}`;
     }
 }
 

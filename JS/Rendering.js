@@ -10,7 +10,12 @@ import { cartesianToIsometric,
 import { drawGridOverlay } from './ProfilingTools.js';
 import { inputState } from './Input.js';
 import { buildMenu } from './BuildMenu.js';
-import { TERRAIN_GENERATOR, GENERATION_PROCESS_VISUALISER, TERRAIN_STATE_DISPLAY, GENERATION_STATE } from './FilePathRouter.js';
+import { TERRAIN_GENERATOR, 
+    GENERATION_PROCESS_VISUALISER, 
+    TERRAIN_STATE_DISPLAY, 
+    GENERATION_STATE,
+    TERRAIN_TILE
+ } from './FilePathRouter.js';
 import { options } from './Options.js';
 
 // Add toggle at the top level
@@ -119,6 +124,9 @@ function drawTileHighlights(ctx, gameStateBufferRead) {
                     ctx.globalAlpha = 0.5;
                     terrainTile.draw(ctx, spriteScreenX, spriteScreenY, 'isometric');
                     ctx.globalAlpha = 1.0;
+                    
+                    // Draw arrow overlay if it's a river tile
+                    drawRiverArrowOverlay(ctx, selectedMenuItem, spriteScreenX, spriteScreenY);
                 }
             }
         } else {
@@ -126,6 +134,70 @@ function drawTileHighlights(ctx, gameStateBufferRead) {
             drawTileHighlight(ctx, screenX, screenY, 'rgba(255, 255, 255, 0.4)', 2);
         }
     }
+}
+
+// Draw arrow sprites on river tiles to show flow direction
+function drawRiverArrowOverlay(ctx, selectedMenuItem, spriteScreenX, spriteScreenY) {
+    // Cache for storing the last calculated arrow data
+    if (!drawRiverArrowOverlay.cache) {
+        drawRiverArrowOverlay.cache = {
+            lastMenuItem: null,
+            lastCurrentVariant: null,
+            lastSpriteX: null,
+            lastSpriteY: null,
+            arrowData: null
+        };
+    }
+    
+    // Check if we need to recalculate arrow data
+    const cache = drawRiverArrowOverlay.cache;
+    const currentVariant = selectedMenuItem ? selectedMenuItem.currentVariant : null;
+    const needsRecalculation = 
+        cache.lastMenuItem !== selectedMenuItem ||
+        cache.lastCurrentVariant !== currentVariant ||
+        cache.lastSpriteX !== spriteScreenX ||
+        cache.lastSpriteY !== spriteScreenY;
+    
+    if (needsRecalculation) {
+        // Get the enhanced river arrow data with sprite information
+        const arrowData = TERRAIN_TILE.getRiverArrowData(selectedMenuItem, spriteScreenX, spriteScreenY);
+        
+        // Update cache
+        cache.lastMenuItem = selectedMenuItem;
+        cache.lastCurrentVariant = currentVariant;
+        cache.lastSpriteX = spriteScreenX;
+        cache.lastSpriteY = spriteScreenY;
+        cache.arrowData = arrowData;
+    }
+    
+    // Use cached arrow data
+    const arrowData = cache.arrowData;
+    if (!arrowData) {
+        return;
+    }
+    
+    // Get the preloaded overlay sprites
+    const overlaySprites = getOverlaySprites();
+    const arrowSize = 60; // Size of the arrow sprite
+    
+    // Draw the two arrows with appropriate sprites
+    ctx.globalAlpha = 0.8; // Semi-transparent arrows
+    
+    // Draw entry arrow (from position)
+    const fromSpriteName = arrowData.arrowSprites.from;
+    const fromSprite = overlaySprites[fromSpriteName];
+    if (fromSprite) {
+        ctx.drawImage(fromSprite, arrowData.coordinates.from.x, arrowData.coordinates.from.y, arrowSize, arrowSize);
+    }
+    
+    // Draw exit arrow (to position)
+    const toSpriteName = arrowData.arrowSprites.to;
+    const toSprite = overlaySprites[toSpriteName];
+    if (toSprite) {
+        ctx.drawImage(toSprite, arrowData.coordinates.to.x, arrowData.coordinates.to.y, arrowSize, arrowSize);
+    }
+    
+    ctx.globalAlpha = 1.0; // Reset alpha
 }
 
 // Render generation status - redraw the progress elements each frame

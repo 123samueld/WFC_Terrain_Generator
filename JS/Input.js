@@ -19,7 +19,8 @@ export const inputState = {
         hoveredTile: null
     },
     offset: { x: 0, y: 0 },
-    selectedTile: null
+    selectedTile: null,
+    paintMode: false
 };
 
 // Constants for edge scrolling
@@ -34,6 +35,12 @@ export function handleKeyDown(e) {
     if (key in inputState.keys) {
         inputState.keys[key] = true;
     }
+    
+    // Handle spacebar for paint mode
+    if (e.code === 'Space') {
+        inputState.paintMode = true;
+    }
+    
     hotkeyManager.handleKeyDown(key);
 }
 
@@ -42,6 +49,12 @@ export function handleKeyUp(e) {
     if (key in inputState.keys) {
         inputState.keys[key] = false;
     }
+    
+    // Handle spacebar for paint mode
+    if (e.code === 'Space') {
+        inputState.paintMode = false;
+    }
+    
     hotkeyManager.handleKeyUp(key);
 }
 
@@ -177,6 +190,14 @@ export function handleMouseWheel(e) {
             
             // Update the selectedMenuItem to reflect the new variant
             buildMenu.selectedMenuItem.currentVariant = variants[buildMenu.currentRoadVariantIndex];
+            
+            // Check if this is a river or bridge tile and log the flow direction
+            if (roadText === 'Clockwise\nRivers' || roadText === 'Anti-Clockwise\nRivers' || roadText === 'Bridges') {
+                // Import the function dynamically since we removed it from the imports
+                import('./TerrainTile.js').then(module => {
+                    module.getRiverFlowDirection(buildMenu.selectedMenuItem.currentVariant);
+                });
+            }
         }
     }
 }
@@ -198,10 +219,10 @@ function getTileTypeFromMenuItem(selectedMenuItem) {
         // Otherwise use the default mapping
         const roadTextToTileType = {
             'Cross': 'cross',
-            'Straight': 'straight_latitude', // Default to latitude for now
-            'T': 't_junction_top', // Default to top for now
-            'L': 'l_curve_top_left', // Default to top-left for now
-            'Diagonal': 'diagonal_top_left', // Default to top-left for now
+            'Straight': 'straight_latitude',
+            'T': 't_junction_top',
+            'L': 'l_curve_top_left',
+            'Diagonal': 'diagonal_top_left',
             'Forest': 'Flora_Forest',
             'Lake_Middle': 'Lake_Middle',
             'Lake_Bank_North': 'Lake_Bank_N',
@@ -212,11 +233,16 @@ function getTileTypeFromMenuItem(selectedMenuItem) {
             'Lake_Bank_South-West': 'Lake_Bank_SW',
             'Lake_Bank_West': 'Lake_Bank_W',
             'Lake_Bank_North-West': 'Lake_Bank_NW',
-            'Clockwise\nRivers': 'River_NS', // Default to first clockwise river
-            'Anti-Clockwise\nRivers': 'River_NW' // Default to first anti-clockwise river
+            'Clockwise\nRivers': 'River_NS',
+            'Anti-Clockwise\nRivers': 'River_NW',
+            'Bridges': 'Bridge_River_NS'
         };
         
-        return roadTextToTileType[selectedMenuItem.text];
+        const tileType = roadTextToTileType[selectedMenuItem.text];
+        if (tileType) {
+            return tileType;
+        }
+        return null;
     }
     
     return null;
@@ -257,8 +283,10 @@ export function handleMouseClick(e) {
                         inputState.mouse.hoveredTile.y,
                         tileType
                     );
-                    // Reset selected tile after placement
-                    buildMenu.selectedMenuItem = null;
+                    // Only reset selected tile after placement if not in paint mode
+                    if (!inputState.paintMode) {
+                        buildMenu.selectedMenuItem = null;
+                    }
                 } else {
                     console.log("ERROR: Tile type not found in terrainTiles:", tileType);
                 }

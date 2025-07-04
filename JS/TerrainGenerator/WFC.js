@@ -86,6 +86,8 @@
 
         // Maybe used in initialisation and regular WFC steps?
         getRoadTileTypes() {
+            // Only return road tile types for WFC generation
+            // This ensures that buildings, water, and other non-road tiles are not used in generation
             return [
                 TERRAIN_TILE.TileType.CROSS,
                 TERRAIN_TILE.TileType.STRAIGHT_LATITUDE,
@@ -105,6 +107,11 @@
             ];
         }
 
+        // Helper function to check if a tile type is a road tile
+        isRoadTile(tileType) {
+            const roadTileTypes = this.getRoadTileTypes();
+            return roadTileTypes.includes(tileType);
+        }
 
         // Maybe used in initialisation and regular WFC steps?
         processSetTiles() {
@@ -345,6 +352,19 @@
                 return;
             }
 
+            // Safety check: Don't collapse if this cell already has a non-road tile
+            const x = cell % this.gridSize;
+            const y = Math.floor(cell / this.gridSize);
+            const { read } = INITIALISE.getGameStateBuffers();
+            const existingTile = read.getTile(x, y);
+            
+            if (existingTile && !this.isRoadTile(existingTile)) {
+                // This cell already has a non-road tile, skip it
+                GENERATION_STATE.superpositionTiles.delete(cell);
+                GENERATION_STATE.collapsedTiles.add(cell);
+                return;
+            }
+
             // Use WFCRules to select a tile from the possible tiles
             const selectedTile = WFC_RULES.collapseRules(possibleTiles);
             
@@ -352,8 +372,6 @@
             this.grid[cell] = selectedTile;
             
             // Update the game state with the selected tile
-            const x = cell % this.gridSize;
-            const y = Math.floor(cell / this.gridSize);
             const { write } = INITIALISE.getGameStateBuffers();
             write.setTile(x, y, selectedTile);
             
@@ -385,6 +403,17 @@
          
             for (const neighborIndex of neighbors) {
                 if (GENERATION_STATE.superpositionTiles.has(neighborIndex)) {
+                    // Safety check: Don't propagate constraints to cells that already have non-road tiles
+                    const nx = neighborIndex % this.gridSize;
+                    const ny = Math.floor(neighborIndex / this.gridSize);
+                    const { read } = INITIALISE.getGameStateBuffers();
+                    const existingNeighborTile = read.getTile(nx, ny);
+                    
+                    if (existingNeighborTile && !this.isRoadTile(existingNeighborTile)) {
+                        // Skip this neighbor as it already has a non-road tile
+                        continue;
+                    }
+
                     const currentX = cell % this.gridSize;
                     const currentY = Math.floor(cell / this.gridSize);
                     const neighborX = neighborIndex % this.gridSize;
