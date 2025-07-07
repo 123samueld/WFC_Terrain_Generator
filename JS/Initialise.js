@@ -474,6 +474,56 @@ export async function loadTerrainTiles() {
         terrainTiles[TileType.RIVER_EN].miniMapTileColour = 'rgba(0, 123, 255, 0.6)';
         terrainTiles[TileType.RIVER_EN].tileHeightSpillOver = 0;
 
+        // River to Lake tiles (4 orientations)
+        // River to Lake North-South
+        const riverToLakeNSIsometric = await loadSprite(riverIsometricSpritesAddressPrefix + '21_River_Lake_NS.png');
+        terrainTiles[TileType.RIVER_TO_LAKE_NS] = createTerrainTile(TileType.RIVER_TO_LAKE_NS, riverToLakeNSIsometric, null);
+        terrainTiles[TileType.RIVER_TO_LAKE_NS].miniMapTileColour = 'rgba(0, 123, 255, 0.6)';
+        terrainTiles[TileType.RIVER_TO_LAKE_NS].tileHeightSpillOver = 0;
+
+        // River to Lake East-West
+        const riverToLakeEWIsometric = await loadSprite(riverIsometricSpritesAddressPrefix + '22_River_Lake_EW.png');
+        terrainTiles[TileType.RIVER_TO_LAKE_EW] = createTerrainTile(TileType.RIVER_TO_LAKE_EW, riverToLakeEWIsometric, null);
+        terrainTiles[TileType.RIVER_TO_LAKE_EW].miniMapTileColour = 'rgba(0, 123, 255, 0.6)';
+        terrainTiles[TileType.RIVER_TO_LAKE_EW].tileHeightSpillOver = 0;
+
+        // River to Lake South-North
+        const riverToLakeSNIsometric = await loadSprite(riverIsometricSpritesAddressPrefix + '23_River_Lake_SN.png');
+        terrainTiles[TileType.RIVER_TO_LAKE_SN] = createTerrainTile(TileType.RIVER_TO_LAKE_SN, riverToLakeSNIsometric, null);
+        terrainTiles[TileType.RIVER_TO_LAKE_SN].miniMapTileColour = 'rgba(0, 123, 255, 0.6)';
+        terrainTiles[TileType.RIVER_TO_LAKE_SN].tileHeightSpillOver = 0;
+
+        // River to Lake West-East
+        const riverToLakeWEIsometric = await loadSprite(riverIsometricSpritesAddressPrefix + '24_River_Lake_WE.png');
+        terrainTiles[TileType.RIVER_TO_LAKE_WE] = createTerrainTile(TileType.RIVER_TO_LAKE_WE, riverToLakeWEIsometric, null);
+        terrainTiles[TileType.RIVER_TO_LAKE_WE].miniMapTileColour = 'rgba(0, 123, 255, 0.6)';
+        terrainTiles[TileType.RIVER_TO_LAKE_WE].tileHeightSpillOver = 0;
+
+        // Lake to River tiles (4 orientations)
+        // Lake to River South-North
+        const lakeToRiverSNIsometric = await loadSprite(riverIsometricSpritesAddressPrefix + '25_River_Lake_SN.png');
+        terrainTiles[TileType.LAKE_TO_RIVER_SN] = createTerrainTile(TileType.LAKE_TO_RIVER_SN, lakeToRiverSNIsometric, null);
+        terrainTiles[TileType.LAKE_TO_RIVER_SN].miniMapTileColour = 'rgba(0, 123, 255, 0.6)';
+        terrainTiles[TileType.LAKE_TO_RIVER_SN].tileHeightSpillOver = 0;
+
+        // Lake to River West-East
+        const lakeToRiverWEIsometric = await loadSprite(riverIsometricSpritesAddressPrefix + '26_River_Lake_WE.png');
+        terrainTiles[TileType.LAKE_TO_RIVER_WE] = createTerrainTile(TileType.LAKE_TO_RIVER_WE, lakeToRiverWEIsometric, null);
+        terrainTiles[TileType.LAKE_TO_RIVER_WE].miniMapTileColour = 'rgba(0, 123, 255, 0.6)';
+        terrainTiles[TileType.LAKE_TO_RIVER_WE].tileHeightSpillOver = 0;
+
+        // Lake to River North-South
+        const lakeToRiverNSIsometric = await loadSprite(riverIsometricSpritesAddressPrefix + '27_River_Lake_NS.png');
+        terrainTiles[TileType.LAKE_TO_RIVER_NS] = createTerrainTile(TileType.LAKE_TO_RIVER_NS, lakeToRiverNSIsometric, null);
+        terrainTiles[TileType.LAKE_TO_RIVER_NS].miniMapTileColour = 'rgba(0, 123, 255, 0.6)';
+        terrainTiles[TileType.LAKE_TO_RIVER_NS].tileHeightSpillOver = 0;
+
+        // Lake to River East-West
+        const lakeToRiverEWIsometric = await loadSprite(riverIsometricSpritesAddressPrefix + '28_River_Lake_EW.png');
+        terrainTiles[TileType.LAKE_TO_RIVER_EW] = createTerrainTile(TileType.LAKE_TO_RIVER_EW, lakeToRiverEWIsometric, null);
+        terrainTiles[TileType.LAKE_TO_RIVER_EW].miniMapTileColour = 'rgba(0, 123, 255, 0.6)';
+        terrainTiles[TileType.LAKE_TO_RIVER_EW].tileHeightSpillOver = 0;
+
         // Bridge tiles
         const bridgeIsometricSpritesAddressPrefix = isometricWaterSpritesAddressPrefix + '02_River/';
 

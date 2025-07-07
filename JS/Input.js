@@ -235,7 +235,8 @@ function getTileTypeFromMenuItem(selectedMenuItem) {
             'Lake_Bank_North-West': 'Lake_Bank_NW',
             'Clockwise\nRivers': 'River_NS',
             'Anti-Clockwise\nRivers': 'River_NW',
-            'Bridges': 'Bridge_River_NS'
+            'Bridges': 'Bridge_River_NS',
+            'River to\nLake': 'River_To_Lake_NS'
         };
         
         const tileType = roadTextToTileType[selectedMenuItem.text];

@@ -69,7 +69,20 @@ class BuildMenu {
             'Bank': ['Lake_Bank_N', 'Lake_Bank_NE', 'Lake_Bank_E', 'Lake_Bank_SE', 'Lake_Bank_S', 'Lake_Bank_SW', 'Lake_Bank_W', 'Lake_Bank_NW'],
             'Clockwise\nRivers': ['River_NS', 'River_NE', 'River_EW', 'River_ES', 'River_SW', 'River_WN'],
             'Anti-Clockwise\nRivers': ['River_NW', 'River_WE', 'River_WS', 'River_SN', 'River_SE', 'River_EN'],
-            'Bridges': ['Bridge_River_NS', 'Bridge_River_SN', 'Bridge_River_WE', 'Bridge_River_EW']
+            'Bridges': ['Bridge_River_NS', 'Bridge_River_SN', 'Bridge_River_WE', 'Bridge_River_EW'],
+            'River to\nLake': [
+                // River to Lake
+                'River_To_Lake_NS', 
+                'River_To_Lake_EW', 
+                'River_To_Lake_SN', 
+                'River_To_Lake_WE', 
+                
+                // Lake to River
+                'Lake_To_River_SN', 
+                'Lake_To_River_WE', 
+                'Lake_To_River_NS', 
+                'Lake_To_River_EW'
+            ]
         };
         this.currentRoadVariantIndex = 0;
     }

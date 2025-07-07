@@ -580,7 +580,10 @@ export const menuItems = {
             },
             {
                 id: 3,
-                placeholder: true
+                image: PATHS.ASSETS.MENU_ICONS.LANDSCAPE + '01_Water/02_River/04_Delta.png',
+                text: 'River to\nLake',
+                menu: 'River',
+                tileType: 'River_To_Lake_NS' // Default to north-south orientation
             },
             {
                 id: 4,

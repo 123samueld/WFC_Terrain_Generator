@@ -202,6 +202,18 @@ export const TileType = {
     RIVER_SE: 'River_SE',
     RIVER_EN: 'River_EN',
 
+    // River to Lake (4 orientations)
+    RIVER_TO_LAKE_NS: 'River_To_Lake_NS',
+    RIVER_TO_LAKE_EW: 'River_To_Lake_EW',
+    RIVER_TO_LAKE_SN: 'River_To_Lake_SN',
+    RIVER_TO_LAKE_WE: 'River_To_Lake_WE',
+
+    // Lake to River (4 orientations)
+    LAKE_TO_RIVER_SN: 'Lake_To_River_SN',
+    LAKE_TO_RIVER_WE: 'Lake_To_River_WE',
+    LAKE_TO_RIVER_NS: 'Lake_To_River_NS',
+    LAKE_TO_RIVER_EW: 'Lake_To_River_EW',
+
     // Bridges
     BRIDGE_RIVER_NS: 'Bridge_River_NS',
     BRIDGE_RIVER_SN: 'Bridge_River_SN',
@@ -229,7 +241,8 @@ export function getRiverFlowDirection(riverTileName) {
         'north': { x: TILE_WIDTH, y: 0 },
         'east': { x: TILE_WIDTH + 25, y: TILE_HEIGHT},
         'south': { x: 50, y: TILE_HEIGHT },
-        'west': { x: 50, y: 0}
+        'west': { x: 50, y: 0},
+        'center': { x: TILE_WIDTH, y: TILE_HEIGHT / 2 }  // Center of the tile
     };
     
     const flowDirections = {
@@ -253,7 +266,19 @@ export function getRiverFlowDirection(riverTileName) {
         'Bridge_River_NS': { from: 'north', to: 'south' },
         'Bridge_River_SN': { from: 'south', to: 'north' },
         'Bridge_River_WE': { from: 'west', to: 'east' },
-        'Bridge_River_EW': { from: 'east', to: 'west' }
+        'Bridge_River_EW': { from: 'east', to: 'west' },
+
+        // River to Lake flow directions
+        'River_To_Lake_NS': { from: 'north', to: 'center' },
+        'River_To_Lake_EW': { from: 'east', to: 'center' },
+        'River_To_Lake_SN': { from: 'south', to: 'center' },
+        'River_To_Lake_WE': { from: 'west', to: 'center' },
+
+        // Lake to River flow directions
+        'Lake_To_River_SN': { from: 'south', to: 'center' },
+        'Lake_To_River_WE': { from: 'west', to: 'center' },
+        'Lake_To_River_NS': { from: 'north', to: 'center' },
+        'Lake_To_River_EW': { from: 'east', to: 'center' }
     };
     
     const direction = flowDirections[riverTileName];
@@ -283,8 +308,8 @@ export function getRiverFlowDirection(riverTileName) {
 
 // Function to get river arrow coordinates from menu item
 export function getRiverArrowCoordinates(selectedMenuItem) {
-    // Check if the selected item is a river or bridge type
-    if (!selectedMenuItem.text || (!selectedMenuItem.text.includes('Clockwise') && !selectedMenuItem.text.includes('Anti-Clockwise') && !selectedMenuItem.text.includes('Bridges'))) {
+    // Check if the selected item is a river, bridge, or river to lake type
+    if (!selectedMenuItem.text || (!selectedMenuItem.text.includes('Clockwise') && !selectedMenuItem.text.includes('Anti-Clockwise') && !selectedMenuItem.text.includes('Bridges') && !selectedMenuItem.text.includes('River to'))) {
         return null;
     }
     
@@ -299,7 +324,8 @@ export function getRiverArrowCoordinates(selectedMenuItem) {
         const roadTextToTileType = {
             'Clockwise\nRivers': 'River_NS',
             'Anti-Clockwise\nRivers': 'River_NW',
-            'Bridges': 'Bridge_River_NS'
+            'Bridges': 'Bridge_River_NS',
+            'River to\nLake': 'River_To_Lake_NS'
         };
         riverTileName = roadTextToTileType[selectedMenuItem.text];
     }
@@ -403,6 +429,42 @@ export const RIVER_ARROW_MAPPING = {
     'Bridge_River_EW': {
         from: 'arrowEW',  // East to West - entry arrow pointing East
         to: 'arrowEW'     // East to West - exit arrow pointing West
+    },
+
+    // River to Lake flow directions
+    'River_To_Lake_NS': {
+        from: 'arrowNS',  // North to Lake - entry arrow pointing towards center
+        to: null          // No exit arrow (flows into lake)
+    },
+    'River_To_Lake_EW': {
+        from: 'arrowEW',  // East to Lake - entry arrow pointing towards center
+        to: null          // No exit arrow (flows into lake)
+    },
+    'River_To_Lake_SN': {
+        from: 'arrowSN',  // South to Lake - entry arrow pointing towards center
+        to: null          // No exit arrow (flows into lake)
+    },
+    'River_To_Lake_WE': {
+        from: 'arrowWE',  // West to Lake - entry arrow pointing towards center
+        to: null          // No exit arrow (flows into lake)
+    },
+
+    // Lake to River flow directions
+    'Lake_To_River_SN': {
+        from: 'arrowSN',  // South to Lake - entry arrow pointing towards center
+        to: null          // No exit arrow (flows into lake)
+    },
+    'Lake_To_River_WE': {
+        from: 'arrowWE',  // West to Lake - entry arrow pointing towards center
+        to: null          // No exit arrow (flows into lake)
+    },
+    'Lake_To_River_NS': {
+        from: 'arrowNS',  // North to Lake - entry arrow pointing towards center
+        to: null          // No exit arrow (flows into lake)
+    },
+    'Lake_To_River_EW': {
+        from: 'arrowEW',  // East to Lake - entry arrow pointing towards center
+        to: null          // No exit arrow (flows into lake)
     }
 };
 
@@ -426,7 +488,8 @@ export function getRiverArrowData(selectedMenuItem, spriteScreenX, spriteScreenY
         const roadTextToTileType = {
             'Clockwise\nRivers': 'River_NS',
             'Anti-Clockwise\nRivers': 'River_NW',
-            'Bridges': 'Bridge_River_NS'
+            'Bridges': 'Bridge_River_NS',
+            'River to\nLake': 'River_To_Lake_NS'
         };
         riverTileName = roadTextToTileType[selectedMenuItem.text];
     }
