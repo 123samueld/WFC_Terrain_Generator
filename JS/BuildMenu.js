@@ -673,8 +673,8 @@ class BuildMenu {
             document.removeEventListener('keydown', handleEscape);
             document.removeEventListener('click', handleOutsideClick);
             
-            // Show about modal
-            this.showAboutModal();
+            // Open README in new window
+            window.open('https://github.com/123samueld/WFC_Terrain_Generator/blob/main/README.md', '_blank');
         };
         
         // Close button handler
