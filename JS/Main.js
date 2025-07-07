@@ -57,6 +57,19 @@ function updateDeleteMapPopup() {
     }
 }
 
+// Function to monitor generate map state and show/hide popup
+function updateGenerateMapPopup() {
+    const generateMapPopup = document.getElementById('generateMapPopup');
+    
+    if (generateMapPopup) {
+        if (GENERATION_STATE.generateMap) {
+            generateMapPopup.style.display = 'flex';
+        } else {
+            generateMapPopup.style.display = 'none';
+        }
+    }
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
   initCanvas();
   initGrid();
@@ -68,6 +81,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Set up interval to monitor generation state
   setInterval(updateGenerationPopup, 100); // Check every 100ms
   setInterval(updateDeleteMapPopup, 100); // Check every 100ms
+  setInterval(updateGenerateMapPopup, 100); // Check every 100ms
   
   requestAnimationFrame(gameLoop);
 });

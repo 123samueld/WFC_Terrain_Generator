@@ -559,25 +559,31 @@ export const menuItems = {
         items: [
             {
                 id: 0,
-                image: PATHS.ASSETS.MENU_ICONS.LANDSCAPE + '01_Water/02_River/01_WE.png',
+                image: PATHS.ASSETS.MENU_ICONS.LANDSCAPE + '01_Water/02_River/01_CW.png',
                 text: 'Clockwise\nRivers',
                 menu: 'River',
                 tileType: 'River_NS' // Default to first clockwise river
             },
             {
                 id: 1,
-                image: PATHS.ASSETS.MENU_ICONS.LANDSCAPE + '01_Water/02_River/02_EW.png',
+                image: PATHS.ASSETS.MENU_ICONS.LANDSCAPE + '01_Water/02_River/02_ACW.png',
                 text: 'Anti-Clockwise\nRivers',
                 menu: 'River',
                 tileType: 'River_NW' // Default to first anti-clockwise river
             },
             {
                 id: 2,
-                placeholder: true
+                image: PATHS.ASSETS.MENU_ICONS.LANDSCAPE + '01_Water/02_River/03_Bridges.png',
+                text: 'Bridges',
+                menu: 'River',
+                tileType: 'Bridge_River_NS' // Default to first bridge type
             },
             {
                 id: 3,
-                placeholder: true
+                image: PATHS.ASSETS.MENU_ICONS.LANDSCAPE + '01_Water/02_River/04_Delta.png',
+                text: 'River to\nLake',
+                menu: 'River',
+                tileType: 'River_To_Lake_NS' // Default to north-south orientation
             },
             {
                 id: 4,

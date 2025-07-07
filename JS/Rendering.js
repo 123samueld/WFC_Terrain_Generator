@@ -10,7 +10,12 @@ import { cartesianToIsometric,
 import { drawGridOverlay } from './ProfilingTools.js';
 import { inputState } from './Input.js';
 import { buildMenu } from './BuildMenu.js';
-import { TERRAIN_GENERATOR, GENERATION_PROCESS_VISUALISER, TERRAIN_STATE_DISPLAY, GENERATION_STATE } from './FilePathRouter.js';
+import { TERRAIN_GENERATOR, 
+    GENERATION_PROCESS_VISUALISER, 
+    TERRAIN_STATE_DISPLAY, 
+    GENERATION_STATE,
+    TERRAIN_TILE
+ } from './FilePathRouter.js';
 import { options } from './Options.js';
 
 // Add toggle at the top level
@@ -131,36 +136,68 @@ function drawTileHighlights(ctx, gameStateBufferRead) {
     }
 }
 
-// Draw river arrow overlay in the top right of the tile
+// Draw arrow sprites on river tiles to show flow direction
 function drawRiverArrowOverlay(ctx, selectedMenuItem, spriteScreenX, spriteScreenY) {
-    // Check if the selected item is a river type
-    if (!selectedMenuItem.text || (!selectedMenuItem.text.includes('Clockwise') && !selectedMenuItem.text.includes('Anti-Clockwise'))) {
+    // Cache for storing the last calculated arrow data
+    if (!drawRiverArrowOverlay.cache) {
+        drawRiverArrowOverlay.cache = {
+            lastMenuItem: null,
+            lastCurrentVariant: null,
+            lastSpriteX: null,
+            lastSpriteY: null,
+            arrowData: null
+        };
+    }
+    
+    // Check if we need to recalculate arrow data
+    const cache = drawRiverArrowOverlay.cache;
+    const currentVariant = selectedMenuItem ? selectedMenuItem.currentVariant : null;
+    const needsRecalculation = 
+        cache.lastMenuItem !== selectedMenuItem ||
+        cache.lastCurrentVariant !== currentVariant ||
+        cache.lastSpriteX !== spriteScreenX ||
+        cache.lastSpriteY !== spriteScreenY;
+    
+    if (needsRecalculation) {
+        // Get the enhanced river arrow data with sprite information
+        const arrowData = TERRAIN_TILE.getRiverArrowData(selectedMenuItem, spriteScreenX, spriteScreenY);
+        
+        // Update cache
+        cache.lastMenuItem = selectedMenuItem;
+        cache.lastCurrentVariant = currentVariant;
+        cache.lastSpriteX = spriteScreenX;
+        cache.lastSpriteY = spriteScreenY;
+        cache.arrowData = arrowData;
+    }
+    
+    // Use cached arrow data
+    const arrowData = cache.arrowData;
+    if (!arrowData) {
         return;
     }
     
+    // Get the preloaded overlay sprites
     const overlaySprites = getOverlaySprites();
-    let arrowSprite = null;
-        
-    // Determine which arrow to use based on the selected river type
-    if (selectedMenuItem.text.includes('Anti-Clockwise')) {
-        arrowSprite = overlaySprites.riverAntiClockwiseArrow;
-    } else if (selectedMenuItem.text.includes('Clockwise')) {
-        arrowSprite = overlaySprites.riverClockwiseArrow;
+    const arrowSize = 60; // Size of the arrow sprite
+    
+    // Draw the two arrows with appropriate sprites
+    ctx.globalAlpha = 0.8; // Semi-transparent arrows
+    
+    // Draw entry arrow (from position)
+    const fromSpriteName = arrowData.arrowSprites.from;
+    const fromSprite = overlaySprites[fromSpriteName];
+    if (fromSprite) {
+        ctx.drawImage(fromSprite, arrowData.coordinates.from.x, arrowData.coordinates.from.y, arrowSize, arrowSize);
     }
     
-    if (arrowSprite) {
-        // Calculate position for top right corner of the tile
-        // Isometric tile dimensions: width = 100, height = 50
-        const arrowSize = 35; // Size of the arrow sprite
-        const arrowX = spriteScreenX + 165; // Right side of tile minus arrow width
-        const arrowY = spriteScreenY; // Top of tile minus arrow height
-        
-        // Draw the arrow with full opacity
-        ctx.globalAlpha = 1.0;
-        ctx.drawImage(arrowSprite, arrowX, arrowY, arrowSize, arrowSize);
-    } else {
-        console.log('No arrow sprite found');
+    // Draw exit arrow (to position)
+    const toSpriteName = arrowData.arrowSprites.to;
+    const toSprite = overlaySprites[toSpriteName];
+    if (toSprite) {
+        ctx.drawImage(toSprite, arrowData.coordinates.to.x, arrowData.coordinates.to.y, arrowSize, arrowSize);
     }
+    
+    ctx.globalAlpha = 1.0; // Reset alpha
 }
 
 // Render generation status - redraw the progress elements each frame

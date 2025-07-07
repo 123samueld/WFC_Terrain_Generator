@@ -30,13 +30,19 @@ export function initializeCells(wfcInstance, read, roadTileTypes) {
             const tileType = read.getTile(x, y);
 
             if (tileType) {
+                // If there's already a tile here, preserve it completely
                 const ix = index % wfcInstance.gridSize;
                 const iy = Math.floor(index / wfcInstance.gridSize);
                 GENERATION_STATE.collapsedTiles.add(index);
                 wfcInstance.grid[index] = tileType;
                 wfcInstance.possibleTiles[index] = new Set([tileType]);
                 wfcInstance.entropy[index] = 1;
+                
+                // Ensure the game state is updated with the existing tile
+                const { write } = INITIALISE.getGameStateBuffers();
+                write.setTile(x, y, tileType);
             } else {
+                // Only empty cells should be used for road generation
                 const ix = index % wfcInstance.gridSize;
                 const iy = Math.floor(index / wfcInstance.gridSize);
                 GENERATION_STATE.untouchedTiles.add(index);

@@ -16,31 +16,16 @@ export const terrainStateDisplayItems = {
                 id: "currentNeighbour",
                 label: "Current Neighbour",
                 value: 0
-            },
-            {
-                id: "neighbourCells",
-                label: "Neighbour Cells",
-                value: 0
-            },
-            {
-                id: "historyIndex",
-                label: "History Index",
-                value: 0
-            },
-            {
-                id: "historyLength",
-                label: "History Length",
-                value: 0
             }
         ],
         potentialNeighbors: {
-            title: "Potential Neighbors",
+            title: "Superposition Options",
             grid: {
                 rows: 4,
                 cols: 4,
                 cells: Array(16).fill(null).map((_, index) => ({
                     id: `neighbor${index}`,
-                    value: null
+                    label: `Cell ${index + 1}`
                 }))
             }
         }

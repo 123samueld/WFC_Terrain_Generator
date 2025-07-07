@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Standard Template Engine</title>
+  <title>Ultimate WFC Generator</title>
+  <link rel="icon" type="image/png" href="./Assets/scroll.png">
   <link rel="stylesheet" href="index.css">
 </head>
 <body>
@@ -30,7 +31,7 @@
             <!-- Items will be dynamically inserted here -->
         </div>
         <div class="neighbors-section">
-            <h4 class="neighbors-title">Potential Neighbors</h4>
+            <h4 class="neighbors-title">Superposition Options</h4>
             <div class="neighbors-grid">
                 <div class="neighbor-cell" id="neighbor0"></div>
                 <div class="neighbor-cell" id="neighbor1"></div>
@@ -226,6 +227,17 @@
       <div class="delete-map-buttons">
         <button id="confirmDelete" class="delete-map-button confirm">Yes, Delete</button>
         <button id="cancelDelete" class="delete-map-button cancel">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Generate Map Confirmation Popup -->
+  <div id="generateMapPopup" class="generate-map-popup">
+    <div class="generate-map-popup-content">
+      <h3>Generate the whole map?</h3>
+      <div class="generate-map-buttons">
+        <button id="confirmGenerate" class="generate-map-button confirm">Generate</button>
+        <button id="cancelGenerate" class="generate-map-button cancel">Cancel</button>
       </div>
     </div>
   </div>
