@@ -86,8 +86,8 @@
 
         // Maybe used in initialisation and regular WFC steps?
         getRoadTileTypes() {
-            // Only return road tile types for WFC generation
-            // This ensures that buildings, water, and other non-road tiles are not used in generation
+            // Return road tile types and grass field for WFC generation
+            // This allows grass fields to be placed when no road connection is needed
             return [
                 TERRAIN_TILE.TileType.CROSS,
                 TERRAIN_TILE.TileType.STRAIGHT_LATITUDE,
@@ -103,11 +103,12 @@
                 TERRAIN_TILE.TileType.DIAGONAL_TOP_LEFT,
                 TERRAIN_TILE.TileType.DIAGONAL_TOP_RIGHT,
                 TERRAIN_TILE.TileType.DIAGONAL_BOTTOM_LEFT,
-                TERRAIN_TILE.TileType.DIAGONAL_BOTTOM_RIGHT
+                TERRAIN_TILE.TileType.DIAGONAL_BOTTOM_RIGHT,
+                TERRAIN_TILE.TileType.GRASS_FIELD
             ];
         }
 
-        // Helper function to check if a tile type is a road tile
+        // Helper function to check if a tile type is a road tile or grass field
         isRoadTile(tileType) {
             const roadTileTypes = this.getRoadTileTypes();
             return roadTileTypes.includes(tileType);

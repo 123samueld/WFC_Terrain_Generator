@@ -171,6 +171,9 @@ export const TileType = {
     FLORA_FOREST: 'Flora_Forest',
     FLORA_TREE: 'Flora_Tree',
 
+    // Landscape
+    GRASS_FIELD: 'Grass_Field',
+
     // Lake
     LAKE_MIDDLE: 'Lake_Middle',
 

@@ -6,7 +6,23 @@ export function collapseRules(possibleTiles) {
     // Convert Set to Array for random selection
     const tilesArray = Array.from(possibleTiles);
     
-    // Randomly select a tile from possible tiles
+    // Check if grass field is available
+    const grassFieldTile = tilesArray.find(tile => tile === 'Grass_Field');
+    
+    if (grassFieldTile) {
+        // If only grass field is available, choose it
+        if (tilesArray.length === 1) {
+            return grassFieldTile;
+        }
+        
+        // If grass field is available along with road tiles, prefer grass (70% chance)
+        // This creates more natural terrain with grass filling empty spaces
+        if (Math.random() < 0.7) {
+            return grassFieldTile;
+        }
+    }
+    
+    // Otherwise, randomly select from available tiles
     const randomIndex = Math.floor(Math.random() * tilesArray.length);
     return tilesArray[randomIndex];
 }

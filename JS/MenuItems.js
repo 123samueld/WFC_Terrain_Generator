@@ -366,7 +366,7 @@ export const menuItems = {
     },
 
     Landscape: {
-        isLeafMenu: false,
+        isLeafMenu: true,
         items: [
             {
                 id: 0,
@@ -377,7 +377,10 @@ export const menuItems = {
             },
             {
                 id: 1,
-                placeholder: true
+                image: PATHS.ASSETS.MENU_ICONS.LANDSCAPE + '02_Grass_Field.png',
+                text: 'Grass\nField',
+                menu: 'Landscape',
+                tileType: 'Grass_Field'
             },
             {
                 id: 2,

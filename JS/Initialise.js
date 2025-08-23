@@ -330,6 +330,13 @@ export async function loadTerrainTiles() {
         terrainTiles[TileType.FLORA_FOREST].miniMapTileColour = 'rgba(52, 191, 47, 0.42)';
         terrainTiles[TileType.FLORA_FOREST].tileHeightSpillOver = 32;
 
+        // Grass Field
+        const grassFieldIsometric = await loadSprite('Assets/Terrain_Tile_Sprites/Isometric/03_Landscape/02_Grass_Field.png');
+        const grassFieldCartesian = await loadSprite('Assets/Nested_Menu_Icons/01_Main_Menu_Icons/01_Build_Options_Menu_Icons/08_Landscape_Menu_Icons/02_Grass_Field.png');
+        terrainTiles[TileType.GRASS_FIELD] = createTerrainTile(TileType.GRASS_FIELD, grassFieldIsometric, grassFieldCartesian);
+        terrainTiles[TileType.GRASS_FIELD].miniMapTileColour = 'rgba(76, 175, 80, 0.6)';
+        terrainTiles[TileType.GRASS_FIELD].tileHeightSpillOver = 0;
+
         /* Water/Lake */
         const isometricWaterSpritesAddressPrefix = 'Assets/Terrain_Tile_Sprites/Isometric/03_Landscape/01_Water/';
 
