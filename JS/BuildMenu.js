@@ -371,7 +371,7 @@ class BuildMenu {
             return;
         }
 
-        // Handle leaf menu item (tile placement)
+        // Handle leaf menu item (tile placement) or mixed menu navigation
         if (menuData.isLeafMenu) {
             // Check if this is a destroy action
             if (selectedItem.text === 'Destroy') {
@@ -382,6 +382,26 @@ class BuildMenu {
                 return;
             }
             
+            // Check if this item has a nextMenu (navigation item)
+            if (selectedItem.nextMenu) {
+                // Navigate to the sub-menu
+                const nextMenuName = selectedItem.nextMenu;
+                
+                // Set visualization flag when entering visualization menu
+                if (nextMenuName === 'Visualise Generation Process') {
+                    options.visualiseTerrainGenerationProcess = true;
+                    this.isVisualisationMenu = true;
+                    TERRAIN_STATE_DISPLAY.terrainStateDisplay.update();
+                }
+            
+                // Navigate to the selected menu
+                this.menuChain.push(nextMenuName);
+                this.activeMenu = nextMenuName;
+                this.generateDynamicMenu(nextMenuName);
+                return;
+            }
+            
+            // Handle direct tile placement (leaf item)
             // Reset destroy mode when selecting a non-destroy item
             this.destroyMode = false;
             this.selectedMenuItem = selectedItem;
